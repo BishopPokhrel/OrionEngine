@@ -138,6 +138,7 @@
     <ClInclude Include="Source\OrionEditor\OEMainWindow.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEEngineDefines.h" />
+    <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
     <ClInclude Include="Source\OrionEngine\Core\OELogging.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
