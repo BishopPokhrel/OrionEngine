@@ -55,4 +55,37 @@ namespace OrionEngine
 			)
 		{}
 	};
+
+	class OEResourceNotFoundException : public OEBaseException
+	{
+	public:
+
+		template<typename ResourceType, typename... Args>
+		explicit OEResourceNotFoundException(ResourceType type, const std::string& resourceName, const Args&... additional)
+			: OEBaseException(
+				Utils::BuildMessage("Resource of type ", type, " with name ", resourceName, " could not be found ", additional...)
+			)
+		{}
+	};
+
+	class OEInvalidFileFormatUsedException : public OEBaseException
+	{
+	public:
+
+		template<typename... Args>
+		explicit OEInvalidFileFormatUsedException(
+			const std::string& expectedFormat, const std::string& actualFormat, const std::string& fileName, const Args&... additional)
+				: OEBaseException(
+					Utils::BuildMessage(
+						"Invalid file format!\n",
+						"File: ", fileName, "\n",
+						"Expected: ", expectedFormat, "\n",
+						"Actual: ", actualFormat, "\n",
+						additional...
+					)
+				)
+		{}
+	};
+
+
 }
