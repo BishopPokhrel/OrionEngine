@@ -130,11 +130,13 @@
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\OrionEngine\Core\OEInputSystem.cpp" />
     <ClCompile Include="Source\OEEntryPoint.cpp" />
     <ClCompile Include="Source\OrionEditor\OEMainWindow.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OEApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\OrionEngine\Core\OEInputSystem.h" />
     <ClInclude Include="Source\OrionEditor\OEMainWindow.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEEngineDefines.h" />

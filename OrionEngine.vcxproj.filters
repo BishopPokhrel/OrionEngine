@@ -27,6 +27,9 @@
     <ClCompile Include="Source\OrionEditor\OEMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEngine\Core\OEInputSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\OEInputSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
