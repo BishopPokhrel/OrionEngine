@@ -2,6 +2,26 @@
 
 #include <exception>
 #include <string>
+#include <sstream>
+
+namespace Utils
+{
+	inline void AppendToStream(std::ostringstream&) {}
+	template<typename First, typename... Rest>
+	void AppendToStream(std::ostringstream& ss, const First& first, const Rest&... rest) 
+	{
+		ss << first;
+		AppendToStream(ss, rest...);
+	}
+
+	template<typename... Args>
+	std::string BuildMessage(const Args&... args) 
+	{
+		std::ostringstream ss;
+		AppendToStream(ss, args...);
+		return ss.str();
+	}
+}
 
 namespace OrionEngine
 {
@@ -28,8 +48,11 @@ namespace OrionEngine
 	{
 	public:
 
-		OENullPointerException()
-			: OEBaseException("Null Pointer Exception")
+		template<typename Pointer, typename... Args>
+		explicit OENullPointerException(Pointer* ptr, const std::string& name, const Args&... additional)
+			: OEBaseException(
+				Utils::BuildMessage("Null pointer: ", name, " was nullptr. ", "Pointer: ", ptr, additional...)
+			)
 		{}
 	};
 }
