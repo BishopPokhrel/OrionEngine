@@ -1,6 +1,7 @@
 #include <OrionEngine/Core/OEApplication.h>
 #include <OrionEngine/Core/OEEngineDefines.h>
 #include <OrionEngine/Core/OELogging.h>
+#include <OrionEngine/Core/OEExceptions.h>
 
 #include <stdexcept>
 #include <memory>
@@ -16,7 +17,7 @@ int main()
 		std::unique_ptr<Application> app(Application::CreateApplication());
 		if (app == nullptr)
 		{
-			ORION_ENGINE_FATAL_ERROR("app variable is a nullptr!");
+			throw OrionEngine::OENullPointerException(app.get(), "app");
 			return ENGINE_FAILURE;
 		}
 
