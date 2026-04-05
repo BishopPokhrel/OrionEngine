@@ -100,7 +100,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OE_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)\Source</AdditionalIncludeDirectories>
@@ -116,7 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OE_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)\Source</AdditionalIncludeDirectories>
@@ -134,14 +134,18 @@
     <ClCompile Include="Source\OEEntryPoint.cpp" />
     <ClCompile Include="Source\OrionEditor\OEMainWindow.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OEApplication.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
+    <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\OrionEngine\Core\OEAssert.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEInputSystem.h" />
     <ClInclude Include="Source\OrionEditor\OEMainWindow.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEEngineDefines.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
     <ClInclude Include="Source\OrionEngine\Core\OELogging.h" />
+    <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
