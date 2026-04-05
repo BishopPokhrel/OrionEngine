@@ -37,7 +37,8 @@ namespace OrionEngine
 		template<typename... Args>
 		explicit OEBaseException(const std::string& exceptionMsg, const Args&... otherText) noexcept // otherText parameter is meant to be completely optional.
 			: m_ExceptionMsg(exceptionMsg)
-		{}
+		{
+		}
 
 	private:
 
@@ -53,7 +54,8 @@ namespace OrionEngine
 			: OEBaseException(
 				Utils::BuildMessage("Null pointer: ", name, " was nullptr. ", "Pointer: ", ptr, additional...)
 			)
-		{}
+		{
+		}
 	};
 
 	class OEResourceNotFoundException : public OEBaseException
@@ -65,7 +67,8 @@ namespace OrionEngine
 			: OEBaseException(
 				Utils::BuildMessage("Resource of type ", type, " with name ", resourceName, " could not be found ", additional...)
 			)
-		{}
+		{
+		}
 	};
 
 	class OEInvalidFileFormatUsedException : public OEBaseException
@@ -75,17 +78,26 @@ namespace OrionEngine
 		template<typename... Args>
 		explicit OEInvalidFileFormatUsedException(
 			const std::string& expectedFormat, const std::string& actualFormat, const std::string& fileName, const Args&... additional)
-				: OEBaseException(
-					Utils::BuildMessage(
-						"Invalid file format!\n",
-						"File: ", fileName, "\n",
-						"Expected: ", expectedFormat, "\n",
-						"Actual: ", actualFormat, "\n",
-						additional...
-					)
+			: OEBaseException(
+				Utils::BuildMessage(
+					"Invalid file format!\n",
+					"File: ", fileName, "\n",
+					"Expected: ", expectedFormat, "\n",
+					"Actual: ", actualFormat, "\n",
+					additional...
 				)
-		{}
+			)
+		{
+		}
 	};
 
+	class OEInvalidNumberOfSceneException : public OEBaseException
+	{
+	public:
 
+		template<typename... Args>
+		explicit OEInvalidNumberOfSceneException(const std::string& name, size_t currentNumOfScenes, const Args&... additional)
+			: OEBaseException(Utils::BuildMessage("Only 1 Scene is allowed, got ", currentNumOfScenes, ".", additional...))
+		{}
+	};
 }
