@@ -3,24 +3,31 @@
 #include <string>
 #include <vector>
 
+#include <OrionEngine/Core/ECS/OEGameEntity.h>
+
 namespace OrionEngine
 {
 	class OEScene
 	{
 	public:
 
-		bool CreateOEScene(const std::string& name);
-		bool DeleteOEScene(int index = 0);
+		explicit OEScene(const std::string& name) noexcept;
+		// Entity functions
+		ECS::OEGameEntityID CreateGameEntity(const std::string& name) noexcept;
+		void DeleteGameEntity(ECS::OEGameEntityID id) noexcept;
+		ECS::OEGameEntityID GetEntityIDByName(const std::string& name) const noexcept;
+		std::string GetEntityNameByID(ECS::OEGameEntityID id) const noexcept;
 
 	private:
-
-		struct OESceneData
+		std::string m_OESceneName;
+	
+		struct OEGameEntityData
 		{
-			std::string name;
-			// Later, add a vector of entities
+			std::string Name;
+			ECS::OEGameEntityID ID;
 		};
 
-		std::vector<OESceneData> m_OEScenes;
-		size_t GetOESceneSize() { return m_OEScenes.size(); }
+		ECS::OEGameEntityID m_NextID = 0;
+		std::vector<OEGameEntityData> m_OEGameEntities;
 	};
 }
