@@ -131,7 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\OrionEngine\Core\ECS\OEComponent.cpp" />
-    <ClCompile Include="Source\OrionEngine\Core\ECS\OEGameEntity.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\ECS\OESystem.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OEInputSystem.cpp" />
     <ClCompile Include="Source\OEEntryPoint.cpp" />
     <ClCompile Include="Source\OrionEditor\OEMainWindow.cpp" />
@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\ECS\OEComponent.h" />
     <ClInclude Include="Source\OrionEngine\Core\ECS\OEGameEntity.h" />
+    <ClInclude Include="Source\OrionEngine\Core\ECS\OESystem.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEAssert.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEInputSystem.h" />
     <ClInclude Include="Source\OrionEditor\OEMainWindow.h" />

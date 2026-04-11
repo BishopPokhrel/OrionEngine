@@ -36,10 +36,10 @@
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OrionEngine\Core\ECS\OEGameEntity.cpp">
+    <ClCompile Include="Source\OrionEngine\Core\ECS\OEComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OrionEngine\Core\ECS\OEComponent.cpp">
+    <ClCompile Include="Source\OrionEngine\Core\ECS\OESystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -72,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\Core\ECS\OEComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\ECS\OESystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
