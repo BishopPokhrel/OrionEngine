@@ -137,7 +137,7 @@
     <ClCompile Include="Source\OEEntryPoint.cpp" />
     <ClCompile Include="Source\OrionEditor\OEMainWindow.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OEApplication.cpp" />
-    <ClCompile Include="Source\OrionEngine\Core\OERef.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\OERef.h" />
     <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
   </ItemGroup>

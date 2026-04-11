@@ -45,7 +45,7 @@
     <ClCompile Include="Source\OrionEngine\Core\ECS\OEECSRegistry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OrionEngine\Core\OERef.cpp">
+    <ClCompile Include="Source\OrionEngine\Core\OERef.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
