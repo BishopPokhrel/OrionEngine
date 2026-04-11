@@ -27,6 +27,16 @@ namespace OrionEngine
 			float radius = 0.0f;
 		};
 
+		struct OERenderableComponent
+		{
+			bool b_Visible = false;
+			/*
+				Later, add:
+				Ref<Mesh> Mesh;
+				Ref<Material> Material;
+			*/
+		};
+
 		template<typename OEComponentType>
 		class OEComponentManager
 		{
