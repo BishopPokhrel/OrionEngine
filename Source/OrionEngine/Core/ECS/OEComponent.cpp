@@ -22,7 +22,17 @@ namespace OrionEngine
 		}
 
 		template<typename OEComponentType>
-		OEComponentType* OEComponentManager<OEComponentType>::GetComponentType(uint64_t id) noexcept
+		OEComponentType* OEComponentManager<OEComponentType>::GetComponent(uint64_t id) noexcept
+		{
+			auto it = m_OEComponents.find(id);
+			if (it != m_OEComponents.end())
+				return &it->second;
+			else
+				return nullptr;
+		}
+
+		template<typename OEComponentType>
+		const OEComponentType* OEComponentManager<OEComponentType>::GetComponent(uint64_t id) const noexcept
 		{
 			auto it = m_OEComponents.find(id);
 			if (it != m_OEComponents.end())
