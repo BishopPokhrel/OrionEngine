@@ -44,8 +44,15 @@ namespace OrionEngine
 
 			OEComponentType AddComponent(OEGameEntityID gameEntityID,  const OEComponentType& type) noexcept;
 			void DeleteComponent(uint64_t id) noexcept;
-			OEComponentType* GetComponent(uint64_t id) noexcept;
-			const OEComponentType* GetComponent(uint64_t id) const noexcept;
+			OEComponentType* GetComponent(uint64_t id) noexcept
+			{
+				auto it = m_OEComponents.find(id);
+				if (it != m_OEComponents.end())
+					return &it->second;
+				else
+					return nullptr;
+			}
+
 			const std::unordered_map<uint64_t, OEComponentType>& GetAllComponents() const noexcept { return m_OEComponents; }
 			std::unordered_map<uint64_t, OEComponentType>& GetAllComponents() noexcept { return m_OEComponents; }
 
