@@ -140,6 +140,10 @@
     <ClCompile Include="Source\OrionEngine\Core\OERef.h" />
     <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\Window\GLFWWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\ECS\OEComponent.h" />
@@ -154,6 +158,13 @@
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
     <ClInclude Include="Source\OrionEngine\Core\OELogging.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRendererAPI.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertex.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\Window\GLFWWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
