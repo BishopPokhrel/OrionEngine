@@ -2,6 +2,8 @@
 #define GLFW_INCLUDE_NONE
 
 #include <GLFW/glfw3.h>
+#include <OrionEngine/OrionRenderer/Platform/Window/GLFWWindow.h>
+#include <OrionEngine/Core/OERef.h>
 
 namespace OrionEngine
 {
@@ -12,13 +14,12 @@ namespace OrionEngine
 		public:
 
 			bool InitOEMainWindow();
-			bool CreateOEMainWindow(int width, int height, const char* title);
 			bool MainLoop();
 			bool DestoryOEMainWindow();
 
 		private:
 
-			GLFWwindow* m_OEMainWindow = nullptr;
+			OrionRenderer::GLFWWindow* m_Window;	
 		};
 	}
 }
