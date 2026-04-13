@@ -22,9 +22,10 @@ namespace OrionEngine
 		bool OEMainWindow::InitOEMainWindow()
 		{
 			ORRenderCommand::s_RendererAPI = new OpenGLRendererAPI();
-			ORRenderCommand::ORInit();
-
 			m_Window = new GLFWWindow(WindowProps());
+
+			ORRenderCommand::ORInit();
+			ORRenderCommand::SetClearColor(0.015f, 0.02f, 0.04f, 1.0f);
 			return true;
 		}
 		
