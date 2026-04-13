@@ -100,4 +100,33 @@ namespace OrionEngine
 			: OEBaseException(Utils::BuildMessage("Only 1 Scene is allowed, got ", currentNumOfScenes, ".", additional...))
 		{}
 	};
+
+	class OEShaderCompilationFailedException : public OEBaseException
+	{
+	public:
+		template<typename... Args>
+		explicit OEShaderCompilationFailedException(const std::string& shaderName, char infoLog[1024], const Args&... additional)
+			: OEBaseException(Utils::BuildMessage("[ORION RENDERER] Failed to compile shader ", shaderName, ".\n", infoLog, additional...))
+		{}
+	};
+
+	class OEShaderIsEmptyException : public OEBaseException
+	{
+	public:
+
+		template<typename... Args>
+		explicit OEShaderIsEmptyException(const Args&... additional)
+			: OEBaseException(Utils::BuildMessage("[ORION RENDERER] Shader soure is empty!", additional...))
+		{}
+	};
+
+	class OEFailedToLinkShaderException : public OEBaseException
+	{
+	public:
+
+		template<typename... Args>
+		explicit OEFailedToLinkShaderException(char infoLog[1024], const Args&... additional)
+			: OEBaseException(Utils::BuildMessage("[ORION RENDERER] Shader linking program failed!\n", infoLog, additional...))
+		{}
+	};
 }
