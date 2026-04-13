@@ -141,6 +141,7 @@
     <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\Window\GLFWWindow.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRendererAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertex.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.h" />
