@@ -12,6 +12,7 @@ namespace OrionEngine
 	{
 		void OpenGLRendererAPI::Init()
 		{
+			glEnable(GL_DEPTH_TEST);
 		}
 
 		void OpenGLRendererAPI::Clear()
