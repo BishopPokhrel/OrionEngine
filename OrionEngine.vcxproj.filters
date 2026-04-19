@@ -125,5 +125,11 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
