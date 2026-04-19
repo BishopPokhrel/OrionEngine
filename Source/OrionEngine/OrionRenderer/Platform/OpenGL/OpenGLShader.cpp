@@ -84,5 +84,25 @@ namespace OrionEngine
 
             return CompileAndLinkViaGLSLShaderFiles(vertexShader.VertexShaderSource, fragmentShader.FragmentShaderSource);
 		}
+
+        void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value) noexcept
+        {
+        }
+
+        void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) noexcept
+        {
+        }
+
+        void OpenGLShader::SetFloat(const std::string& name, float value) noexcept
+        {
+        }
+
+        void OpenGLShader::Bind() noexcept
+        {
+        }
+
+        void OpenGLShader::Unbind() noexcept
+        {
+        }
 	}
 }
