@@ -32,7 +32,7 @@ namespace OrionEngine
 		OEBaseException() = default;
 		const char* what() const noexcept override { return m_ExceptionMsg.c_str(); }
 
-	protected:
+	public:
 
 		template<typename... Args>
 		explicit OEBaseException(const std::string& exceptionMsg, const Args&... otherText) noexcept // otherText parameter is meant to be completely optional.
