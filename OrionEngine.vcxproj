@@ -159,6 +159,7 @@
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
     <ClInclude Include="Source\OrionEngine\Core\OELogging.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLShaderAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRendererAPI.h" />

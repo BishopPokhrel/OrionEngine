@@ -131,5 +131,8 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLShaderAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
