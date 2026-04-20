@@ -7,6 +7,8 @@
 
 #include <string>
 
+#include <OrionEngine/OrionRenderer/ORShader.h>
+
 namespace OrionEngine
 {
 	namespace OrionRenderer
@@ -20,22 +22,13 @@ namespace OrionEngine
 			glm::mat4 GetModelMatrix() const;
 		};
 
-		struct VertexShader
-		{
-			std::string VertexShaderSource;
-		};
-
-		struct FragmentShader
-		{
-			std::string FragmentShaderSource;
-		};
-
 		class OpenGLShader
 		{
 		public:
 
 			GLuint CompileAndLinkViaGLSLShaderFiles(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) noexcept;
 			GLuint CompileAndLinkViaGLSLShaderVariables(const VertexShader& vertexShader, const FragmentShader& fragmentShaderSource) noexcept;
+			GLint GetUniformLocation(const std::string& name) const noexcept;
 
 			void SetMat4(const std::string& name, const glm::mat4& value) noexcept;
 			void SetVec3(const std::string& name, const glm::vec3& value) noexcept;
@@ -43,6 +36,10 @@ namespace OrionEngine
 
 			void Bind() noexcept;
 			void Unbind() noexcept;
+
+		private:
+
+			GLuint m_RendererID = 0;
 		};
 	}
 }
