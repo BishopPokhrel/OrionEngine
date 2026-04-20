@@ -19,11 +19,7 @@
     do {                                                                         \
         if (!(condition))                                                       \
         {                                                                       \
-            std::string msg = "Assertion failed";                               \
-            if constexpr (sizeof...(__VA_ARGS__) > 0)                           \
-            {                                                                   \
-                msg = Utils::BuildMessage(__VA_ARGS__);                         \
-            }                                                                   \
+            std::string msg = Utils::BuildMessage(__VA_ARGS__);                \
                                                                                 \
             std::cerr << "[" << type << "] ASSERTION FAILED: " << msg << "\n"   \
                       << "FILE: " << __FILE__ << "\n"                           \
