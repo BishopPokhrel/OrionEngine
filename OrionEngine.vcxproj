@@ -165,6 +165,7 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRendererAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORShader.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexBufferLayout.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.h" />

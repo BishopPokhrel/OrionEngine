@@ -140,5 +140,8 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexBufferLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
