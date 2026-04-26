@@ -4,7 +4,7 @@ namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
-		enum class ORGrahpicsAPI
+		enum class ORGraphicsAPI
 		{
 			None = 0,
 			OpenGL
