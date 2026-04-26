@@ -24,12 +24,12 @@ namespace OrionEngine
 			}
 		}
 
-		void OpenGLVertexBuffer::BindVertexBuffer() const noexcept
+		void OpenGLVertexBuffer::Bind() const noexcept
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		}
 
-		void OpenGLVertexBuffer::UnbindVertexBuffer() const noexcept
+		void OpenGLVertexBuffer::Unbind() const noexcept
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, 0);	
 		}
