@@ -25,7 +25,7 @@ namespace OrionEngine
 			m_Window = new GLFWWindow(WindowProps());
 
 			ORRenderCommand::ORInit();
-			ORRenderCommand::SetClearColor(0.015f, 0.02f, 0.04f, 1.0f);
+			ORRenderCommand::SetClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 			return true;
 		}
 		
