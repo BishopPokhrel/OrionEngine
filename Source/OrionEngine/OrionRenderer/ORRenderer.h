@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "ORGraphicsAPI.h"
 
 namespace OrionEngine
 {
@@ -34,6 +35,17 @@ namespace OrionEngine
 			{
 
 			}
+
+			static void SetGraphicsAPI(ORGraphicsAPI API) noexcept
+			{
+				s_GraphicsAPI = API;
+			}
+
+			static ORGraphicsAPI GetGraphicsAPI() noexcept { return s_GraphicsAPI; }
+
+		private:
+
+			static ORGraphicsAPI s_GraphicsAPI;
 		};
 	}
 }
