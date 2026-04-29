@@ -141,6 +141,7 @@
     <ClCompile Include="Source\OrionEngine\Core\OERef.h" />
     <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.cpp" />
