@@ -19,7 +19,7 @@ namespace OrionEngine
 			virtual void Bind() const noexcept = 0;
 			virtual void Unbind() const noexcept = 0;
 
-			static Ref<ORVertexBuffer> Create(float* vertices, uint32_t size) noexcept
+			static Ref<ORVertexBuffer> Create(const void* vertices, uint32_t size) noexcept
 			{
 				OE_CORE_ASSERT(vertices, "Vertex data is null!");
 				OE_CORE_ASSERT(size > 0, "VertexBuffer size must be > 0");
