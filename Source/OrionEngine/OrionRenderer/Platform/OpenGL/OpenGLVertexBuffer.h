@@ -11,7 +11,7 @@ namespace OrionEngine
 		class OpenGLVertexBuffer : public ORVertexBuffer
 		{
 		public:
-			OpenGLVertexBuffer(const float* vertices, size_t size) noexcept;
+			OpenGLVertexBuffer(const float* vertices, uint32_t size) noexcept;
 			~OpenGLVertexBuffer() noexcept override;
 
 			void Bind() const noexcept override;
