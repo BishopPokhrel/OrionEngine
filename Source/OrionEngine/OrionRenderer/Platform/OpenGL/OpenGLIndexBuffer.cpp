@@ -21,12 +21,12 @@ namespace OrionEngine
 				glDeleteBuffers(1, &m_RendererID);
 		}
 
-		void OpenGLIndexBuffer::BindIndexBuffer() const noexcept
+		void OpenGLIndexBuffer::Bind() const noexcept
 		{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 		}
 
-		void OpenGLIndexBuffer::UnbindIndexBuffer() const noexcept
+		void OpenGLIndexBuffer::Unbind() const noexcept
 		{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
