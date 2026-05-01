@@ -7,7 +7,7 @@ namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
-		OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, uint32_t size) noexcept
+		OpenGLVertexBuffer::OpenGLVertexBuffer(const void* vertices, uint32_t size) noexcept
 		{
 			glGenBuffers(1, &m_RendererID);
 			glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);

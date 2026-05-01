@@ -1,25 +1,21 @@
 #pragma once
-#define GLFW_INCLUDE_NONE
 
+#include <cstdint>
 #include <glad/glad.h>
 #include <OrionEngine/OrionRenderer/ORVertexBuffer.h>
 
-namespace OrionEngine
+namespace OrionEngine::OrionRenderer
 {
-	namespace OrionRenderer
+	class OpenGLVertexBuffer : public ORVertexBuffer
 	{
-		class OpenGLVertexBuffer : public ORVertexBuffer
-		{
-		public:
-			OpenGLVertexBuffer(const float* vertices, uint32_t size) noexcept;
-			~OpenGLVertexBuffer() noexcept override;
+	public:
+		OpenGLVertexBuffer(const void* vertices, uint32_t size) noexcept;
+		~OpenGLVertexBuffer() noexcept override;
 
-			void Bind() const noexcept override;
-			void Unbind() const noexcept override;
+		void Bind() const noexcept override;
+		void Unbind() const noexcept override;
 
-		private:
-
-			GLuint m_RendererID;
-		};
-	}
-} 
+	private:
+		GLuint m_RendererID;
+	};
+}
