@@ -2,21 +2,25 @@
 #define GLFW_INCLUDE_NONE
 #include "OpenGLVertexBuffer.h"
 
+#include <OrionEngine/Core/OERef.h>
+#include <OrionEngine/OrionRenderer/ORVertexArray.h>
+#include <OrionEngine/OrionRenderer/ORVertexBuffer.h>
+
 namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
-		class OpenGLVertexArray
+		class OpenGLVertexArray : public ORVertexArray
 		{
 		public:
 
 			OpenGLVertexArray() noexcept;
-			~OpenGLVertexArray() noexcept;
+			~OpenGLVertexArray() noexcept override;
 
-			void BindVertexArray() const noexcept;
-			void UnbindVertexArray() const noexcept;
+			void Bind() const noexcept override;
+			void Unbind() const noexcept override;
 
-			void AddVertexBuffer(const OpenGLVertexBuffer& VBO) noexcept;
+			void AddVertexBuffer(const Ref<ORVertexBuffer>& VBO) noexcept override;
 
 		private:
 

@@ -19,23 +19,23 @@ namespace OrionEngine
 			}
 		}
 
-		void OpenGLVertexArray::BindVertexArray() const noexcept
+		void OpenGLVertexArray::Bind() const noexcept
 		{
 			glBindVertexArray(m_RendererID);
 		}
 
-		void OpenGLVertexArray::UnbindVertexArray() const noexcept
+		void OpenGLVertexArray::Unbind() const noexcept
 		{
 			glBindVertexArray(0);
 		}
 
-		void OpenGLVertexArray::AddVertexBuffer(const OpenGLVertexBuffer& VBO) noexcept
+		void OpenGLVertexArray::AddVertexBuffer(const Ref<ORVertexBuffer>& VBO) noexcept
 		{
-			BindVertexArray();
-			VBO.BindVertexBuffer();
+			Bind();
+			VBO->Bind();
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
 			glEnableVertexAttribArray(0);
-			UnbindVertexArray();
+			Unbind();
 		}
 	}
 }
