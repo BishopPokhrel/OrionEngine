@@ -2,50 +2,126 @@
 
 #include "OEMainWindow.h"
 
-#include <OrionEngine/Core/OELogging.h>
-#include <OrionEngine/OrionRenderer/ORRenderCommand.h>
-#include <OrionEngine/OrionRenderer/Platform/OpenGL/OpenGLRendererAPI.h>
-
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-namespace OrionEngine::OrionRenderer
-{
-	OERRendererAPI* ORRenderCommand::s_RendererAPI = nullptr;
-}
+#include <OrionEngine/OrionRenderer/Platform/OpenGL/OpenGLVertexArray.h>
+#include <OrionEngine/OrionRenderer/Platform/OpenGL/OpenGLIndexBuffer.h>
+#include <OrionEngine/OrionRenderer/Platform/OpenGL/OpenGLVertexBuffer.h>
+#include <OrionEngine/OrionRenderer/OROpenGLShaderAPI.h>
 
 namespace OrionEngine
 {
-	namespace OrionEditor
-	{
-		using namespace OrionRenderer;
-		bool OEMainWindow::InitOEMainWindow()
-		{
-			ORRenderCommand::s_RendererAPI = new OpenGLRendererAPI();
-			m_Window = new GLFWWindow(WindowProps());
+    namespace OrionEditor
+    {
+        using namespace OrionRenderer;
 
-			ORRenderCommand::ORInit();
-			ORRenderCommand::SetClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-			return true;
-		}
-		
-		bool OEMainWindow::MainLoop()
-		{
-			while (!m_Window->ShouldClose())
-			{
-				ORRenderCommand::Clear();
-				m_Window->OnUpdate();
-			}
-			return true;
-		}
+        bool OEMainWindow::InitOEMainWindow()
+        {
+            m_Window = new GLFWWindow(WindowProps());
 
-		bool OEMainWindow::DestoryOEMainWindow()
-		{
-			delete m_Window;
-			m_Window = nullptr;
-			delete ORRenderCommand::s_RendererAPI;
-			ORRenderCommand::s_RendererAPI = nullptr;
-			return true;
-		}
-	}
+            ORRenderer::Init(ORGraphicsAPI::OpenGL);
+            ORRenderer::SetViewport(0, 0, 1280, 800);
+            ORRenderCommand::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+            // -----------------------
+            // TRIANGLE DATA (POSITION + COLOR)
+            // -----------------------
+            float vertices[] =
+            {
+                // position           // color
+                -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // red
+                 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, // green
+                 0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f  // blue
+            };
+
+            uint32_t indices[] = { 0, 1, 2 };
+
+            // -----------------------
+            // VAO + BUFFERS
+            // -----------------------
+            m_VertexArray = CreateRef<OpenGLVertexArray>();
+
+            auto vb = CreateRef<OpenGLVertexBuffer>(vertices, sizeof(vertices));
+            auto ib = CreateRef<OpenGLIndexBuffer>(indices, 3);
+
+            // IMPORTANT: 6 floats per vertex = position(3) + color(3)
+            ORVertexBufferLayout layout;
+            layout.Push<glm::vec3>("a_Position");
+            layout.Push<glm::vec3>("a_Color");
+
+            vb->SetLayout(layout);
+
+            m_VertexArray->AddVertexBuffer(vb);
+            m_VertexArray->SetIndexBuffer(ib);
+
+            // -----------------------
+            // SHADER
+            // -----------------------
+            std::string vs = R"(
+                #version 330 core
+
+                layout(location = 0) in vec3 a_Position;
+                layout(location = 1) in vec3 a_Color;
+
+                out vec3 v_Color;
+
+                uniform mat4 u_ViewProjection;
+                uniform mat4 u_Transform;
+
+                void main()
+                {
+                    v_Color = a_Color;
+                    gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+                }
+            )";
+
+            std::string fs = R"(
+                #version 330 core
+
+                in vec3 v_Color;
+                out vec4 color;
+
+                void main()
+                {
+                    color = vec4(v_Color, 1.0);
+                }
+            )";
+
+            m_Shader = std::make_shared<OROpenGLShaderAPI>();
+            m_Shader->CompileAndLinkThroughShaderVariables({ vs }, { fs });
+
+            return true;
+        }
+
+        bool OEMainWindow::MainLoop()
+        {
+            while (!m_Window->ShouldClose())
+            {
+                ORRenderCommand::Clear();
+
+                ORRenderer::BeginScene(glm::mat4(1.0f));
+
+                ORRenderer::Submit(
+                    m_Shader,
+                    m_VertexArray,
+                    glm::mat4(1.0f)
+                );
+
+                ORRenderer::EndScene();
+
+                m_Window->OnUpdate();
+            }
+
+            return true;
+        }
+
+        bool OEMainWindow::DestoryOEMainWindow()
+        {
+            ORRenderer::EndScene();
+            delete m_Window;
+            m_Window = nullptr;
+            return true;
+        }
+    }
 }
