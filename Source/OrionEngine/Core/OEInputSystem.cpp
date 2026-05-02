@@ -3,13 +3,14 @@
 #include "OEInputSystem.h"
 #include <OrionEngine/Core/OEExceptions.h>
 
+#include <glm/glm.hpp> // (if needed elsewhere)
+
 namespace Utils
 {
 	static int StringToGLFWKey(const std::string& key)
 	{
 		static const std::unordered_map<std::string, int> keyMap =
 		{
-			// Letters
 			{"A", GLFW_KEY_A}, {"B", GLFW_KEY_B}, {"C", GLFW_KEY_C}, {"D", GLFW_KEY_D},
 			{"E", GLFW_KEY_E}, {"F", GLFW_KEY_F}, {"G", GLFW_KEY_G}, {"H", GLFW_KEY_H},
 			{"I", GLFW_KEY_I}, {"J", GLFW_KEY_J}, {"K", GLFW_KEY_K}, {"L", GLFW_KEY_L},
@@ -18,18 +19,15 @@ namespace Utils
 			{"U", GLFW_KEY_U}, {"V", GLFW_KEY_V}, {"W", GLFW_KEY_W}, {"X", GLFW_KEY_X},
 			{"Y", GLFW_KEY_Y}, {"Z", GLFW_KEY_Z},
 
-			// Numbers
 			{"0", GLFW_KEY_0}, {"1", GLFW_KEY_1}, {"2", GLFW_KEY_2}, {"3", GLFW_KEY_3},
 			{"4", GLFW_KEY_4}, {"5", GLFW_KEY_5}, {"6", GLFW_KEY_6}, {"7", GLFW_KEY_7},
 			{"8", GLFW_KEY_8}, {"9", GLFW_KEY_9},
 
-			// Arrows
 			{"UP", GLFW_KEY_UP},
 			{"DOWN", GLFW_KEY_DOWN},
 			{"LEFT", GLFW_KEY_LEFT},
 			{"RIGHT", GLFW_KEY_RIGHT},
 
-			// Special
 			{"SPACE", GLFW_KEY_SPACE},
 			{"ESC", GLFW_KEY_ESCAPE},
 			{"ENTER", GLFW_KEY_ENTER},
@@ -40,10 +38,7 @@ namespace Utils
 		};
 
 		auto it = keyMap.find(key);
-		if (it != keyMap.end())
-			return it->second;
-
-		return GLFW_KEY_UNKNOWN;
+		return (it != keyMap.end()) ? it->second : GLFW_KEY_UNKNOWN;
 	}
 }
 
@@ -59,15 +54,14 @@ namespace OrionEngine
 		deltaX = deltaY = 0.0;
 		scrollDelta = 0;
 
-		// Set user pointer once
 		glfwSetWindowUserPointer(window, this);
 
-		// Scroll callback (ONLY ONCE)
 		glfwSetScrollCallback(window,
 			[](GLFWwindow* window, double, double yOffset)
 			{
 				auto* self = static_cast<OEInputSystem*>(glfwGetWindowUserPointer(window));
-				self->scrollDelta += static_cast<int>(yOffset);
+				if (self)
+					self->scrollDelta += static_cast<int>(yOffset);
 			});
 	}
 
@@ -75,22 +69,33 @@ namespace OrionEngine
 	{
 		glfwPollEvents();
 
-		// --- KEY STATES ---
+		// -----------------------
+		// KEY STATES (SAFE VERSION)
+		// -----------------------
 		for (auto& [key, state] : m_OEInputStates)
 		{
-			bool prev = m_PreviousKeyDown[key];
-			int glfwKey = key.empty() ? GLFW_KEY_UNKNOWN : key[0]; // keep your string system minimal
+			auto prevIt = m_PreviousKeyDown.find(key);
+			bool prev = (prevIt != m_PreviousKeyDown.end()) ? prevIt->second : false;
+
+			int glfwKey = key.empty() ? GLFW_KEY_UNKNOWN : key[0];
 
 			bool curr = (glfwGetKey(window, glfwKey) == GLFW_PRESS);
+
 			m_PreviousKeyDown[key] = curr;
 
-			if (!prev && curr) state = OEInputState::Pressed;
-			else if (prev && curr) state = OEInputState::Held;
-			else if (prev && !curr) state = OEInputState::Released;
-			else state = OEInputState::None;
+			if (!prev && curr)
+				state = OEInputState::Pressed;
+			else if (prev && curr)
+				state = OEInputState::Held;
+			else if (prev && !curr)
+				state = OEInputState::Released;
+			else
+				state = OEInputState::None;
 		}
 
-		// --- MOUSE BUTTONS ---
+		// -----------------------
+		// MOUSE BUTTONS (SAFE)
+		// -----------------------
 		for (auto& [trigger, callbacks] : m_MouseCallbacks)
 		{
 			int button = trigger.key;
@@ -98,13 +103,17 @@ namespace OrionEngine
 
 			bool prev = m_PreviousMouseDown[button];
 			bool curr = (glfwGetMouseButton(window, button) == GLFW_PRESS);
+
 			m_PreviousMouseDown[button] = curr;
 
 			OEInputState state = OEInputState::None;
 
-			if (!prev && curr) state = OEInputState::Pressed;
-			else if (prev && curr) state = OEInputState::Held;
-			else if (prev && !curr) state = OEInputState::Released;
+			if (!prev && curr)
+				state = OEInputState::Pressed;
+			else if (prev && curr)
+				state = OEInputState::Held;
+			else if (prev && !curr)
+				state = OEInputState::Released;
 
 			if (state == required)
 			{
@@ -113,7 +122,9 @@ namespace OrionEngine
 			}
 		}
 
-		// --- MOUSE POSITION ---
+		// -----------------------
+		// MOUSE POSITION
+		// -----------------------
 		double cx, cy;
 		glfwGetCursorPos(window, &cx, &cy);
 
@@ -123,10 +134,14 @@ namespace OrionEngine
 		mouseX = cx;
 		mouseY = cy;
 
-		// --- KEY CALLBACKS ---
+		// -----------------------
+		// KEY CALLBACKS
+		// -----------------------
 		for (auto& [trigger, callbacks] : m_KeyCallbacks)
 		{
-			auto it = m_OEInputStates.find(trigger.key ? std::string(1, (char)trigger.key) : "");
+			std::string keyStr(1, static_cast<char>(trigger.key));
+
+			auto it = m_OEInputStates.find(keyStr);
 			if (it != m_OEInputStates.end() && it->second == trigger.state)
 			{
 				for (auto& cb : callbacks)
@@ -136,22 +151,34 @@ namespace OrionEngine
 	}
 
 	// ---------------------------
-	// PUBLIC API
+	// PUBLIC API (FIXED)
 	// ---------------------------
 
 	bool OEInputSystem::IsKeyPressed(const std::string& key) noexcept
 	{
-		return m_OEInputStates[key] == OEInputState::Pressed;
+		auto it = m_OEInputStates.find(key);
+		if (it == m_OEInputStates.end())
+			return false;
+
+		return it->second == OEInputState::Pressed;
 	}
 
 	bool OEInputSystem::IsKeyReleased(const std::string& key) noexcept
 	{
-		return m_OEInputStates[key] == OEInputState::Released;
+		auto it = m_OEInputStates.find(key);
+		if (it == m_OEInputStates.end())
+			return false;
+
+		return it->second == OEInputState::Released;
 	}
 
 	bool OEInputSystem::IsKeyHeld(const std::string& key) noexcept
 	{
-		return m_OEInputStates[key] == OEInputState::Held;
+		auto it = m_OEInputStates.find(key);
+		if (it == m_OEInputStates.end())
+			return false;
+
+		return it->second == OEInputState::Held;
 	}
 
 	std::pair<double, double> OEInputSystem::GetMousePosition() noexcept
