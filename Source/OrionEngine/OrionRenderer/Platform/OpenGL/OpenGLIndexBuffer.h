@@ -21,7 +21,7 @@ namespace OrionEngine
 			void Bind() const noexcept override;
 			void Unbind() const noexcept override;
 
-			uint32_t GetCount() const noexcept { return m_Count; }
+			uint32_t GetCount() const noexcept override { return m_Count; }
 
 		private:
 
