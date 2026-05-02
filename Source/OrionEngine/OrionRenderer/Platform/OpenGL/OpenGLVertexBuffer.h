@@ -15,7 +15,11 @@ namespace OrionEngine::OrionRenderer
 		void Bind() const noexcept override;
 		void Unbind() const noexcept override;
 
+		void SetLayout(const ORVertexBufferLayout& layout) noexcept override { m_Layout = layout; }
+		const ORVertexBufferLayout& GetLayout() const noexcept override { return m_Layout; }
+
 	private:
 		GLuint m_RendererID;
+		ORVertexBufferLayout m_Layout;
 	};
 }
