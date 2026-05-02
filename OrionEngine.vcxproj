@@ -134,6 +134,7 @@
     <ClCompile Include="Source\OrionEngine\Core\ECS\OEComponent.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\ECS\OEECSRegistry.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\ECS\OESystem.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\OEGlobals.h" />
     <ClCompile Include="Source\OrionEngine\Core\OEInputSystem.cpp" />
     <ClCompile Include="Source\OEEntryPoint.cpp" />
     <ClCompile Include="Source\OrionEditor\OEMainWindow.cpp" />
@@ -150,6 +151,8 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\Window\GLFWWindow.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCamera.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCameraController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\ECS\OEComponent.h" />
@@ -181,6 +184,8 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\Window\GLFWWindow.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCamera.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCameraController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
