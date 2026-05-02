@@ -73,6 +73,9 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
