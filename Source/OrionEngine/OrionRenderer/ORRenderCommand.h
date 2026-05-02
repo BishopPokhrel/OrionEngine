@@ -3,6 +3,8 @@
 #include "ORRendererAPI.h"
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
+#include <OrionEngine/Core/OERef.h>
+
 namespace OrionEngine
 {
 	namespace OrionRenderer
@@ -11,12 +13,12 @@ namespace OrionEngine
 		{
 		public:
 
-			static OERRendererAPI* s_RendererAPI;
+			static Scope<OpenGLRendererAPI> s_RendererAPI;
 
 			static void ORInit()
 			{
 				if (!s_RendererAPI)
-					s_RendererAPI = new OpenGLRendererAPI();
+					s_RendererAPI = CreateScope<OpenGLRendererAPI>();
 
 				s_RendererAPI->Init();
 			}
