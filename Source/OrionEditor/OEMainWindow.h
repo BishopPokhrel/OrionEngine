@@ -11,6 +11,8 @@
 #include <OrionEngine/OrionRenderer/Platform/OpenGL/OpenGLRendererAPI.h>
 #include <OrionEngine/OrionRenderer/ORVertexArray.h>
 #include <OrionEngine/OrionRenderer/ORShader.h>
+#include <OrionEngine/OrionRenderer/SceneRenderer/ORCamera.h>
+#include <OrionEngine/OrionRenderer/SceneRenderer/ORCameraController.h>
 
 namespace OrionEngine
 {
@@ -29,6 +31,8 @@ namespace OrionEngine
 			OrionRenderer::GLFWWindow* m_Window;	
 			Ref<OrionRenderer::ORVertexArray> m_VertexArray;
 			Ref<OrionRenderer::ORShader> m_Shader;
+			Ref<OrionRenderer::ORCamera> m_Camera;
+			Ref<OrionRenderer::ORCameraController> m_CameraController;
 		};
 	}
 }
