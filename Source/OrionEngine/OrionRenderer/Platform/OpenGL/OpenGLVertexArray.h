@@ -5,6 +5,7 @@
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/OrionRenderer/ORVertexArray.h>
 #include <OrionEngine/OrionRenderer/ORVertexBuffer.h>
+#include <OrionEngine/OrionRenderer/ORIndexBuffer.h>
 
 namespace OrionEngine
 {
@@ -21,10 +22,14 @@ namespace OrionEngine
 			void Unbind() const noexcept override;
 
 			void AddVertexBuffer(const Ref<ORVertexBuffer>& VBO) noexcept override;
+			void SetIndexBuffer(const Ref<ORIndexBuffer>& IBO) noexcept override;
+			const Ref<ORIndexBuffer>& GetIndexBuffer() const noexcept override { return m_IndexBuffer; }
 
 		private:
 
 			GLuint m_RendererID;
+			Ref<ORIndexBuffer> m_IndexBuffer;
+			std::vector<Ref<ORVertexBuffer>> m_VertexBuffers;
 		};
 	}
 }
