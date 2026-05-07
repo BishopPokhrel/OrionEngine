@@ -42,7 +42,7 @@ namespace OrionEngine
             m_Camera = CreateRef<ORCamera>(left, right, bottom, top);
             OE_CORE_ASSERT(m_Camera, "Camera creation failed!");
 
-            m_CameraController = CreateRef<ORCameraController>(m_Camera.get(),g_InputSystem.get(),  2.5f);
+            m_CameraController = CreateRef<ORCameraController>(m_Camera.get(), g_InputSystem.get(), 2.5f);
             OE_CORE_ASSERT(m_CameraController, "CameraController creation failed!");
 
             // -----------------------
@@ -127,7 +127,7 @@ namespace OrionEngine
                 m_CameraController->OnUpdate(dt);
 
                 OE_CORE_ASSERT(m_Camera, "Camera is null in MainLoop");
-                ORRenderer::BeginScene(m_Camera->GetViewProjection());
+                ORRenderer::BeginScene(glm::mat4(1.0f));
                 ORRenderer::Submit(m_Shader, m_VertexArray, glm::mat4(1.0f));
 
                 ORRenderer::EndScene();

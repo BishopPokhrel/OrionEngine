@@ -43,6 +43,8 @@ namespace OrionEngine
 
 			uint32_t stride = 6 * sizeof(float); // position + color
 
+			std::cout << "VAO: " << m_RendererID << std::endl; 
+
 			// Position attribute (location 0)
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(

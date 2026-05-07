@@ -8,6 +8,7 @@
 #include "ORVertexArray.h"
 #include "ORIndexBuffer.h"
 #include "ORVertexBuffer.h"
+#include "ORSceneData.h"
 
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/Core/OEAssert.h>
@@ -67,14 +68,8 @@ namespace OrionEngine
 			static ORGraphicsAPI GetGraphicsAPI() noexcept { return s_GraphicsAPI; }
 
 		private:
-
-			struct SceneData
-			{
-				glm::mat4 ViewProjectionMatrix;
-			};
 		
 			static SceneData s_SceneData;
-
 			static ORGraphicsAPI s_GraphicsAPI;
 		};
 	}

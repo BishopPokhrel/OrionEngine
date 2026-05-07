@@ -85,6 +85,12 @@
     <ClCompile Include="Source\OrionEngine\Core\OEGlobals.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\Core\Assets\OEAssetManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
@@ -178,6 +184,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCameraController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORSceneData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\Assets\OEAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\Assets\OEAssetType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\Assets\OEAssetManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

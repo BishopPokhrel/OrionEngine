@@ -28,7 +28,7 @@ namespace OrionEngine
 
 		private:
 
-			OrionRenderer::GLFWWindow* m_Window;	
+			OrionRenderer::GLFWWindow* m_Window;
 			Ref<OrionRenderer::ORVertexArray> m_VertexArray;
 			Ref<OrionRenderer::ORShader> m_Shader;
 			Ref<OrionRenderer::ORCamera> m_Camera;

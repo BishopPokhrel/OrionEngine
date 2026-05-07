@@ -6,6 +6,10 @@
 
 #include "OEGameEntity.h"
 
+#include <OrionEngine/OrionRenderer/ORVertexArray.h>
+#include <OrionEngine/OrionRenderer/ORShader.h>
+#include <OrionEngine/Core/OERef.h>
+
 namespace OrionEngine
 {
 	namespace ECS
@@ -30,11 +34,8 @@ namespace OrionEngine
 		struct OERenderableComponent
 		{
 			bool b_Visible = false;
-			/*
-				Later, add:
-				Ref<Mesh> Mesh;
-				Ref<Material> Material;
-			*/
+			Ref<OrionRenderer::ORShader> Shader;
+			Ref<OrionRenderer::ORVertexArray> VertexArray;
 		};
 
 		template<typename OEComponentType>
