@@ -11,7 +11,7 @@ namespace OrionEngine
 	{
 		void ORSceneRenderer::Render(ECS::OEECSRegistry& registry, ECS::OEGameEntityID entity)
 		{
-			auto* transform = registry.TranformComponent.GetComponent(entity);
+			auto* transform = registry.TransformComponent.GetComponent(entity);
 			auto* physics = registry.PhysicsComponent.GetComponent(entity);
 			auto* render = registry.RenderableComponent.GetComponent(entity);
 
@@ -19,16 +19,16 @@ namespace OrionEngine
 				return;
 
 			// Build Model Matrix
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->position)
-				* glm::mat4_cast(glm::quat(transform->rotation))
-				* glm::scale(glm::mat4(1.0f), transform->scale);
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->Position)
+				* glm::mat4_cast(glm::quat(transform->Rotation))
+				* glm::scale(glm::mat4(1.0f), transform->Scale);
 
 			ORRenderer::Submit(render->Shader, render->VertexArray, model);
 		}
 
 		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const glm::mat4& viewProjection)
 		{
-			ORRenderer::BeginScene(camera.GetViewProjection());
+			ORRenderer::BeginScene(viewProjection);
 			auto& render = registry.RenderableComponent.GetAllComponents();
 
 			for (auto& [id, comp] : render)

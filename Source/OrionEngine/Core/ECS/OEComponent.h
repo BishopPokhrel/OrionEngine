@@ -16,19 +16,19 @@ namespace OrionEngine
 	{
 		struct OETransformComponent
 		{
-			glm::vec3 position;
-			glm::vec3 rotation;
-			glm::vec3 scale;
+			glm::vec3 Position;
+			glm::vec3 Rotation;
+			glm::vec3 Scale;
 		};
 
 		struct OEPhysicsComponent
 		{
-			float mass = 0.0f;
-			glm::vec3 velocity{ 0.0f };
-			glm::vec3 accleration{ 0.0f };
-			bool isStatic = true; // default
-			float linearDrag = 0.0f;
-			float radius = 0.0f;
+			float Mass = 0.0f;
+			glm::vec3 Velocity{ 0.0f };
+			glm::vec3 Accleration{ 0.0f };
+			bool IsStatic = true; // default
+			float LinearDrag = 0.0f;
+			float Radius = 0.0f;
 		};
 
 		struct OERenderableComponent
@@ -43,8 +43,20 @@ namespace OrionEngine
 		{
 		public:
 
-			OEComponentType AddComponent(OEGameEntityID gameEntityID,  const OEComponentType& type) noexcept;
-			void DeleteComponent(uint64_t id) noexcept;
+			OEComponentType AddComponent(OEGameEntityID gameEntityID, const OEComponentType& type) noexcept
+			{
+				m_OEComponents[gameEntityID] = type;
+				return type;
+			}
+
+			void DeleteComponent(uint64_t id) noexcept
+			{
+				auto it = m_OEComponents.find(id);
+				if (it != m_OEComponents.end())
+				{
+					m_OEComponents.erase(it);
+				}
+			}
 			OEComponentType* GetComponent(uint64_t id) noexcept
 			{
 				auto it = m_OEComponents.find(id);
@@ -52,6 +64,10 @@ namespace OrionEngine
 					return &it->second;
 				else
 					return nullptr;
+			}
+
+			bool HasComponent(uint64_t id) const noexcept {
+				return m_OEComponents.find(id) != m_OEComponents.end();
 			}
 
 			const std::unordered_map<uint64_t, OEComponentType>& GetAllComponents() const noexcept { return m_OEComponents; }

@@ -6,21 +6,21 @@ namespace OrionEngine
 	{
 		void OETransformSystem::Update(OEECSRegistry& registry, float dt) noexcept
 		{
-			auto& transforms = registry.TranformComponent.GetAllComponents();
+			auto& transforms = registry.TransformComponent.GetAllComponents();
 			
 			for (auto& [entity, transform] : transforms)
 			{
-				transform.position.x += 1.0f * dt;
-				transform.position.y += 1.0f * dt;
-				transform.position.z += 1.0f * dt;
+				transform.Position.x += 1.0f * dt;
+				transform.Position.y += 1.0f * dt;
+				transform.Position.z += 1.0f * dt;
 
-				transform.rotation.x += 1.0f * dt;
-				transform.rotation.y += 1.0f * dt;
-				transform.rotation.z += 1.0f * dt;
+				transform.Rotation.x += 1.0f * dt;
+				transform.Rotation.y += 1.0f * dt;
+				transform.Rotation.z += 1.0f * dt;
 
-				transform.scale.x += 1.0f * dt;
-				transform.scale.y += 1.0f * dt;
-				transform.scale.z += 1.0f * dt;
+				transform.Scale.x += 1.0f * dt;
+				transform.Scale.y += 1.0f * dt;
+				transform.Scale.z += 1.0f * dt;
 			}
 		}
 
@@ -30,24 +30,24 @@ namespace OrionEngine
 
 			for (auto& [entity, physics] : physicsMap)
 			{
-				auto* transform = registry.TranformComponent.GetComponent(entity); // entity will be uint64_t id
+				auto* transform = registry.TransformComponent.GetComponent(entity); // entity will be uint64_t id
 				if (!transform)
 					continue;
 
-				if (physics.isStatic)
+				if (physics.IsStatic)
 					continue;
 
-				physics.velocity.x += physics.accleration.x * dt;
-				physics.velocity.y += physics.accleration.y * dt;
-				physics.velocity.z += physics.accleration.z * dt;
+				physics.Velocity.x += physics.Accleration.x * dt;
+				physics.Velocity.y += physics.Accleration.y * dt;
+				physics.Velocity.z += physics.Accleration.z * dt;
 
-				physics.velocity.x *= (1.0f - physics.linearDrag * dt);
-				physics.velocity.y *= (1.0f - physics.linearDrag * dt);
-				physics.velocity.z *= (1.0f - physics.linearDrag * dt);
+				physics.Velocity.x *= (1.0f - physics.LinearDrag * dt);
+				physics.Velocity.y *= (1.0f - physics.LinearDrag * dt);
+				physics.Velocity.z *= (1.0f - physics.LinearDrag * dt);
 
-				transform->position.x += physics.velocity.x * dt;	
-				transform->position.y += physics.velocity.y * dt;	
-				transform->position.z += physics.velocity.z * dt;	
+				transform->Position.x += physics.Velocity.x * dt;	
+				transform->Position.y += physics.Velocity.y * dt;	
+				transform->Position.z += physics.Velocity.z * dt;	
 			}
 		}
 
