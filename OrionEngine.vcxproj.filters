@@ -37,9 +37,6 @@
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OrionEngine\Core\ECS\OEComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\OrionEngine\Core\ECS\OESystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -88,7 +85,7 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OrionEngine\Core\Assets\OEAssetManager.cpp">
+    <ClCompile Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -202,6 +199,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\Core\Assets\OEAssetManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

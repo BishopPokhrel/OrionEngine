@@ -131,7 +131,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\OrionEngine\Core\ECS\OEComponent.cpp" />
+    <ClCompile Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\ECS\OEECSRegistry.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\ECS\OESystem.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OEGlobals.h" />
@@ -156,6 +156,7 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.h" />
     <ClInclude Include="Source\OrionEngine\Core\Assets\OEAsset.h" />
     <ClInclude Include="Source\OrionEngine\Core\Assets\OEAssetManager.h" />
     <ClInclude Include="Source\OrionEngine\Core\Assets\OEAssetType.h" />
