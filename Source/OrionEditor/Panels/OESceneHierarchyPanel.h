@@ -7,6 +7,8 @@
 
 #include <OrionEngine/Core/OERef.h>
 
+#include <OrionEditor/OEEditorContext.h>
+
 namespace OrionEngine::OrionEditor
 {
 	struct OESHPDataNeeded
@@ -52,7 +54,7 @@ namespace OrionEngine::OrionEditor
 	private:
 
 		ECS::OEECSRegistry* m_Registry = nullptr;
-		ECS::OEGameEntityID m_SelectedID = 0;
+		OEEditorContext* m_EditorContext = nullptr;
 		OESHPDataNeeded m_OESHPDataNeeded;
 		bool m_OpenCommandPalette;
 	};

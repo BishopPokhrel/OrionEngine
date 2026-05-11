@@ -18,13 +18,13 @@ namespace OrionEngine::OrionEditor
 
         for (auto& id : entities)
         {
-            bool b_Selected = (m_SelectedID == id);
+            bool b_Selected = (m_EditorContext->SelectedEntity == id);
 
             std::string name = m_Registry->GetEntityNameByID(id);
 
             if (ImGui::Selectable(name.c_str(), b_Selected))
             {
-                m_SelectedID = id;
+                m_EditorContext->SelectedEntity = id;
             }
         }
 
@@ -96,6 +96,7 @@ namespace OrionEngine::OrionEditor
                                 if (ImGui::Button("OK")) { ImGui::CloseCurrentPopup(); }
                                 ImGui::EndPopup();
                             }
+                            ImGui::CloseCurrentPopup();
                         }
 
                         ImGui::SameLine();
@@ -114,7 +115,7 @@ namespace OrionEngine::OrionEditor
                         if (m_OESHPDataNeeded.CreationDataNeeded->OpenNewTransformComponentDialog)
                         {
                             ImGui::OpenPopup("New Transform Component");
-                            m_OESHPDataNeeded.CreationDataNeeded->OpenNewTransformComponentDialog = true;
+                            m_OESHPDataNeeded.CreationDataNeeded->OpenNewTransformComponentDialog = false;
                         }
 
                         if (ImGui::BeginPopupModal("New Transform Component", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -129,10 +130,11 @@ namespace OrionEngine::OrionEditor
                                 // Default properties
                                 ECS::OETransformComponent type;
                                 type.Position = { 0.0f, 0.0f, 0.0f };
-                                type.Rotation = { 0.0f, 1.0f, 0.0f };
+                                type.Rotation = { 0.0f, 0.0f, 0.0f };
                                 type.Scale = { 1.0f, 1.0f, 1.0f };
 
                                 m_Registry->TransformComponent.AddComponent(id, type);
+                                ImGui::CloseCurrentPopup();
                             }
 
                             ImGui::SameLine();
@@ -143,7 +145,7 @@ namespace OrionEngine::OrionEditor
 
                     if (ImGui::MenuItem("Physics Component"))
                     {
-                        m_OESHPDataNeeded.CreationDataNeeded->OpenNewRenderableComponentDialog = true;
+                        m_OESHPDataNeeded.CreationDataNeeded->OpenNewPhysicsComponentDialog = true;
                         if (m_OESHPDataNeeded.CreationDataNeeded->OpenNewPhysicsComponentDialog)
                         {
                             ImGui::OpenPopup("New Physics Component");
@@ -161,6 +163,7 @@ namespace OrionEngine::OrionEditor
                                 
                                 ECS::OEPhysicsComponent type; // properites already set
                                 m_Registry->PhysicsComponent.AddComponent(id, type);
+                                ImGui::CloseCurrentPopup();
                             }
 
                             ImGui::SameLine();
@@ -191,6 +194,7 @@ namespace OrionEngine::OrionEditor
                                 type.b_Visible = true; 
 
                                 m_Registry->RenderableComponent.AddComponent(id, type);
+                                ImGui::CloseCurrentPopup();
                             }
 
                             ImGui::SameLine();
@@ -222,6 +226,7 @@ namespace OrionEngine::OrionEditor
                                 std::string gameEntityName = m_OESHPDataNeeded.DeletionDataNeeded->GameEntityNameBufferToDelete;
                                 ECS::OEGameEntityID id = m_Registry->GetEntityIDByName(gameEntityName);
                                 m_Registry->DeleteGameEntity(id);
+                                ImGui::CloseCurrentPopup();
                             }
 
                             ImGui::SameLine();
@@ -243,7 +248,7 @@ namespace OrionEngine::OrionEditor
                         {
                             // Component Types
                             const char* componentTypes[] = {
-                                "Transform Component", "Physics Component", "Renderable Component"
+                                "Transform Component", "Physics Component", "Renderable Component", "Camera Component"
                             };
 
                             if (ImGui::BeginCombo("Component Types", componentTypes[m_OESHPDataNeeded.DeletionDataNeeded->ComponentDeletionIndex]))
@@ -273,6 +278,10 @@ namespace OrionEngine::OrionEditor
                                     m_Registry->PhysicsComponent.DeleteComponent(id);
                                 else if (m_OESHPDataNeeded.DeletionDataNeeded->ComponentDeletionIndex == 2)
                                     m_Registry->RenderableComponent.DeleteComponent(id);
+                                else if (m_OESHPDataNeeded.DeletionDataNeeded->ComponentDeletionIndex == 3)
+                                    m_Registry->CameraComponent.DeleteComponent(id);
+                                else; // do nothing (lol)
+                                ImGui::CloseCurrentPopup();
                             }
 
                             ImGui::SameLine();
@@ -282,6 +291,8 @@ namespace OrionEngine::OrionEditor
                     }
                 }
             }
+
+            if (ImGui::Button("Close")) { ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
 
