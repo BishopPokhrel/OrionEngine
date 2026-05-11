@@ -46,7 +46,7 @@ namespace OrionEngine
             }
 
             template<typename T>
-            T* GetComponent(OEGameEntityID id)
+            T* GetComponent(OEGameEntityID id) 
             {
                 static_assert(sizeof(T) == 0, "GetComponent<T> not specialized for this type");
                 return nullptr;
@@ -64,6 +64,7 @@ namespace OrionEngine
             OEComponentManager<OETransformComponent> TransformComponent;
             OEComponentManager<OEPhysicsComponent> PhysicsComponent;
             OEComponentManager<OERenderableComponent> RenderableComponent;
+            OEComponentManager<OECameraComponent> CameraComponent;
 
         private:
 
@@ -77,7 +78,7 @@ namespace OrionEngine
         };
 
         template<>
-        inline OETransformComponent* OEECSRegistry::GetComponent<OETransformComponent>(OEGameEntityID id)
+        inline OETransformComponent* OEECSRegistry::GetComponent<OETransformComponent>(OEGameEntityID id) 
         {
             return TransformComponent.GetComponent(id);
         }
@@ -92,6 +93,12 @@ namespace OrionEngine
         inline OERenderableComponent* OEECSRegistry::GetComponent<OERenderableComponent>(OEGameEntityID id)
         {
             return RenderableComponent.GetComponent(id);
+        }
+
+        template<>
+        inline OECameraComponent* OEECSRegistry::GetComponent<OECameraComponent>(OEGameEntityID id)
+        {
+            return CameraComponent.GetComponent(id);
         }
 
         template<>
@@ -110,6 +117,12 @@ namespace OrionEngine
         inline bool OEECSRegistry::HasComponent<OEPhysicsComponent>(OEGameEntityID id) const
         {
             return PhysicsComponent.HasComponent(id);
+        }
+
+        template<>
+        inline bool OEECSRegistry::HasComponent<OECameraComponent>(OEGameEntityID id) const
+        {
+            return CameraComponent.HasComponent(id);
         }
     }
 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <glm/glm.hpp>
 #include <unordered_map>
@@ -8,6 +8,7 @@
 
 #include <OrionEngine/OrionRenderer/ORVertexArray.h>
 #include <OrionEngine/OrionRenderer/ORShader.h>
+#include <OrionEngine/OrionRenderer/SceneRenderer/ORCamera.h>
 #include <OrionEngine/Core/OERef.h>
 
 namespace OrionEngine
@@ -38,6 +39,20 @@ namespace OrionEngine
 			Ref<OrionRenderer::ORVertexArray> VertexArray;
 		};
 
+		struct OECameraComponent
+		{
+			OrionRenderer::ORCamera Camera;
+			
+			bool Primary = true;
+			float NearClip = 0.1f;
+			float FarClip = 1000.0f;
+
+			OECameraComponent()
+				: Camera(-10.0f, 10.0f, -10.0f, 10.0f) // ← THE FIX
+			{
+			}
+		};
+
 		template<typename OEComponentType>
 		class OEComponentManager
 		{
@@ -57,13 +72,17 @@ namespace OrionEngine
 					m_OEComponents.erase(it);
 				}
 			}
-			OEComponentType* GetComponent(uint64_t id) noexcept
+
+			OEComponentType* GetComponent(uint64_t id)
 			{
 				auto it = m_OEComponents.find(id);
-				if (it != m_OEComponents.end())
-					return &it->second;
-				else
-					return nullptr;
+				return (it != m_OEComponents.end()) ? &it->second : nullptr;
+			}
+
+			const OEComponentType* GetComponent(uint64_t id) const
+			{
+				auto it = m_OEComponents.find(id);
+				return (it != m_OEComponents.end()) ? &it->second : nullptr;
 			}
 
 			bool HasComponent(uint64_t id) const noexcept {
