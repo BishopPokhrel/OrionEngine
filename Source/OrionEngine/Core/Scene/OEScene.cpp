@@ -2,8 +2,15 @@
 
 namespace OrionEngine
 {
-	OEScene::OEScene(const std::string& name) noexcept
-		: m_OESceneName(name)
+	void OEScene::InitScene(const std::string& name) noexcept
 	{
+		m_OESceneName = name;
+		m_Registry = CreateScope<ECS::OEECSRegistry>();
+		m_Created = IsCreated();
+	}
+
+	void OEScene::DeleteScene() noexcept
+	{
+		m_Registry->DeleteRegistry(this);
 	}
 }
