@@ -91,6 +91,9 @@
     <ClCompile Include="Source\OrionEditor\Panels\OEDetailsPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEditor\Panels\OESceneManagerPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
@@ -214,6 +217,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEditor\OEViewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEditor\Panels\OESceneManagerPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
