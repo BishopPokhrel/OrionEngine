@@ -91,44 +91,64 @@ namespace OrionEngine::OrionEditor
 			{
 				if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 0)
 				{
-					ECS::OETransformComponent transform;
-					transform.Position = { 0.0f, 0.0f, 0.0f };
-					transform.Rotation = { 0.0f, 0.0f, 0.0f };
-					transform.Scale = { 1.0f, 1.0f, 1.0f };
+					if (!m_Registry->HasComponent<ECS::OETransformComponent>(m_EditorContext->SelectedEntity))
+					{
+						ECS::OETransformComponent transform;
+						transform.Position = { 0.0f, 0.0f, 0.0f };
+						transform.Rotation = { 0.0f, 0.0f, 0.0f };
+						transform.Scale = { 1.0f, 1.0f, 1.0f };
 
-					m_Registry->TransformComponent.AddComponent(m_EditorContext->SelectedEntity, transform);
+						m_Registry->TransformComponent.AddComponent(m_EditorContext->SelectedEntity, transform);
+					}
+					else
+						ImGui::Text("Entity %s with ID %d already has a Transform Component!", entityName, m_EditorContext->SelectedEntity);
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 1)
 				{
-					ECS::OEPhysicsComponent physics;
+					if (!m_Registry->HasComponent<ECS::OEPhysicsComponent>(m_EditorContext->SelectedEntity))
+					{
+						ECS::OEPhysicsComponent physics;
 
-					// All properties already set, no need to set them now like in transform component
-					m_Registry->PhysicsComponent.AddComponent(m_EditorContext->SelectedEntity, physics);
+						// All properties already set, no need to set them now like in transform component
+						m_Registry->PhysicsComponent.AddComponent(m_EditorContext->SelectedEntity, physics);
+					}
+					else
+						ImGui::Text("Entity %s with ID %d already has a Physics Component!", entityName, m_EditorContext->SelectedEntity);
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 2)
 				{
-					ECS::OERenderableComponent render;
-					render.b_Visible = true;
+					if (!m_Registry->HasComponent<ECS::OERenderableComponent>(m_EditorContext->SelectedEntity))
+					{
+						ECS::OERenderableComponent render;
+						render.b_Visible = true;
 
-					// Other propeties are smart pointers (Ref: std::shared_ptr) so we cannot exactly set the default properties smoothly
-					// until they are set by the renderer, render system, or scene renderer
-					// the editor should NOT know anything about the renderer or about the renderer pipeline
-					// or architecure. It may know about the ECS, it may request creation, deletion, editon of game entities and components
-					// but it should NOT know anything about how those things are rendered. 
-					// Rendering is low level. The editor, which sits on top of the engine, uses the engine API, and does not use the renderer API
-					// The engine only uses the renderer API to render all entities in a given scene
-					m_Registry->RenderableComponent.AddComponent(m_EditorContext->SelectedEntity, render);
+						// Other propeties are smart pointers (Ref: std::shared_ptr) so we cannot exactly set the default properties smoothly
+						// until they are set by the renderer, render system, or scene renderer
+						// the editor should NOT know anything about the renderer or about the renderer pipeline
+						// or architecure. It may know about the ECS, it may request creation, deletion, editon of game entities and components
+						// but it should NOT know anything about how those things are rendered. 
+						// Rendering is low level. The editor, which sits on top of the engine, uses the engine API, and does not use the renderer API
+						// The engine only uses the renderer API to render all entities in a given scene
+						m_Registry->RenderableComponent.AddComponent(m_EditorContext->SelectedEntity, render);
+					}
+					else
+						ImGui::Text("Entity %s with ID %d already has a Renderable Component!", entityName, m_EditorContext->SelectedEntity);
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 3)
 				{
-					ECS::OECameraComponent cameraComp;
+					if (!m_Registry->HasComponent<ECS::OECameraComponent>(m_EditorContext->SelectedEntity))
+					{
+						ECS::OECameraComponent cameraComp;
 
-					// Camera property already set (see OEComponen.h)
-					cameraComp.NearClip = 0.1f;
-					cameraComp.FarClip = 1000.0f;
-					cameraComp.Primary = true;
+						// Camera property already set (see OEComponen.h)
+						cameraComp.NearClip = 0.1f;
+						cameraComp.FarClip = 1000.0f;
+						cameraComp.Primary = true;
 
-					m_Registry->CameraComponent.AddComponent(m_EditorContext->SelectedEntity, cameraComp);
+						m_Registry->CameraComponent.AddComponent(m_EditorContext->SelectedEntity, cameraComp);
+					}
+					else
+						ImGui::Text("Entity %s with ID %d already has a Camera Component!", entityName, m_EditorContext->SelectedEntity);
 				}
 				else; // do nothing (lol)
 				ImGui::CloseCurrentPopup();
