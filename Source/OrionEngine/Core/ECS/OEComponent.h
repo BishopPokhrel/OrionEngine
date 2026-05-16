@@ -89,6 +89,8 @@ namespace OrionEngine
 				return m_OEComponents.find(id) != m_OEComponents.end();
 			}
 
+			void Clear() noexcept { m_OEComponents.clear(); }
+
 			const std::unordered_map<uint64_t, OEComponentType>& GetAllComponents() const noexcept { return m_OEComponents; }
 			std::unordered_map<uint64_t, OEComponentType>& GetAllComponents() noexcept { return m_OEComponents; }
 
