@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <optional>
 
+#include <OrionEngine/Core/Scene/OEScene.h>
+
 namespace OrionEngine
 {
     namespace ECS
@@ -60,6 +62,9 @@ namespace OrionEngine
             }
             template<typename T>
             bool HasComponent(OEGameEntityID id) const { return false;  }
+
+            void DeleteRegistry(const OEScene& scene) noexcept;
+            size_t GetEntityCount() const noexcept { return m_Entities.size(); }
 
             OEComponentManager<OETransformComponent> TransformComponent;
             OEComponentManager<OEPhysicsComponent> PhysicsComponent;

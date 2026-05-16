@@ -96,5 +96,25 @@ namespace OrionEngine
 
             return ids;
         }
+
+        // This function is to simply delete ALL the entities in a scene. 
+        // Since everything is in the registry, we delete everything in that current registry. 
+        // This function is only meanted to be used when the scene is to be deleted, NOT when the scene is to be loaded or unloaded.
+       
+        void OEECSRegistry::DeleteRegistry(const OEScene& scene) noexcept
+        {
+            // CLEANUP ENTITIES
+            m_Entities.clear(); 
+            m_NameToID.clear();
+            m_IDToName.clear();
+
+            // CLEANUP COMPONENTS
+            TransformComponent.Clear();
+            PhysicsComponent.Clear();
+            RenderableComponent.Clear();
+            CameraComponent.Clear();
+
+            m_NextID = 0;
+        }
     }
 }
