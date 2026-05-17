@@ -145,7 +145,7 @@
     <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.cpp" />
-    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommandPipeline.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.cpp" />
@@ -182,7 +182,9 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORMesh.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLShaderAPI.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCmd.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommandPipeline.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRendererAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORSceneData.h" />
