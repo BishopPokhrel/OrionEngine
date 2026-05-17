@@ -51,17 +51,13 @@ namespace OrionEngine::OrionRenderer
 		m_CommandQueue.push_back(cmd);
 	}
 
-	void ORRenderCommandPipeline::Execute() noexcept
+	void ORRenderCommandPipeline::ExecuteClearCmd()
 	{
-		for (auto& cmd : m_CommandQueue)
-		{
-//			switch (cmd.Type)
-//			{
-//				case ORRenderCmdType::BeginFrame:
-//				{
+		ORRenderCommand::Clear();
+	}
 
-//				}
-//			}
-		}
+	void ORRenderCommandPipeline::ExecuteClearColorCmd(float r, float g, float b, float a)
+	{
+		ORRenderCommand::SetClearColor(r, g, b, a);
 	}
 }

@@ -8,6 +8,7 @@
 #include "ORShader.h"
 #include "ORVertexArray.h"
 #include "ORRenderCmd.h"
+#include "ORRenderer.h"
 
 #include <glm/glm.hpp>
 
@@ -28,10 +29,13 @@ namespace OrionEngine::OrionRenderer
 		void SubmitToGPU(const Ref<ORShader>& shader, const Ref<ORVertexArray>& vertexArray, const glm::mat4& transform) noexcept;
 		void EndFrame() noexcept;
 		void EndScene(const OEScene& scene) noexcept;
-		void Execute() noexcept;
+		
+		void ExecuteClearCmd();
+		void ExecuteClearColorCmd(float r, float g, float b, float a);
 
 	private:
 
 		std::vector<ORRenderCmd> m_CommandQueue;
+		ORRenderer* m_Renderer = nullptr;
 	};
 }
