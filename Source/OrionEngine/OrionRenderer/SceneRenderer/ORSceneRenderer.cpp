@@ -1,7 +1,5 @@
 #include "ORSceneRenderer.h"
 
-#include <OrionEngine/OrionRenderer/ORRenderer.h>
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -23,12 +21,12 @@ namespace OrionEngine
 				* glm::mat4_cast(glm::quat(transform->Rotation))
 				* glm::scale(glm::mat4(1.0f), transform->Scale);
 
-			ORRenderer::Submit(render->Shader, render->VertexArray, model);
+			m_Renderer->Submit(render->Shader, render->VertexArray, model);
 		}
 
 		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const glm::mat4& viewProjection)
 		{
-			ORRenderer::BeginScene(viewProjection);
+			m_Renderer->BeginScene(viewProjection);
 			auto& render = registry.RenderableComponent.GetAllComponents();
 
 			for (auto& [id, comp] : render)
@@ -39,7 +37,7 @@ namespace OrionEngine
 				Render(registry, id);
 			}
 
-			ORRenderer::EndScene();
+			m_Renderer->EndScene();
 		}
 	}
 }

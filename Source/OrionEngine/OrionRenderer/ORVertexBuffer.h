@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ORGraphicsAPI.h"
-#include "ORRenderer.h"
 #include "ORVertexBufferLayout.h"
 
 #include <OrionEngine/Core/OERef.h>
@@ -11,6 +10,8 @@ namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
+		class ORRenderer; // forward declare
+
 		class ORVertexBuffer
 		{
 		public:
@@ -22,7 +23,11 @@ namespace OrionEngine
 			virtual void SetLayout(const ORVertexBufferLayout& layout) noexcept = 0;
 			virtual const ORVertexBufferLayout& GetLayout() const noexcept = 0;
 
-			static Ref<ORVertexBuffer> Create(const void* vertices, uint32_t size);
+			Ref<ORVertexBuffer> Create(const void* vertices, uint32_t size);
+
+		private:
+
+			ORRenderer* m_Renderer = nullptr;
 		};
 	}
 } 

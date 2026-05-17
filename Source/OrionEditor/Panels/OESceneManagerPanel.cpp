@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include <OrionEngine/Core/OETime.h>
+#include <OrionEngine/Core/ECS/OEECSRegistry.h>
 
 namespace EditorUtils
 {

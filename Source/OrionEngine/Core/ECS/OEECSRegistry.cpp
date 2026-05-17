@@ -101,7 +101,7 @@ namespace OrionEngine
         // Since everything is in the registry, we delete everything in that current registry. 
         // This function is only meanted to be used when the scene is to be deleted, NOT when the scene is to be loaded or unloaded.
        
-        void OEECSRegistry::DeleteRegistry(const OEScene& scene) noexcept
+        void OEECSRegistry::DeleteRegistry() noexcept
         {
             // CLEANUP ENTITIES
             m_Entities.clear(); 

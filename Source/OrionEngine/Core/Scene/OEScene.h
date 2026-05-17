@@ -4,9 +4,13 @@
 #include <vector>
 
 #include <OrionEngine/Core/ECS/OEGameEntity.h>
-#include <OrionEngine/Core/ECS/OEECSRegistry.h>
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/OrionRenderer/SceneRenderer/ORCamera.h>
+
+namespace OrionEngine::ECS
+{
+	class OEECSRegistry;
+}
 
 namespace OrionEngine
 {

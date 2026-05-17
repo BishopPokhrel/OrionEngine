@@ -63,7 +63,7 @@ namespace OrionEngine
             template<typename T>
             bool HasComponent(OEGameEntityID id) const { return false;  }
 
-            void DeleteRegistry(const OEScene& scene) noexcept;
+            void DeleteRegistry() noexcept;
             size_t GetEntityCount() const noexcept { return m_Entities.size(); }
 
             OEComponentManager<OETransformComponent> TransformComponent;

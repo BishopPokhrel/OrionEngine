@@ -7,6 +7,8 @@
 #include <OrionEngine/Core/ECS/OEGameEntity.h>
 #include <OrionEngine/Core/ECS/OEECSRegistry.h>
 
+#include <OrionEngine/OrionRenderer/ORRenderer.h>
+
 namespace OrionEngine
 {
 	namespace OrionRenderer
@@ -17,6 +19,10 @@ namespace OrionEngine
 
 			void RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const glm::mat4& viewProjection);
 			void Render(ECS::OEECSRegistry& registry, ECS::OEGameEntityID entity);
+
+		private:
+
+			ORRenderer* m_Renderer = nullptr;
 		};
 	}
 }

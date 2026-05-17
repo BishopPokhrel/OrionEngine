@@ -1,4 +1,5 @@
 #include "OEScene.h"
+#include <OrionEngine/Core/ECS/OEECSRegistry.h>
 
 namespace OrionEngine
 {
@@ -11,6 +12,6 @@ namespace OrionEngine
 
 	void OEScene::DeleteScene() noexcept
 	{
-		m_Registry->DeleteRegistry(this);
+		m_Registry->DeleteRegistry();
 	}
 }
