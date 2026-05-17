@@ -21,36 +21,36 @@ namespace OrionEngine
 		{
 		public:
 
-			static void Init(ORGraphicsAPI API) noexcept
+			void Init(ORGraphicsAPI API) noexcept
 			{
 				SetGraphicsAPI(API);
 				ORRenderCommand::ORInit();
 			}
 
-			static void Shutdown() noexcept
+			void Shutdown() noexcept
 			{
 
 			}
 
-			static void SetViewport(int x, int y, int width, int height) noexcept
+			void SetViewport(int x, int y, int width, int height) noexcept
 			{
 				ORRenderCommand::SetViewport(x, y, width, height);
 			}
 
-			static void BeginScene(const glm::mat4& viewProjection) noexcept
+			void BeginScene(const glm::mat4& viewProjection) noexcept
 			{
-				s_SceneData.ViewProjectionMatrix = viewProjection;
+				m_SceneData.ViewProjectionMatrix = viewProjection;
 			}
 
-			static void EndScene() noexcept
+			void EndScene() noexcept
 			{
 
 			}
 
-			static void Submit(const Ref<ORShader>& shader, const Ref<ORVertexArray>& vertexArray, const glm::mat4& transform) noexcept
+			void Submit(const Ref<ORShader>& shader, const Ref<ORVertexArray>& vertexArray, const glm::mat4& transform)
 			{
 				shader->Bind();
-				shader->SetMat4("u_ViewProjection", s_SceneData.ViewProjectionMatrix);
+				shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
 				shader->SetMat4("u_Transform", transform);
 
 				vertexArray->Bind();
@@ -60,17 +60,17 @@ namespace OrionEngine
 				ORRenderCommand::DrawIndexed(indexCount);
 			}
 
-			static void SetGraphicsAPI(ORGraphicsAPI API) noexcept
+			void SetGraphicsAPI(ORGraphicsAPI API) noexcept
 			{
-				s_GraphicsAPI = API;
+				m_GraphicsAPI = API;
 			}
 
-			static ORGraphicsAPI GetGraphicsAPI() noexcept { return s_GraphicsAPI; }
+			ORGraphicsAPI GetGraphicsAPI() const noexcept { return m_GraphicsAPI; }
 
 		private:
 		
-			static SceneData s_SceneData;
-			static ORGraphicsAPI s_GraphicsAPI;
+			SceneData m_SceneData;
+			ORGraphicsAPI m_GraphicsAPI;
 		};
 	}
 }
