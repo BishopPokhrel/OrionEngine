@@ -2,9 +2,9 @@
 #include <OrionEngine/Core/OEEngineDefines.h>
 #include <OrionEngine/Core/OELogging.h>
 #include <OrionEngine/Core/OEExceptions.h>
+#include <OrionEngine/Core/OERef.h>
 
 #include <stdexcept>
-#include <memory>
 
 using namespace OrionEngine;
 
@@ -14,7 +14,7 @@ int main()
 {
 	try
 	{
-		std::unique_ptr<Application> app(Application::CreateApplication());
+		Scope<Application> app(Application::CreateApplication());
 		if (app == nullptr)
 		{
 			throw OrionEngine::OENullPointerException(app.get(), "app");
