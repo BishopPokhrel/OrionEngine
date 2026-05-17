@@ -3,19 +3,21 @@
 #define GLFW_INCLUDE_NONE
 #include <OrionEditor/OEMainWindow.h>
 
+#include "OERef.h"
+
 namespace OrionEngine
 {
-	class Application
+	class OEApplication
 	{
 	public:
-		Application() = default;
-		~Application() = default;
+		OEApplication() = default;
+		~OEApplication() = default;
 
 		bool EngineInit();
 		bool EngineRun(int width, int height, const char* title);
 		bool EngineShutdown();
 
-		static Application* CreateApplication();
+		static Scope<OEApplication> CreateApplication();
 
 	private:
 

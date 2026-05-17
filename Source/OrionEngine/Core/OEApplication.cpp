@@ -3,13 +3,13 @@
 
 namespace OrionEngine
 {
-	bool Application::EngineInit()
+	bool OEApplication::EngineInit()
 	{
 		ORION_ENGINE_INFO("Orion Engine is initializing!");
 		return true;
 	}
 
-	bool Application::EngineRun(int width, int height, const char* title)
+	bool OEApplication::EngineRun(int width, int height, const char* title)
 	{
 		ORION_ENGINE_INFO("Orion Engine is running!");
 		m_OEMainEngineWindow.InitOEMainWindow();
@@ -18,14 +18,14 @@ namespace OrionEngine
 		return true;
 	}
 
-	bool Application::EngineShutdown()
+	bool OEApplication::EngineShutdown()
 	{
 		ORION_ENGINE_INFO("Orion Engine is shutting down!");
 		return true;
 	}
 
-	Application* Application::CreateApplication()
+	Scope<OEApplication> OEApplication::CreateApplication()
 	{
-		return new Application();
+		return CreateScope<OEApplication>();
 	}
 }
