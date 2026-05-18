@@ -18,7 +18,7 @@ namespace OrionEngine::OrionRenderer
 		m_CommandQueue.push_back(cmd);
 	}
 
-	void ORRenderCommandPipeline::BeginScene(const OEScene& scene) noexcept
+	void ORRenderCommandPipeline::BeginScene(const glm::mat4& viewProjection) noexcept
 	{
 		ORRenderCmd cmd{};
 		cmd.Type = ORRenderCmdType::BeginScene;
@@ -44,7 +44,7 @@ namespace OrionEngine::OrionRenderer
 		m_CommandQueue.push_back(cmd);
 	}
 
-	void ORRenderCommandPipeline::EndScene(const OEScene& scene) noexcept
+	void ORRenderCommandPipeline::EndScene() noexcept
 	{
 		ORRenderCmd cmd{};
 		cmd.Type = ORRenderCmdType::EndScene;
