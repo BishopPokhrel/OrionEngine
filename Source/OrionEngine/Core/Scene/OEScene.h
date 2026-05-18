@@ -17,6 +17,9 @@ namespace OrionEngine
 	class OEScene
 	{
 	public:
+		
+		OEScene() = default;
+		~OEScene() = default;
 
 		void InitScene(const std::string& name = "NewScene") noexcept; // this function acts as the constructor
 
@@ -26,6 +29,7 @@ namespace OrionEngine
 		void DeleteScene() noexcept; 
 		bool IsCreated() const noexcept { return m_Created; }
 		void SetSceneName(const std::string& name) { m_OESceneName = name; }
+		void UpdateSystems(ECS::OEECSRegistry& registry, float dt);
 		
 		OrionRenderer::ORCamera* GetCurrentCamera() const noexcept { return m_Camera; }
 
