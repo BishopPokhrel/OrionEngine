@@ -24,7 +24,7 @@ namespace OrionEngine
 			m_Renderer->Submit(render->Shader, render->VertexArray, model);
 		}
 
-		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const glm::mat4& viewProjection)
+		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera* camera, const glm::mat4& viewProjection)
 		{
 			m_Renderer->BeginScene(viewProjection);
 			auto& render = registry.RenderableComponent.GetAllComponents();

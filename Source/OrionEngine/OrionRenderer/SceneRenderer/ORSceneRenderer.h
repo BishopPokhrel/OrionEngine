@@ -17,7 +17,7 @@ namespace OrionEngine
 		{
 		public:
 
-			void RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const glm::mat4& viewProjection);
+			void RenderScene(ECS::OEECSRegistry& registry, const ORCamera* camera, const glm::mat4& viewProjection);
 			void Render(ECS::OEECSRegistry& registry, ECS::OEGameEntityID entity);
 
 		private:
