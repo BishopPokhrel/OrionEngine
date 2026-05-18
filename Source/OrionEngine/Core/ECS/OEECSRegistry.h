@@ -14,6 +14,10 @@ namespace OrionEngine
 {
     namespace ECS
     {
+        class OETransformSystem;
+        class OEPhysicsSystem;
+        class OERenderSystem;
+
         class OEECSRegistry
         {
         private:
@@ -70,6 +74,10 @@ namespace OrionEngine
             OEComponentManager<OEPhysicsComponent> PhysicsComponent;
             OEComponentManager<OERenderableComponent> RenderableComponent;
             OEComponentManager<OECameraComponent> CameraComponent;
+
+            OETransformSystem* TransformSystem = nullptr;
+            OEPhysicsSystem* PhysicsSystem = nullptr;
+            OERenderSystem* RenderSystem = nullptr;
 
         private:
 

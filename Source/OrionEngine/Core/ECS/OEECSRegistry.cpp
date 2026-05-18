@@ -1,4 +1,5 @@
 #include "OEECSRegistry.h"
+#include "OESystem.h"
 
 namespace OrionEngine
 {
