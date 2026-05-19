@@ -26,6 +26,8 @@ namespace OrionEngine
 			bool MainLoop();
 			bool DestoryOEMainWindow();
 
+			OrionRenderer::GLFWWindow* GetOEWindow() const noexcept { return m_Window; }
+
 		private:
 
 			OrionRenderer::GLFWWindow* m_Window;
