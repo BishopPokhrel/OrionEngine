@@ -3,6 +3,8 @@
 #define GLFW_INCLUDE_NONE
 #include <OrionEditor/OEMainWindow.h>
 
+#include <OrionEngine/Engine/OEngine.h>
+
 #include "OERef.h"
 
 namespace OrionEngine
@@ -22,5 +24,8 @@ namespace OrionEngine
 	private:
 
 		OrionEditor::OEMainWindow m_OEMainEngineWindow;
+		Scope<OEngine> m_OEngine;
+
+		bool m_Running = false; 
 	};
 }
