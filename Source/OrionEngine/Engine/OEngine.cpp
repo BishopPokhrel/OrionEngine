@@ -7,9 +7,6 @@ namespace OrionEngine
 {
 	void OEngine::OInitEngineSubsystems()
 	{
-		OE_CORE_ASSERT(m_InputSystem, "Input System is null!");
-		m_InputSystem->InitializeOEInputSystem(m_Window->GetNativeWindow());
-
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
 		m_Scene->InitScene();
 	}
@@ -27,9 +24,6 @@ namespace OrionEngine
 
 	void OEngine::OTick(float dt)
 	{
-		OE_CORE_ASSERT(m_InputSystem, "Input System is null!");
-		m_InputSystem->Update(m_Window->GetNativeWindow());
-
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
 		m_Scene->UpdateSystems(m_Scene->GetRegistry(), dt);
 	}

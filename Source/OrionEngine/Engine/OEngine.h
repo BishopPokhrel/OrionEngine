@@ -16,7 +16,7 @@ namespace OrionEngine
 
 		OEngine()
 			: m_Renderer(CreateScope<OrionRenderer::ORRenderCommandPipeline>()), m_InputSystem(CreateScope<OEInputSystem>()), m_Scene(CreateScope<OEScene>()),
-			m_Window(CreateScope<OrionRenderer::GLFWWindow>()), m_SceneRenderer(CreateScope<OrionRenderer::ORSceneRenderer>())
+			m_SceneRenderer(CreateScope<OrionRenderer::ORSceneRenderer>())
 		{ }
 
 		void OInitEngineSubsystems();
@@ -30,12 +30,13 @@ namespace OrionEngine
 
 		void Render();
 
+		OEInputSystem* GetInputSystem() { return m_InputSystem.get(); }
+
 	private:
 
 		Scope<OrionRenderer::ORRenderCommandPipeline> m_Renderer; 
 		Scope<OEInputSystem> m_InputSystem;
 		Scope<OEScene> m_Scene; // there will only be one scene 
-		Scope<OrionRenderer::GLFWWindow> m_Window; // only used for input system nothing more
 		Scope<OrionRenderer::ORSceneRenderer> m_SceneRenderer;
 	};
 }
