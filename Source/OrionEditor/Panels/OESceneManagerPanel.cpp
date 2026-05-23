@@ -190,7 +190,11 @@ namespace OrionEngine::OrionEditor
                 DrawSceneCreation();
             }
             else
+            {
+                if (ImGui::CollapsingHeader("Metadata"))
+                    DrawSceneMetadata();
                 DrawSceneEdit();
+            }
 
             if (ImGui::Button("Delete Scene", ImVec2(-1, 0)))
                 DrawSceneDeletion();
