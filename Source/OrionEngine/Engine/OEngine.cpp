@@ -25,7 +25,7 @@ namespace OrionEngine
 	void OEngine::OTick(float dt)
 	{
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
-		m_Scene->UpdateSystems(m_Scene->GetRegistry(), dt);
+		// Update other systems here later
 	}
 
 	void OEngine::OBeginFrame()
@@ -43,8 +43,8 @@ namespace OrionEngine
 	void OEngine::Render()
 	{
 		OE_CORE_ASSERT(m_Renderer, "Renderer is null!");
-		m_Renderer->BeginScene(m_Scene->GetCurrentCamera()->GetViewProjection());
-		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetCurrentCamera()->GetViewProjection());
+		m_Renderer->BeginScene(m_Scene->GetCurrentCamera().GetViewProjection());
+		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetCurrentCamera().GetViewProjection());
 		m_Renderer->EndScene();
 	}
 }
