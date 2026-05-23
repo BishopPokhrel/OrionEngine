@@ -9,6 +9,13 @@ namespace OrionEngine
 		ORION_ENGINE_INFO("Orion Engine is initializing!");
 		m_OEngine = CreateScope<OEngine>();
 		m_OEngine->OInitEngineSubsystems();
+		
+		// Intialize or create the window
+		m_WindowProps.Width = 1280;
+		m_WindowProps.Height = 800;
+		m_WindowProps.Title = "Orion Engine";
+		m_WindowProps.VSyncEnabled = true;
+		m_Window = CreateScope<OrionRenderer::GLFWWindow>(m_WindowProps);
 		return true;
 	}
 
@@ -16,25 +23,22 @@ namespace OrionEngine
 	{
 		ORION_ENGINE_INFO("Orion Engine is running!");
 
-		m_OEMainEngineWindow.InitOEMainWindow();
 		m_Running = true;
 
-		while (m_Running && !m_OEMainEngineWindow.GetOEWindow()->ShouldClose())
+		while (m_Running && !m_Window->ShouldClose())
 		{
 			float dt = OETime::OEGetDeltaTime();
 
 			m_OEngine->OBeginFrame();
 
 			m_OEngine->OTick(dt);
-			m_OEngine->GetInputSystem()->Update(m_OEMainEngineWindow.GetOEWindow()->GetNativeWindow());
+			m_OEngine->GetInputSystem()->Update(m_Window->GetNativeWindow());
 			m_OEngine->Render();
 
-			m_OEMainEngineWindow.GetOEWindow()->OnUpdate();
+			m_Window->OnUpdate();
 
 			m_OEngine->OEndFrame();
 		}
-
-		m_OEMainEngineWindow.DestoryOEMainWindow();
 
 		return true;
 	}

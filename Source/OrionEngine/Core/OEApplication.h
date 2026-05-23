@@ -1,9 +1,9 @@
 #pragma once
 
 #define GLFW_INCLUDE_NONE
-#include <OrionEditor/OEMainWindow.h>
 
 #include <OrionEngine/Engine/OEngine.h>
+#include <OrionEngine/OrionRenderer/Platform/Window/GLFWWindow.h>
 
 #include "OERef.h"
 
@@ -23,8 +23,9 @@ namespace OrionEngine
 
 	private:
 
-		OrionEditor::OEMainWindow m_OEMainEngineWindow;
 		Scope<OEngine> m_OEngine;
+		Scope<OrionRenderer::GLFWWindow> m_Window;
+		OrionRenderer::WindowProps m_WindowProps;
 
 		bool m_Running = false; 
 	};
