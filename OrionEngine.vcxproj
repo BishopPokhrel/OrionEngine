@@ -139,7 +139,6 @@
     <ClCompile Include="Source\OrionEngine\Core\OEGlobals.h" />
     <ClCompile Include="Source\OrionEngine\Core\OEInputSystem.cpp" />
     <ClCompile Include="Source\OEEntryPoint.cpp" />
-    <ClCompile Include="Source\OrionEditor\OEMainWindow.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OEApplication.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OERef.h" />
     <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
@@ -173,7 +172,6 @@
     <ClInclude Include="Source\OrionEngine\Core\ECS\OESystem.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEAssert.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEInputSystem.h" />
-    <ClInclude Include="Source\OrionEditor\OEMainWindow.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEEngineDefines.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
