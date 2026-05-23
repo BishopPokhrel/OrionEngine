@@ -29,15 +29,14 @@ namespace OrionEngine
 		void DeleteScene() noexcept; 
 		bool IsCreated() const noexcept { return m_Created; }
 		void SetSceneName(const std::string& name) { m_OESceneName = name; }
-		void UpdateSystems(ECS::OEECSRegistry& registry, float dt);
 		
-		OrionRenderer::ORCamera* GetCurrentCamera() const noexcept { return m_Camera; }
+		OrionRenderer::ORCamera GetCurrentCamera() const noexcept { return m_Camera; }
 
 	private:
 		std::string m_OESceneName;
 		Scope<ECS::OEECSRegistry> m_Registry; // each scene owns each ECS registrry
 		bool m_Created;
 
-		OrionRenderer::ORCamera* m_Camera = nullptr;
+		OrionRenderer::ORCamera m_Camera = OrionRenderer::ORCamera(0.0f, 0.0f, 0.0f, 0.0f);
 	};
 } 

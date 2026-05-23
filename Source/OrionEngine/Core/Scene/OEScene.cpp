@@ -15,11 +15,4 @@ namespace OrionEngine
 	{
 		m_Registry->DeleteRegistry();
 	}
-
-	void OEScene::UpdateSystems(ECS::OEECSRegistry& registry, float dt)
-	{
-		m_Registry->TransformSystem->Update(registry, dt);
-		m_Registry->PhysicsSystem->Update(registry, dt);
-		m_Registry->RenderSystem->Update(registry, dt);
-	}
 }
