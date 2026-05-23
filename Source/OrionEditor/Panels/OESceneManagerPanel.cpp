@@ -99,15 +99,15 @@ namespace OrionEngine::OrionEditor
 
         if (ImGui::CollapsingHeader("Camera"))
         {
-            glm::vec3 position = m_CurrentScene->GetCurrentCamera()->GetPosition();
-            glm::vec3 forward = m_CurrentScene->GetCurrentCamera()->GetForward();
-            glm::vec3 right = m_CurrentScene->GetCurrentCamera()->GetRight();
-            glm::vec3 up = m_CurrentScene->GetCurrentCamera()->GetUp();
+            glm::vec3 position = m_CurrentScene->GetCurrentCamera().GetPosition();
+            glm::vec3 forward = m_CurrentScene->GetCurrentCamera().GetForward();
+            glm::vec3 right = m_CurrentScene->GetCurrentCamera().GetRight();
+            glm::vec3 up = m_CurrentScene->GetCurrentCamera().GetUp();
 
-            float yaw = m_CurrentScene->GetCurrentCamera()->GetYaw();
-            float pitch = m_CurrentScene->GetCurrentCamera()->GetPitch();
+            float yaw = m_CurrentScene->GetCurrentCamera().GetYaw();
+            float pitch = m_CurrentScene->GetCurrentCamera().GetPitch();
 
-            if (ImGui::DragFloat3("Position: ", &position[0], 0.1f)) m_CurrentScene->GetCurrentCamera()->SetPosition(position);
+            if (ImGui::DragFloat3("Position: ", &position[0], 0.1f)) m_CurrentScene->GetCurrentCamera().SetPosition(position);
             ImGui::DragFloat("Yaw: ", &yaw, 0.1f);
             ImGui::DragFloat("Pitch: ", &pitch, 0.1f);
             ImGui::DragFloat3("Forward: ", &forward[0], 0.1f);
@@ -140,40 +140,40 @@ namespace OrionEngine::OrionEditor
         {
             ImGui::Text("Current Camera (Pointer): %p", m_CurrentScene->GetCurrentCamera());
 
-            EditorUtils::DrawMat4ReadOnly("Projection Matrix", m_CurrentScene->GetCurrentCamera()->GetProjection());
-            EditorUtils::DrawMat4ReadOnly("View Matrix", m_CurrentScene->GetCurrentCamera()->GetView());
-            EditorUtils::DrawMat4ReadOnly("View Projection Matrix", m_CurrentScene->GetCurrentCamera()->GetViewProjection());
+            EditorUtils::DrawMat4ReadOnly("Projection Matrix", m_CurrentScene->GetCurrentCamera().GetProjection());
+            EditorUtils::DrawMat4ReadOnly("View Matrix", m_CurrentScene->GetCurrentCamera().GetView());
+            EditorUtils::DrawMat4ReadOnly("View Projection Matrix", m_CurrentScene->GetCurrentCamera().GetViewProjection());
             
             if (ImGui::CollapsingHeader("Position"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera()->GetPosition().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera()->GetPosition().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera()->GetPosition().z);
+                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetPosition().x);
+                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetPosition().y);
+                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetPosition().z);
             }
 
             ImGui::Spacing();
-            ImGui::Text("Yaw: %f", m_CurrentScene->GetCurrentCamera()->GetYaw());
-            ImGui::Text("Pitch: %f", m_CurrentScene->GetCurrentCamera()->GetPitch());
+            ImGui::Text("Yaw: %f", m_CurrentScene->GetCurrentCamera().GetYaw());
+            ImGui::Text("Pitch: %f", m_CurrentScene->GetCurrentCamera().GetPitch());
             
             if (ImGui::CollapsingHeader("Forward"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera()->GetForward().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera()->GetForward().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera()->GetForward().z);
+                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetForward().x);
+                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetForward().y);
+                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetForward().z);
             }
 
             if (ImGui::CollapsingHeader("Right"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera()->GetRight().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera()->GetRight().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera()->GetRight().z);
+                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetRight().x);
+                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetRight().y);
+                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetRight().z);
             }
 
             if (ImGui::CollapsingHeader("Up"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera()->GetUp().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera()->GetUp().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera()->GetUp().z);
+                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetUp().x);
+                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetUp().y);
+                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetUp().z);
             }
         }
 
