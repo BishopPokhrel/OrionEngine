@@ -131,6 +131,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\OrionEditor\OEImGuiLayer.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OEDetailsPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneManagerPanel.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEditor\OEEditorContext.h" />
+    <ClInclude Include="Source\OrionEditor\OEImGuiLayer.h" />
     <ClInclude Include="Source\OrionEditor\OEViewport.h" />
     <ClInclude Include="Source\OrionEditor\Panels\OEDetailsPanel.h" />
     <ClInclude Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.h" />
