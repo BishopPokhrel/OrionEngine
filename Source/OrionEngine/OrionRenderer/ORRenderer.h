@@ -39,7 +39,7 @@ namespace OrionEngine
 
 			void BeginScene(const glm::mat4& viewProjection) noexcept
 			{
-				m_SceneData.ViewProjectionMatrix = viewProjection;
+				
 			}
 
 			void EndScene() noexcept
