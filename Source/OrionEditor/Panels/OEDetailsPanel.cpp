@@ -6,7 +6,7 @@ namespace OrionEngine::OrionEditor
 {
 	bool OEDetailsPanel::DrawEntityDetails()
 	{
-		if (m_EditorContext->SelectedEntity == ECS::INVALID_GAME_ENTITY_ID)
+		if (m_EditorContext.SelectedEntity == ECS::INVALID_GAME_ENTITY_ID)
 		{
 			ImGui::Text("No entities selected yet.");
 			return false;
@@ -15,15 +15,15 @@ namespace OrionEngine::OrionEditor
 		ImGui::Text("Game Entity Name: "); 
 		ImGui::SameLine();
 
-		std::string entityName = m_Registry->GetEntityNameByID(m_EditorContext->SelectedEntity);
+		std::string entityName = m_Registry->GetEntityNameByID(m_EditorContext.SelectedEntity);
 		if (ImGui::InputText(entityName.c_str(), m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer, sizeof(m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer)))
-			m_Registry->SetEntityName(m_EditorContext->SelectedEntity, std::string(m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer));
+			m_Registry->SetEntityName(m_EditorContext.SelectedEntity, std::string(m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer));
 
-		ImGui::Text("Game Entity ID: %d", m_EditorContext->SelectedEntity); 
+		ImGui::Text("Game Entity ID: %d", m_EditorContext.SelectedEntity); 
 
 		if (ImGui::CollapsingHeader("Transform Component"))
 		{
-			if (ECS::OETransformComponent* transform = m_Registry->TransformComponent.GetComponent(m_EditorContext->SelectedEntity))
+			if (ECS::OETransformComponent* transform = m_Registry->TransformComponent.GetComponent(m_EditorContext.SelectedEntity))
 			{
 				ImGui::DragFloat3("Position: ", &transform->Position[0], 0.1f);
 				ImGui::DragFloat3("Rotation: ", &transform->Rotation[0], 0.1f);
@@ -33,7 +33,7 @@ namespace OrionEngine::OrionEditor
 
 		if (ImGui::CollapsingHeader("Physics Component"))
 		{
-			if (ECS::OEPhysicsComponent* physics = m_Registry->PhysicsComponent.GetComponent(m_EditorContext->SelectedEntity))
+			if (ECS::OEPhysicsComponent* physics = m_Registry->PhysicsComponent.GetComponent(m_EditorContext.SelectedEntity))
 			{
 				ImGui::DragFloat("Mass: ", &physics->Mass, 0.1f);
 				ImGui::DragFloat3("Velocity: ", &physics->Velocity[0], 0.1f);
@@ -46,7 +46,7 @@ namespace OrionEngine::OrionEditor
 
 		if (ImGui::CollapsingHeader("Renderable Component"))
 		{
-			if (ECS::OERenderableComponent* render = m_Registry->RenderableComponent.GetComponent(m_EditorContext->SelectedEntity))
+			if (ECS::OERenderableComponent* render = m_Registry->RenderableComponent.GetComponent(m_EditorContext.SelectedEntity))
 			{
 				if (ImGui::Checkbox("Is Visible", &render->b_Visible)) {}
 			}
@@ -54,7 +54,7 @@ namespace OrionEngine::OrionEditor
 
 		if (ImGui::CollapsingHeader("Camera Component"))
 		{
-			if (ECS::OECameraComponent* camera = m_Registry->CameraComponent.GetComponent(m_EditorContext->SelectedEntity))
+			if (ECS::OECameraComponent* camera = m_Registry->CameraComponent.GetComponent(m_EditorContext.SelectedEntity))
 			{
 				if (ImGui::Checkbox("Primary: ", &camera->Primary)) {}
 				ImGui::DragFloat("Near Clip: ", &camera->NearClip, 0.1f);
@@ -91,33 +91,33 @@ namespace OrionEngine::OrionEditor
 			{
 				if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 0)
 				{
-					if (!m_Registry->HasComponent<ECS::OETransformComponent>(m_EditorContext->SelectedEntity))
+					if (!m_Registry->HasComponent<ECS::OETransformComponent>(m_EditorContext.SelectedEntity))
 					{
 						ECS::OETransformComponent transform;
 						transform.Position = { 0.0f, 0.0f, 0.0f };
 						transform.Rotation = { 0.0f, 0.0f, 0.0f };
 						transform.Scale = { 1.0f, 1.0f, 1.0f };
 
-						m_Registry->TransformComponent.AddComponent(m_EditorContext->SelectedEntity, transform);
+						m_Registry->TransformComponent.AddComponent(m_EditorContext.SelectedEntity, transform);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Transform Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %d already has a Transform Component!", entityName, m_EditorContext.SelectedEntity);
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 1)
 				{
-					if (!m_Registry->HasComponent<ECS::OEPhysicsComponent>(m_EditorContext->SelectedEntity))
+					if (!m_Registry->HasComponent<ECS::OEPhysicsComponent>(m_EditorContext.SelectedEntity))
 					{
 						ECS::OEPhysicsComponent physics;
 
 						// All properties already set, no need to set them now like in transform component
-						m_Registry->PhysicsComponent.AddComponent(m_EditorContext->SelectedEntity, physics);
+						m_Registry->PhysicsComponent.AddComponent(m_EditorContext.SelectedEntity, physics);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Physics Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %d already has a Physics Component!", entityName, m_EditorContext.SelectedEntity);
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 2)
 				{
-					if (!m_Registry->HasComponent<ECS::OERenderableComponent>(m_EditorContext->SelectedEntity))
+					if (!m_Registry->HasComponent<ECS::OERenderableComponent>(m_EditorContext.SelectedEntity))
 					{
 						ECS::OERenderableComponent render;
 						render.b_Visible = true;
@@ -129,14 +129,14 @@ namespace OrionEngine::OrionEditor
 						// but it should NOT know anything about how those things are rendered. 
 						// Rendering is low level. The editor, which sits on top of the engine, uses the engine API, and does not use the renderer API
 						// The engine only uses the renderer API to render all entities in a given scene
-						m_Registry->RenderableComponent.AddComponent(m_EditorContext->SelectedEntity, render);
+						m_Registry->RenderableComponent.AddComponent(m_EditorContext.SelectedEntity, render);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Renderable Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %d already has a Renderable Component!", entityName, m_EditorContext.SelectedEntity);
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 3)
 				{
-					if (!m_Registry->HasComponent<ECS::OECameraComponent>(m_EditorContext->SelectedEntity))
+					if (!m_Registry->HasComponent<ECS::OECameraComponent>(m_EditorContext.SelectedEntity))
 					{
 						ECS::OECameraComponent cameraComp;
 
@@ -145,10 +145,10 @@ namespace OrionEngine::OrionEditor
 						cameraComp.FarClip = 1000.0f;
 						cameraComp.Primary = true;
 
-						m_Registry->CameraComponent.AddComponent(m_EditorContext->SelectedEntity, cameraComp);
+						m_Registry->CameraComponent.AddComponent(m_EditorContext.SelectedEntity, cameraComp);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Camera Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %d already has a Camera Component!", entityName, m_EditorContext.SelectedEntity);
 				}
 				else; // do nothing (lol)
 				ImGui::CloseCurrentPopup();
@@ -190,13 +190,13 @@ namespace OrionEngine::OrionEditor
 			if (ImGui::Button("OK"))
 			{
 				if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeDeletionIndex == 0)
-					m_Registry->TransformComponent.DeleteComponent(m_EditorContext->SelectedEntity);
+					m_Registry->TransformComponent.DeleteComponent(m_EditorContext.SelectedEntity);
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeDeletionIndex == 1)
-					m_Registry->PhysicsComponent.DeleteComponent(m_EditorContext->SelectedEntity);
+					m_Registry->PhysicsComponent.DeleteComponent(m_EditorContext.SelectedEntity);
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeDeletionIndex == 2)
-					m_Registry->RenderableComponent.DeleteComponent(m_EditorContext->SelectedEntity);
+					m_Registry->RenderableComponent.DeleteComponent(m_EditorContext.SelectedEntity);
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeDeletionIndex == 3)
-					m_Registry->CameraComponent.DeleteComponent(m_EditorContext->SelectedEntity);
+					m_Registry->CameraComponent.DeleteComponent(m_EditorContext.SelectedEntity);
 				else; // do nothing (lol)
 				ImGui::CloseCurrentPopup();
 

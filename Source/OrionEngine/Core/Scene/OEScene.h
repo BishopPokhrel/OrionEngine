@@ -32,6 +32,8 @@ namespace OrionEngine
 		
 		OrionRenderer::ORCamera GetCurrentCamera() const noexcept { return m_Camera; }
 
+		std::string GetSceneName() const noexcept { return m_OESceneName; }
+
 	private:
 		std::string m_OESceneName;
 		Scope<ECS::OEECSRegistry> m_Registry; // each scene owns each ECS registrry
@@ -39,4 +41,4 @@ namespace OrionEngine
 
 		OrionRenderer::ORCamera m_Camera = OrionRenderer::ORCamera(0.0f, 0.0f, 0.0f, 0.0f);
 	};
-} 
+}  

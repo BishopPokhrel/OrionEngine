@@ -37,7 +37,7 @@ namespace OrionEngine::OrionEditor
 
 	private:
 
-		OEEditorContext* m_EditorContext = nullptr;
+		OEEditorContext m_EditorContext;
 		ECS::OEECSRegistry* m_Registry = nullptr;
 		OEDPDataNeeded m_OEDPDataNeeded;
 	};

@@ -8,7 +8,7 @@ namespace OrionEngine
 	{
 		m_OESceneName = name;
 		m_Registry = CreateScope<ECS::OEECSRegistry>();
-		m_Created = IsCreated();
+		m_Created = true;
 	}
 
 	void OEScene::DeleteScene() noexcept

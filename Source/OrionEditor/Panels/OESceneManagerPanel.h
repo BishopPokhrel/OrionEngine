@@ -24,9 +24,13 @@ namespace OrionEngine::OrionEditor
 			
 		};
 
-		Scope<CreationDataNeeded> CreationDataNeeded;
-		Scope<DeletionDataNeeded> DeletionDataNeeded;
-		Scope<EditableDataNeeded> EditableDataNeeded;
+		using CreationData = CreationDataNeeded;
+		using DeletionData = DeletionDataNeeded;
+		using EditableData = EditableDataNeeded;
+
+		Scope<CreationData> CreationDataNeeded = CreateScope<CreationData>();
+		Scope<DeletionData> DeletionDataNeeded = CreateScope<DeletionData>();
+		Scope<EditableData> EditableDataNeeded = CreateScope<EditableData>();
 	};
 
 	class OESceneManagerPanel
@@ -41,7 +45,7 @@ namespace OrionEngine::OrionEditor
 
 	private:
 
-		OEScene* m_CurrentScene = nullptr;
+		OEScene m_CurrentScene;
 		std::string m_SceneName;
 		OESMPDataNeeded m_OESMPDataNeeded;
 	};

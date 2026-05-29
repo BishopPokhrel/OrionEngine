@@ -34,13 +34,12 @@ namespace OrionEngine::OrionEditor
     bool OESceneHierarchyPanel::DrawCommandPalette()
     {
         m_OpenCommandPalette = true;
-        if (m_OpenCommandPalette)
+        if (ImGui::Button("Command Palette"))
         {
             ImGui::OpenPopup("Command Palette");
-            m_OpenCommandPalette = false; 
         }
 
-        if (ImGui::BeginPopupModal("Command Palette", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        if (ImGui::BeginPopupModal("Command Palette", nullptr, ImGuiWindowFlags_None))
         {
             if (ImGui::BeginMenu("Add..."))
             {
@@ -69,11 +68,9 @@ namespace OrionEngine::OrionEditor
 
                     // All checks passed, so we create a new entity
                     // Create popup for Game Entity name first
-                    m_OESHPDataNeeded.CreationDataNeeded->OpenGameEntityNameDialog = true;
-                    if (m_OESHPDataNeeded.CreationDataNeeded->OpenGameEntityNameDialog)
+                    if (ImGui::Button("Create Game Entity"))
                     {
                         ImGui::OpenPopup("New Game Entity");
-                        m_OESHPDataNeeded.CreationDataNeeded->OpenGameEntityNameDialog = false;
                     }
 
                     if (ImGui::BeginPopupModal("New Game Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -111,11 +108,9 @@ namespace OrionEngine::OrionEditor
                 {
                     if (ImGui::MenuItem("Transform Component"))
                     {
-                        m_OESHPDataNeeded.CreationDataNeeded->OpenNewTransformComponentDialog = true;
-                        if (m_OESHPDataNeeded.CreationDataNeeded->OpenNewTransformComponentDialog)
+                        if (ImGui::Button("New Transform Component"))
                         {
                             ImGui::OpenPopup("New Transform Component");
-                            m_OESHPDataNeeded.CreationDataNeeded->OpenNewTransformComponentDialog = false;
                         }
 
                         if (ImGui::BeginPopupModal("New Transform Component", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -145,11 +140,9 @@ namespace OrionEngine::OrionEditor
 
                     if (ImGui::MenuItem("Physics Component"))
                     {
-                        m_OESHPDataNeeded.CreationDataNeeded->OpenNewPhysicsComponentDialog = true;
-                        if (m_OESHPDataNeeded.CreationDataNeeded->OpenNewPhysicsComponentDialog)
+                        if (ImGui::Button("New Physics Component"))
                         {
                             ImGui::OpenPopup("New Physics Component");
-                            m_OESHPDataNeeded.CreationDataNeeded->OpenNewPhysicsComponentDialog = false;
                         }
 
                         if (ImGui::BeginPopupModal("New Physics Component", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -174,11 +167,9 @@ namespace OrionEngine::OrionEditor
 
                     if (ImGui::MenuItem("Renderable Component"))
                     {
-                        m_OESHPDataNeeded.CreationDataNeeded->OpenNewRenderableComponentDialog = true;
-                        if (m_OESHPDataNeeded.CreationDataNeeded->OpenNewRenderableComponentDialog)
+                        if (ImGui::Button("New Rendererable Component"))
                         {
                             ImGui::OpenPopup("New Renderable Component");
-                            m_OESHPDataNeeded.CreationDataNeeded->OpenNewRenderableComponentDialog = false;
                         }
 
                         if (ImGui::BeginPopupModal("New Renderable Component", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -210,11 +201,9 @@ namespace OrionEngine::OrionEditor
                 {
                     if (ImGui::MenuItem("Game Entity"))
                     {
-                        m_OESHPDataNeeded.DeletionDataNeeded->OpenGameEntityDeletionDialog = true;
-                        if (m_OESHPDataNeeded.DeletionDataNeeded->OpenGameEntityDeletionDialog)
+                        if (ImGui::Button("Delete Game Entity"))
                         {
                             ImGui::OpenPopup("Game Entity Deletion");
-                            m_OESHPDataNeeded.DeletionDataNeeded->OpenGameEntityDeletionDialog = false;
                         }
 
                         if (ImGui::BeginPopupModal("Game Entity Deletion", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -237,11 +226,9 @@ namespace OrionEngine::OrionEditor
 
                     if (ImGui::MenuItem("Component"))
                     {
-                        m_OESHPDataNeeded.DeletionDataNeeded->OpenComponentDeletionDialog = true;
-                        if (m_OESHPDataNeeded.DeletionDataNeeded->OpenComponentDeletionDialog)
+                        if (ImGui::Button("Delete Component"))
                         {
                             ImGui::OpenPopup("Component Deletion");
-                            m_OESHPDataNeeded.DeletionDataNeeded->OpenComponentDeletionDialog = false;
                         }
 
                         if (ImGui::BeginPopupModal("Component Deletion", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -304,9 +291,7 @@ namespace OrionEngine::OrionEditor
         ImGui::Begin("Scene Hierachy");
 
         ShowSceneHierachy();
-
-        if (ImGui::Button("Command Palette"))
-            DrawCommandPalette();
+        DrawCommandPalette();
 
         ImGui::End();
         return true;

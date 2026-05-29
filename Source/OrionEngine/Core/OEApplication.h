@@ -5,6 +5,8 @@
 #include <OrionEngine/Engine/OEngine.h>
 #include <OrionEngine/OrionRenderer/Platform/Window/GLFWWindow.h>
 
+#include <OrionEditor/OEImGuiLayer.h>
+
 #include "OERef.h"
 
 namespace OrionEngine
@@ -26,6 +28,7 @@ namespace OrionEngine
 		Scope<OEngine> m_OEngine;
 		Scope<OrionRenderer::GLFWWindow> m_Window;
 		OrionRenderer::WindowProps m_WindowProps;
+		OrionEditor::OEImGuiLayer m_ImGuiLayer;
 
 		bool m_Running = false; 
 	};

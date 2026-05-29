@@ -16,6 +16,8 @@ namespace OrionEngine
 		m_WindowProps.Title = "Orion Engine";
 		m_WindowProps.VSyncEnabled = true;
 		m_Window = CreateScope<OrionRenderer::GLFWWindow>(m_WindowProps);
+
+		m_ImGuiLayer.InitImGui(m_Window->GetNativeWindow());
 		return true;
 	}
 
@@ -30,16 +32,25 @@ namespace OrionEngine
 			float dt = OETime::OEGetDeltaTime();
 
 			m_OEngine->OBeginFrame();
-
 			m_OEngine->OTick(dt);
 			m_OEngine->GetInputSystem()->Update(m_Window->GetNativeWindow());
+
 			m_OEngine->Render();
+
+			m_ImGuiLayer.StartImGuiNewFrame();
+
+			m_ImGuiLayer.CreateDockspace();
+
+			m_ImGuiLayer.ShowSceneHierarchyPanel();
+			m_ImGuiLayer.ShowDetailsPanel();
+			m_ImGuiLayer.ShowSceneManagerPanel();
+
+			m_ImGuiLayer.RenderImGui();
 
 			m_Window->OnUpdate();
 
 			m_OEngine->OEndFrame();
 		}
-
 		return true;
 	}
 
@@ -47,6 +58,7 @@ namespace OrionEngine
 	{
 		ORION_ENGINE_INFO("Orion Engine is shutting down!");
 		
+		m_ImGuiLayer.ShutdownImGui();
 		m_OEngine->OShutdownEngineSubsystems(); // Shutdown the subsystems first
 		m_OEngine->OEngineShutdown(); // Fully shut down the engine
 		return true;

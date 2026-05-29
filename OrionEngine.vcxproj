@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="imgui.ini" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +145,7 @@
     <ClCompile Include="Source\OrionEngine\Core\OERef.h" />
     <ClCompile Include="Source\OrionEngine\Core\OETime.h" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\Scene\OESceneSerializer.cpp" />
     <ClCompile Include="Source\OrionEngine\Engine\OEngine.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommandPipeline.cpp" />
@@ -179,6 +181,7 @@
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
     <ClInclude Include="Source\OrionEngine\Core\OELogging.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
+    <ClInclude Include="Source\OrionEngine\Core\Scene\OESceneSerializer.h" />
     <ClInclude Include="Source\OrionEngine\Engine\OEngine.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORGraphicsAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.h" />
