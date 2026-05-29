@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 namespace OrionEngine
 {
@@ -18,12 +19,13 @@ namespace OrionEngine
 			Fatal
 		};
 
+		template<typename... Args>
 		inline static void Log(
 			LogLevel level,
-			const std::string& msg,
 			const char* file,
 			int line,
-			const char* func)
+			const char* func,
+			Args&&... args)
 		{
 			std::ostream& out =
 				(level == LogLevel::Error || level == LogLevel::Fatal)
@@ -36,45 +38,45 @@ namespace OrionEngine
 				(level == LogLevel::Error) ? "ERROR" :
 				"FATAL";
 
-			out << "[" << lvl << "] " << msg << "\n"
+			std::stringstream ss;
+
+			(ss << ... << args);
+
+			out << "[" << lvl << "] "
+				<< ss.str() << "\n"
 				<< "  FILE: " << file << "\n"
 				<< "  LINE: " << line << "\n"
 				<< "  FUNC: " << func << "\n\n";
 		}
 	};
-
-	inline void OrionLog(
-		Logging::LogLevel level,
-		const std::string& msg,
-		const char* file,
-		int line,
-		const char* func)
-	{
-		Logging::Log(level, msg, file, line, func);
-	}
 }
 
-#define ORION_ENGINE_DEBUG(msg) \
-	OrionEngine::OrionLog( \
+#define ORION_ENGINE_DEBUG(...) \
+	OrionEngine::Logging::Log( \
 		OrionEngine::Logging::LogLevel::Debug, \
-		msg, __FILE__, __LINE__, __FUNCTION__)
+		__FILE__, __LINE__, __FUNCTION__, \
+		__VA_ARGS__)
 
-#define ORION_ENGINE_INFO(msg) \
-	OrionEngine::OrionLog( \
+#define ORION_ENGINE_INFO(...) \
+	OrionEngine::Logging::Log( \
 		OrionEngine::Logging::LogLevel::Info, \
-		msg, __FILE__, __LINE__, __FUNCTION__)
+		__FILE__, __LINE__, __FUNCTION__, \
+		__VA_ARGS__)
 
-#define ORION_ENGINE_WARNING(msg) \
-	OrionEngine::OrionLog( \
+#define ORION_ENGINE_WARNING(...) \
+	OrionEngine::Logging::Log( \
 		OrionEngine::Logging::LogLevel::Warning, \
-		msg, __FILE__, __LINE__, __FUNCTION__)
+		__FILE__, __LINE__, __FUNCTION__, \
+		__VA_ARGS__)
 
-#define ORION_ENGINE_ERROR(msg) \
-	OrionEngine::OrionLog( \
+#define ORION_ENGINE_ERROR(...) \
+	OrionEngine::Logging::Log( \
 		OrionEngine::Logging::LogLevel::Error, \
-		msg, __FILE__, __LINE__, __FUNCTION__)
+		__FILE__, __LINE__, __FUNCTION__, \
+		__VA_ARGS__)
 
-#define ORION_ENGINE_FATAL_ERROR(msg) \
-	OrionEngine::OrionLog( \
+#define ORION_ENGINE_FATAL_ERROR(...) \
+	OrionEngine::Logging::Log( \
 		OrionEngine::Logging::LogLevel::Fatal, \
-		msg, __FILE__, __LINE__, __FUNCTION__)
+		__FILE__, __LINE__, __FUNCTION__, \
+		__VA_ARGS__)
