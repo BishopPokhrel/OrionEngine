@@ -11,6 +11,7 @@ Please follow the steps below to build **Orion Engine**
 - Dear ImGui
 - GLFW & GLAD
 - GLM
+- YAML
 
 ---
 
