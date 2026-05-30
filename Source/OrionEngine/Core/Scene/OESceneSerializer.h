@@ -1,19 +1,22 @@
 #pragma once
 
 #include <OrionEngine/Core/OERef.h>
+#include <yaml-cpp/yaml.h>
 
 #include <filesystem>
+#include "OEScene.h"
 
 namespace OrionEngine
 {
-	class OEScene; // forward declare
 	class OESceneSerializer
 	{
 	public:
 
 		bool CreateOEProjectDirectory(const std::string& projectName);
-		bool SerializeEntities();
+		bool SerializeEntities(YAML::Emitter& out, const std::filesystem::path& path);
 		bool SerializeScene();
+
+		bool DoesProjectExist(const std::string& projectName);
 
 	private:
 
@@ -23,6 +26,7 @@ namespace OrionEngine
 		{
 			bool AssetDirectoryCreated = false;
 			bool ScriptsDirectoryCreated = false;
+			bool ProjectDirectoryCreated = false; 
 			
 			struct FilesCreated
 			{
@@ -39,6 +43,7 @@ namespace OrionEngine
 				// FOLDERS
 				bool FailedToCreateAssetsDirectory = false;
 				bool FailedToCreateScriptsDirectory = false;
+				bool FailedToCreateProjectDirectory = false; 
 			};
 
 			Scope<FilesCreated> pFilesCreated = CreateScope<FilesCreated>();
