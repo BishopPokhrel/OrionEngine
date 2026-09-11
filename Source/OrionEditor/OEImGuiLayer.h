@@ -12,13 +12,17 @@ namespace OrionEngine::OrionEditor
 	{
 	public:
 
+		OEImGuiLayer()
+			: m_SceneHierarchyPanel(m_EditorContext.get())
+		{ }
+
 		bool InitImGui(GLFWwindow* window);
 		bool ShutdownImGui();
 
 		bool StartImGuiNewFrame();
 		bool RenderImGui();
 
-		bool ShowSceneHierarchyPanel();
+		bool ShowSceneHierarchyPanel(OEScene* scene);
 		bool ShowDetailsPanel();
 		bool ShowSceneManagerPanel();
 
@@ -29,5 +33,6 @@ namespace OrionEngine::OrionEditor
 		OEDetailsPanel m_DetailsPanel;
 		OESceneHierarchyPanel m_SceneHierarchyPanel;
 		OESceneManagerPanel m_SceneManagerPanel;
+		Scope<OEEditorContext> m_EditorContext = CreateScope<OEEditorContext>();
 	};
 }

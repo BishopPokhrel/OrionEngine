@@ -31,6 +31,7 @@ namespace OrionEngine
 		void Render();
 
 		OEInputSystem* GetInputSystem() { return m_InputSystem.get(); }
+		OEScene* GetScene() { return m_Scene.get(); }
 
 	private:
 

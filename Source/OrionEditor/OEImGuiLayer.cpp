@@ -11,7 +11,7 @@ namespace OrionEngine::OrionEditor
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); 
-		(void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		ImGui::StyleColorsDark();
 
@@ -44,8 +44,9 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
-	bool OEImGuiLayer::ShowSceneHierarchyPanel()
+	bool OEImGuiLayer::ShowSceneHierarchyPanel(OEScene* scene)
 	{
+		m_SceneHierarchyPanel.SetRegistry(scene->GetRegistry());
 		m_SceneHierarchyPanel.DrawSceneHierarchyPanel();
 		return true;
 	}

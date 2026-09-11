@@ -41,7 +41,7 @@ namespace OrionEngine
 
 			m_ImGuiLayer.CreateDockspace();
 
-			m_ImGuiLayer.ShowSceneHierarchyPanel();
+			m_ImGuiLayer.ShowSceneHierarchyPanel(m_OEngine->GetScene());
 			m_ImGuiLayer.ShowDetailsPanel();
 			m_ImGuiLayer.ShowSceneManagerPanel();
 

@@ -13,7 +13,7 @@ namespace OrionEngine::OrionEditor
 {
 	struct OESHPDataNeeded
 	{
-		struct CreationDataNeeded
+		struct OCreationDataNeeded
 		{
 			bool OpenMaxGameEntitiesReached = false; 
 			char GameEntityNameBuffer[1024];
@@ -30,7 +30,7 @@ namespace OrionEngine::OrionEditor
 			char GameEntityNameBufferForRCCreation[1024];
 		};
 
-		struct DeletionDataNeeded
+		struct ODeletionDataNeeded
 		{
 			char GameEntityNameBufferToDelete[1024];
 			bool OpenGameEntityDeletionDialog = false; 
@@ -39,13 +39,19 @@ namespace OrionEngine::OrionEditor
 			int ComponentDeletionIndex = 0;
 		};
 		
-		Scope<CreationDataNeeded> CreationDataNeeded;
-		Scope<DeletionDataNeeded> DeletionDataNeeded;
+		Scope<OCreationDataNeeded> CreationDataNeeded = CreateScope<OCreationDataNeeded>();
+		Scope<ODeletionDataNeeded> DeletionDataNeeded = CreateScope<ODeletionDataNeeded>();
 	};
 
 	class OESceneHierarchyPanel
 	{
 	public:
+
+		explicit OESceneHierarchyPanel(OEEditorContext* context)
+			: m_EditorContext(context)
+		{}
+
+		void SetRegistry(ECS::OEECSRegistry& registry) { m_Registry = &registry; }
 
 		bool ShowSceneHierachy();
 		bool DrawSceneHierarchyPanel();
@@ -56,6 +62,6 @@ namespace OrionEngine::OrionEditor
 		ECS::OEECSRegistry* m_Registry = nullptr;
 		OEEditorContext* m_EditorContext = nullptr;
 		OESHPDataNeeded m_OESHPDataNeeded;
-		bool m_OpenCommandPalette;
+		bool m_OpenCommandPalette = false;
 	};
 }
