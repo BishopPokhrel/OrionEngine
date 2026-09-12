@@ -13,7 +13,7 @@ namespace OrionEngine::OrionEditor
 	public:
 
 		OEImGuiLayer()
-			: m_SceneHierarchyPanel(m_EditorContext.get())
+			: m_SceneHierarchyPanel(m_EditorContext.get()), m_DetailsPanel(m_EditorContext.get())
 		{ }
 
 		bool InitImGui(GLFWwindow* window);
@@ -23,7 +23,7 @@ namespace OrionEngine::OrionEditor
 		bool RenderImGui();
 
 		bool ShowSceneHierarchyPanel(OEScene* scene);
-		bool ShowDetailsPanel();
+		bool ShowDetailsPanel(OEScene* scene);
 		bool ShowSceneManagerPanel();
 
 		bool CreateDockspace();

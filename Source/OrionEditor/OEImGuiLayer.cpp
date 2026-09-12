@@ -51,8 +51,9 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
-	bool OEImGuiLayer::ShowDetailsPanel()
+	bool OEImGuiLayer::ShowDetailsPanel(OEScene* scene)
 	{
+		m_DetailsPanel.SetRegistry(scene->GetRegistry());
 		m_DetailsPanel.DrawDetailsPanel();
 		return true;
 	}
