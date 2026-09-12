@@ -65,6 +65,13 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
+	bool OEImGuiLayer::ShowCommandPanel(OEScene* scene)
+	{
+		m_CommandPanel.SetRegistry(scene->GetRegistry());
+		m_CommandPanel.DrawOECommandPanel();
+		return true;
+	}
+
 	bool OEImGuiLayer::CreateDockspace()
 	{
 		ImGuiWindowFlags windowFlags =

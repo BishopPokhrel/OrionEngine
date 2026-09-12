@@ -3,6 +3,7 @@
 #include "Panels/OEDetailsPanel.h"
 #include "Panels/OESceneHierarchyPanel.h"
 #include "Panels/OESceneManagerPanel.h"
+#include "Panels/OECommandPanel.h"
 
 #include <GLFW/glfw3.h>
 
@@ -13,7 +14,8 @@ namespace OrionEngine::OrionEditor
 	public:
 
 		OEImGuiLayer()
-			: m_SceneHierarchyPanel(m_EditorContext.get()), m_DetailsPanel(m_EditorContext.get())
+			: m_SceneHierarchyPanel(m_EditorContext.get()), m_DetailsPanel(m_EditorContext.get()), 
+			m_CommandPanel(m_EditorContext.get())
 		{ }
 
 		bool InitImGui(GLFWwindow* window);
@@ -25,6 +27,7 @@ namespace OrionEngine::OrionEditor
 		bool ShowSceneHierarchyPanel(OEScene* scene);
 		bool ShowDetailsPanel(OEScene* scene);
 		bool ShowSceneManagerPanel(OEScene* scene);
+		bool ShowCommandPanel(OEScene* scene);
 
 		bool CreateDockspace();
 
@@ -35,5 +38,6 @@ namespace OrionEngine::OrionEditor
 		OEDetailsPanel m_DetailsPanel;
 		OESceneHierarchyPanel m_SceneHierarchyPanel;
 		OESceneManagerPanel m_SceneManagerPanel;
+		OECommandPanel m_CommandPanel;
 	};
 }
