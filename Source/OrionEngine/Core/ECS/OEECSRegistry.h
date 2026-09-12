@@ -43,7 +43,7 @@ namespace OrionEngine
 
             void SetEntityName(OEGameEntityID id, const std::string& name);
 
-            const std::vector<OEGameEntityID>& GetAllEntityIDs() const noexcept;
+            std::vector<OEGameEntityID> GetAllEntityIDs() const noexcept;
             const std::vector<OEGameEntityData>& GetAllGameEntities() const noexcept { return m_Entities; }
             void ResizeVectorToMax() {
                 if (m_Entities.size() >= ECS::MAX_GAME_ENTITIES)
@@ -81,7 +81,7 @@ namespace OrionEngine
 
         private:
 
-            OEGameEntityID m_NextID = 0;
+            OEGameEntityID m_NextID = 1;
 
             std::vector<OEGameEntityData> m_Entities;
 

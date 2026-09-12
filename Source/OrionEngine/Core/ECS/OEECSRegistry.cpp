@@ -34,6 +34,7 @@ namespace OrionEngine
                     TransformComponent.DeleteComponent(id);
                     PhysicsComponent.DeleteComponent(id);
                     RenderableComponent.DeleteComponent(id);
+                    CameraComponent.DeleteComponent(id);
 
                     // remove entity
                     m_Entities.erase(it);
@@ -87,7 +88,7 @@ namespace OrionEngine
             }
         }
 
-        const std::vector<OEGameEntityID>& OEECSRegistry::GetAllEntityIDs() const noexcept
+        std::vector<OEGameEntityID> OEECSRegistry::GetAllEntityIDs() const noexcept
         {
             std::vector<OEGameEntityID> ids;
             ids.reserve(m_Entities.size());
@@ -115,7 +116,7 @@ namespace OrionEngine
             RenderableComponent.Clear();
             CameraComponent.Clear();
 
-            m_NextID = 0;
+            m_NextID = 1;
         }
     }
 }
