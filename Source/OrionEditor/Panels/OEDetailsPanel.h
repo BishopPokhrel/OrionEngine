@@ -13,31 +13,37 @@ namespace OrionEngine::OrionEditor
 {
 	struct OEDPDataNeeded
 	{
-		struct GameEntityDataNeeded
+		struct OGameEntityDataNeeded
 		{
 			char GameEntityNameBuffer[1024];
 		};
 
-		struct ComponentDataNeeded
+		struct OComponentDataNeeded
 		{
 			int ComponentTypeCreationIndex = 0;
 			int ComponentTypeDeletionIndex = 0;
 		};
 
-		Scope<GameEntityDataNeeded> GameEntityDataNeeded;
-		Scope<ComponentDataNeeded> ComponentDataNeeded;
+		Scope<OGameEntityDataNeeded> GameEntityDataNeeded = CreateScope<OGameEntityDataNeeded>();
+		Scope<OComponentDataNeeded> ComponentDataNeeded = CreateScope<OComponentDataNeeded>();
 	};
 
 	class OEDetailsPanel
 	{
 	public:
 
+		explicit OEDetailsPanel(OEEditorContext* context)
+			: m_EditorContext(context)
+		{ }
+
+		void SetRegistry(ECS::OEECSRegistry& registry) { m_Registry = &registry; }
+
 		bool DrawEntityDetails();
 		bool DrawDetailsPanel();
 
 	private:
 
-		OEEditorContext m_EditorContext;
+		OEEditorContext* m_EditorContext = nullptr;
 		ECS::OEECSRegistry* m_Registry = nullptr;
 		OEDPDataNeeded m_OEDPDataNeeded;
 	};
