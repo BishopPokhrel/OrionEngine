@@ -24,15 +24,16 @@ namespace OrionEngine::OrionEditor
 
 		bool ShowSceneHierarchyPanel(OEScene* scene);
 		bool ShowDetailsPanel(OEScene* scene);
-		bool ShowSceneManagerPanel();
+		bool ShowSceneManagerPanel(OEScene* scene);
 
 		bool CreateDockspace();
 
 	private:
 
+		Scope<OEEditorContext> m_EditorContext = CreateScope<OEEditorContext>();
+
 		OEDetailsPanel m_DetailsPanel;
 		OESceneHierarchyPanel m_SceneHierarchyPanel;
 		OESceneManagerPanel m_SceneManagerPanel;
-		Scope<OEEditorContext> m_EditorContext = CreateScope<OEEditorContext>();
 	};
 }

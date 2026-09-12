@@ -58,8 +58,9 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
-	bool OEImGuiLayer::ShowSceneManagerPanel()
+	bool OEImGuiLayer::ShowSceneManagerPanel(OEScene* scene)
 	{
+		m_SceneManagerPanel.SetScene(scene);
 		m_SceneManagerPanel.DrawSceneManagerPanel();
 		return true;
 	}
