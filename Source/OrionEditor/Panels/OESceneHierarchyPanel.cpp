@@ -8,7 +8,7 @@ namespace OrionEngine::OrionEditor
         if (!m_Registry)
             return false;
 
-        auto& entities = m_Registry->GetAllEntityIDs();
+        auto entities = m_Registry->GetAllEntityIDs();
 
         if (entities.empty())
         {
