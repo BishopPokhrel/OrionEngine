@@ -42,7 +42,7 @@ namespace OrionEngine
 			m_ImGuiLayer.CreateDockspace();
 
 			m_ImGuiLayer.ShowSceneHierarchyPanel(m_OEngine->GetScene());
-			m_ImGuiLayer.ShowDetailsPanel();
+			m_ImGuiLayer.ShowDetailsPanel(m_OEngine->GetScene());
 			m_ImGuiLayer.ShowSceneManagerPanel();
 
 			m_ImGuiLayer.RenderImGui();
