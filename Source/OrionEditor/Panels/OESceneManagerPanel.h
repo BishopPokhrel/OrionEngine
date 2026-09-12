@@ -37,6 +37,8 @@ namespace OrionEngine::OrionEditor
 	{
 	public:
 
+		void SetScene(OEScene* scene) { m_CurrentScene = scene; }
+
 		bool DrawSceneCreation();
 		bool DrawSceneDeletion();
 		bool DrawSceneMetadata();
@@ -45,7 +47,7 @@ namespace OrionEngine::OrionEditor
 
 	private:
 
-		OEScene m_CurrentScene;
+		OEScene* m_CurrentScene = nullptr;
 		std::string m_SceneName;
 		OESMPDataNeeded m_OESMPDataNeeded;
 	};
