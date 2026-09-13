@@ -15,7 +15,7 @@ namespace OrionEngine
 		{
 		public:
 
-			OpenGLIndexBuffer(uint32_t* indices, uint32_t count) noexcept;
+			OpenGLIndexBuffer(const uint32_t* indices, uint32_t count) noexcept;
 			~OpenGLIndexBuffer() noexcept;
 
 			void Bind() const noexcept override;

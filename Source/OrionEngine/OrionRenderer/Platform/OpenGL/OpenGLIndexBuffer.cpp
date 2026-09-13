@@ -6,7 +6,7 @@ namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
-		OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count) noexcept
+		OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, uint32_t count) noexcept
 		{
 			m_Count = count;
 
