@@ -7,9 +7,7 @@ namespace OrionEngine
 	bool OEApplication::EngineInit()
 	{
 		ORION_ENGINE_INFO("Orion Engine is initializing!");
-		m_OEngine = CreateScope<OEngine>();
-		m_OEngine->OInitEngineSubsystems();
-		
+
 		// Intialize or create the window
 		m_WindowProps.Width = 1280;
 		m_WindowProps.Height = 800;
@@ -17,6 +15,9 @@ namespace OrionEngine
 		m_WindowProps.VSyncEnabled = true;
 		m_Window = CreateScope<OrionRenderer::GLFWWindow>(m_WindowProps);
 
+		m_OEngine = CreateScope<OEngine>();
+		m_OEngine->OInitEngineSubsystems();
+		
 		m_ImGuiLayer.InitImGui(m_Window->GetNativeWindow());
 		return true;
 	}
