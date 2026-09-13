@@ -16,6 +16,12 @@ namespace OrionEngine
 			if (!transform || !render)
 				return;
 
+			if (!render->Shader)
+				render->Shader = ORDefaultRendererResources::GetDefaultShader();
+
+			if (!render->VertexArray)
+				render->VertexArray = ORDefaultRendererResources::GetDefaultVertexArray();
+
 			// Build Model Matrix
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->Position)
 				* glm::mat4_cast(glm::quat(transform->Rotation))
