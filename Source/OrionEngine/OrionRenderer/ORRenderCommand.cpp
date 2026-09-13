@@ -2,5 +2,5 @@
 
 namespace OrionEngine::OrionRenderer
 {
-	Scope<OpenGLRendererAPI> ORRenderCommand::s_RendererAPI = nullptr;
+	Scope<OpenGLRendererAPI> ORRenderCommand::s_RendererAPI = CreateScope<OpenGLRendererAPI>();
 }
