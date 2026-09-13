@@ -178,6 +178,7 @@ namespace OrionEngine::OrionEditor
 					{
 						ECS::OERenderableComponent render;
 						render.b_Visible = true;
+						OEEditorRenderCommands::InitializeRenderableRemaining(render);
 
 						if (m_EditorContext->SelectedEntity != ECS::INVALID_GAME_ENTITY_ID)
 							m_Registry->RenderableComponent.AddComponent(m_EditorContext->SelectedEntity, render);

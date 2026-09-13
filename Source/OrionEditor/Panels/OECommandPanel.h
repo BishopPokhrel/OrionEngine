@@ -2,6 +2,7 @@
 
 #include <OrionEngine/Core/ECS/OEECSRegistry.h>
 #include <OrionEditor/OEEditorContext.h>
+#include <OrionEditor/OEEditorRenderCommands.h>
 #include <OrionEngine/Core/OERef.h>
 
 namespace OrionEngine::OrionEditor
