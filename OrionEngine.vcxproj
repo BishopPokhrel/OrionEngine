@@ -132,6 +132,8 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.cpp" />
+    <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.h" />
     <ClCompile Include="Source\OrionEditor\OEImGuiLayer.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OECommandPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OEDetailsPanel.cpp" />
@@ -148,8 +150,8 @@
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OESceneSerializer.cpp" />
     <ClCompile Include="Source\OrionEngine\Engine\OEngine.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.cpp" />
-    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommandPipeline.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.cpp" />
@@ -185,13 +187,13 @@
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OESceneSerializer.h" />
     <ClInclude Include="Source\OrionEngine\Engine\OEngine.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORGraphicsAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORMesh.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLShaderAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCmd.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.h" />
-    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommandPipeline.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRendererAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORSceneData.h" />
