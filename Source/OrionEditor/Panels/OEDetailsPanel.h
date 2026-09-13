@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OrionEditor/OEEditorContext.h>
+#include <OrionEditor/OEEditorRenderCommands.h>
 
 // ECS includes
 #include <OrionEngine/Core/ECS/OEComponent.h>

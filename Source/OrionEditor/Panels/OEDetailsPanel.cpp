@@ -121,6 +121,7 @@ namespace OrionEngine::OrionEditor
 					{
 						ECS::OERenderableComponent render;
 						render.b_Visible = true;
+						OEEditorRenderCommands::InitializeRenderableRemaining(render);
 
 						// Other propeties are smart pointers (Ref: std::shared_ptr) so we cannot exactly set the default properties smoothly
 						// until they are set by the renderer, render system, or scene renderer
