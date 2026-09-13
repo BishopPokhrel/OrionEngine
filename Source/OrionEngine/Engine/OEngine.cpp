@@ -9,11 +9,16 @@ namespace OrionEngine
 	{
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
 		m_Scene->InitScene();
+		m_Renderer->Init(OrionRenderer::ORGraphicsAPI::OpenGL);
+		OrionRenderer::ORDefaultRendererResources::Initialize();
+		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get());
 	}
 
 	void OEngine::OShutdownEngineSubsystems()
 	{
-		// Unload/shutdown later (TODO)
+		m_SceneRenderer.reset();
+		OrionRenderer::ORDefaultRendererResources::Shutdown();
+		m_Renderer->Shutdown();
 	}
 
 	void OEngine::OEngineShutdown()
@@ -31,13 +36,13 @@ namespace OrionEngine
 	void OEngine::OBeginFrame()
 	{
 		OE_CORE_ASSERT(m_Renderer, "Renderer is null!");
-		m_Renderer->BeginFrame();
+		// TODO: Implement ORRenderer:BeginFrame and call it here
 	}
 
 	void OEngine::OEndFrame()
 	{
 		OE_CORE_ASSERT(m_Renderer, "Renderer is null!");
-		m_Renderer->EndFrame();
+		// TODO: Implement ORRenderer::EndFrame and call it here
 	}
 
 	void OEngine::Render()

@@ -1,11 +1,12 @@
 #pragma once
 
-#include <OrionEngine/OrionRenderer/ORRenderCommandPipeline.h>
+#include <OrionEngine/OrionRenderer/ORRenderer.h>
 #include <OrionEngine/OrionRenderer/SceneRenderer/ORSceneRenderer.h>
 #include <OrionEngine/OrionRenderer/Platform/Window/GLFWWindow.h>
+#include <OrionEngine/OrionRenderer/ORDefaultRendererResources.h>
+
 #include <OrionEngine/Core/OEInputSystem.h>
 #include <OrionEngine/Core/Scene/OEScene.h>
-
 #include <OrionEngine/Core/OERef.h>
 
 namespace OrionEngine
@@ -15,9 +16,10 @@ namespace OrionEngine
 	public:
 
 		OEngine()
-			: m_Renderer(CreateScope<OrionRenderer::ORRenderCommandPipeline>()), m_InputSystem(CreateScope<OEInputSystem>()), m_Scene(CreateScope<OEScene>()),
-			m_SceneRenderer(CreateScope<OrionRenderer::ORSceneRenderer>())
-		{ }
+			: m_Renderer(CreateScope<OrionRenderer::ORRenderer>()), m_InputSystem(CreateScope<OEInputSystem>()), m_Scene(CreateScope<OEScene>()),
+			m_SceneRenderer(nullptr)
+		{ 
+		}
 
 		void OInitEngineSubsystems();
 		void OShutdownEngineSubsystems();
@@ -35,7 +37,7 @@ namespace OrionEngine
 
 	private:
 
-		Scope<OrionRenderer::ORRenderCommandPipeline> m_Renderer; 
+		Scope<OrionRenderer::ORRenderer> m_Renderer; 
 		Scope<OEInputSystem> m_InputSystem;
 		Scope<OEScene> m_Scene; // there will only be one scene 
 		Scope<OrionRenderer::ORSceneRenderer> m_SceneRenderer;
