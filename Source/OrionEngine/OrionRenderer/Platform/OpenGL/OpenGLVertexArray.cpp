@@ -36,17 +36,17 @@ namespace OrionEngine
 			m_IndexBuffer = IBO;
 		}
 
-		void OpenGLVertexArray::AddVertexBuffer(const Ref<ORVertexBuffer>& VBO) noexcept
+		void OpenGLVertexArray::AddVertexBuffer(
+			const Ref<ORVertexBuffer>& VBO
+		) noexcept
 		{
 			Bind();
 			VBO->Bind();
 
-			uint32_t stride = 6 * sizeof(float); // position + color
+			uint32_t stride = 3 * sizeof(float);
 
-			std::cout << "VAO: " << m_RendererID << std::endl; 
-
-			// Position attribute (location 0)
 			glEnableVertexAttribArray(0);
+
 			glVertexAttribPointer(
 				0,
 				3,
@@ -56,18 +56,8 @@ namespace OrionEngine
 				(const void*)0
 			);
 
-			// Color attribute (location 1)
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(
-				1,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				stride,
-				(const void*)(3 * sizeof(float))
-			);
-
 			m_VertexBuffers.push_back(VBO);
 		}
+
 	}
 }

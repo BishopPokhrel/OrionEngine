@@ -132,6 +132,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\OrionEditor\OEViewport.cpp" />
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.cpp" />
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.h" />
     <ClCompile Include="Source\OrionEditor\OEImGuiLayer.cpp" />
@@ -151,8 +152,10 @@
     <ClCompile Include="Source\OrionEngine\Core\Scene\OESceneSerializer.cpp" />
     <ClCompile Include="Source\OrionEngine\Engine\OEngine.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORFramebuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexBuffer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.cpp" />
@@ -188,6 +191,7 @@
     <ClInclude Include="Source\OrionEngine\Core\Scene\OESceneSerializer.h" />
     <ClInclude Include="Source\OrionEngine\Engine\OEngine.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORGraphicsAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORMesh.h" />
@@ -201,6 +205,7 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexArray.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexBufferLayout.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.h" />

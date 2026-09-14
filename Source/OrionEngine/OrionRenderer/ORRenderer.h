@@ -12,6 +12,7 @@
 
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/Core/OEAssert.h>
+#include <OrionEngine/Core/OELogging.h>
 
 namespace OrionEngine
 {
@@ -39,7 +40,7 @@ namespace OrionEngine
 
 			void BeginScene(const glm::mat4& viewProjection) noexcept
 			{
-				
+				m_SceneData.ViewProjectionMatrix = viewProjection;
 			}
 
 			void EndScene() noexcept
@@ -50,13 +51,14 @@ namespace OrionEngine
 			void Submit(const Ref<ORShader>& shader, const Ref<ORVertexArray>& vertexArray, const glm::mat4& transform)
 			{
 				shader->Bind();
-				shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
-				shader->SetMat4("u_Transform", transform);
+				//shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
+				//shader->SetMat4("u_Transform", transform);
 
 				vertexArray->Bind();
 				
 				OE_CORE_ASSERT(vertexArray->GetIndexBuffer(), "VertexArray is missing IndexBuffer!");
 				uint32_t indexCount = vertexArray->GetIndexBuffer()->GetCount();
+
 				ORRenderCommand::DrawIndexed(indexCount);
 			}
 

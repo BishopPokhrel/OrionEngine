@@ -1,47 +1,47 @@
-#pragma once
+	#pragma once
 
-#include "ORRendererAPI.h"
-#include "Platform/OpenGL/OpenGLRendererAPI.h"
+	#include "ORRendererAPI.h"
+	#include "Platform/OpenGL/OpenGLRendererAPI.h"
 
-#include <OrionEngine/Core/OERef.h>
+	#include <OrionEngine/Core/OERef.h>
 
-namespace OrionEngine
-{
-	namespace OrionRenderer
+	namespace OrionEngine
 	{
-		class ORRenderCommand
+		namespace OrionRenderer
 		{
-		public:
-
-			static Scope<OpenGLRendererAPI> s_RendererAPI;
-
-			static void ORInit()
+			class ORRenderCommand
 			{
-				if (!s_RendererAPI)
-					s_RendererAPI = CreateScope<OpenGLRendererAPI>();
+			public:
 
-				s_RendererAPI->Init();
-			}
+				static Scope<OpenGLRendererAPI> s_RendererAPI;
 
-			static void Clear()
-			{
-				s_RendererAPI->Clear();
-			}
+				static void ORInit()
+				{
+					if (!s_RendererAPI)
+						s_RendererAPI = CreateScope<OpenGLRendererAPI>();
 
-			static void SetViewport(int x, int y, int width, int height)
-			{
-				s_RendererAPI->SetViewport(x, y, width, height);
-			}
+					s_RendererAPI->Init();
+				}
 
-			static void SetClearColor(float r, float g, float b, float a)
-			{
-				s_RendererAPI->SetClearColor(r, g, b, a);
-			}
+				static void Clear()
+				{
+					s_RendererAPI->Clear();
+				}
 
-			static void DrawIndexed(uint32_t indexCount)
-			{
-				s_RendererAPI->DrawIndexed(indexCount);
-			}
-		};
+				static void SetViewport(int x, int y, int width, int height)
+				{
+					s_RendererAPI->SetViewport(x, y, width, height);
+				}
+
+				static void SetClearColor(float r, float g, float b, float a)
+				{
+					s_RendererAPI->SetClearColor(r, g, b, a);
+				}
+
+				static void DrawIndexed(uint32_t indexCount)
+				{
+					s_RendererAPI->DrawIndexed(indexCount);
+				}
+			};
+		}
 	}
-}

@@ -4,6 +4,7 @@
 #include <OrionEngine/OrionRenderer/SceneRenderer/ORSceneRenderer.h>
 #include <OrionEngine/OrionRenderer/Platform/Window/GLFWWindow.h>
 #include <OrionEngine/OrionRenderer/ORDefaultRendererResources.h>
+#include <OrionEngine/OrionRenderer/ORFramebuffer.h>
 
 #include <OrionEngine/Core/OEInputSystem.h>
 #include <OrionEngine/Core/Scene/OEScene.h>
@@ -32,8 +33,9 @@ namespace OrionEngine
 
 		void Render();
 
-		OEInputSystem* GetInputSystem() { return m_InputSystem.get(); }
-		OEScene* GetScene() { return m_Scene.get(); }
+		OEInputSystem* GetInputSystem() const { return m_InputSystem.get(); }
+		OEScene* GetScene() const { return m_Scene.get(); }
+		Ref<OrionRenderer::ORFrameBuffer> GetFrameBuffer() const { return m_ViewportFramebuffer; }
 
 	private:
 
@@ -41,5 +43,6 @@ namespace OrionEngine
 		Scope<OEInputSystem> m_InputSystem;
 		Scope<OEScene> m_Scene; // there will only be one scene 
 		Scope<OrionRenderer::ORSceneRenderer> m_SceneRenderer;
+		Ref<OrionRenderer::ORFrameBuffer> m_ViewportFramebuffer;
 	};
 }

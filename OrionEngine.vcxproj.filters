@@ -110,6 +110,15 @@
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORFramebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLFramebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEditor\OEViewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
@@ -251,6 +260,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORFramebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLFramebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

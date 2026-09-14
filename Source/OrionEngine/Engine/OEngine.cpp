@@ -11,7 +11,8 @@ namespace OrionEngine
 		m_Scene->InitScene();
 		m_Renderer->Init(OrionRenderer::ORGraphicsAPI::OpenGL);
 		OrionRenderer::ORDefaultRendererResources::Initialize();
-		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get());
+		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get()); 
+		m_ViewportFramebuffer = OrionRenderer::ORFrameBuffer::CreateFrameBuffer(1280, 720, m_Renderer->GetGraphicsAPI());
 	}
 
 	void OEngine::OShutdownEngineSubsystems()
@@ -48,8 +49,26 @@ namespace OrionEngine
 	void OEngine::Render()
 	{
 		OE_CORE_ASSERT(m_Renderer, "Renderer is null!");
-		m_Renderer->BeginScene(m_Scene->GetCurrentCamera().GetViewProjection());
-		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetCurrentCamera().GetViewProjection());
-		m_Renderer->EndScene();
+		OE_CORE_ASSERT(m_SceneRenderer, "Scene renderer is null!");
+		OE_CORE_ASSERT(m_ViewportFramebuffer, "Viewport framebuffer is null!");
+
+		m_ViewportFramebuffer->Bind();
+
+		OrionRenderer::ORRenderCommand::SetClearColor(
+			0.2f,
+			0.3f,
+			0.4f,
+			1.0f
+		);
+
+		OrionRenderer::ORRenderCommand::Clear();
+
+		m_SceneRenderer->RenderScene(
+			m_Scene->GetRegistry(),
+			m_Scene->GetCurrentCamera(),
+			m_Scene->GetCurrentCamera().GetViewProjection()
+		);
+
+		m_ViewportFramebuffer->Unbind();
 	}
 }

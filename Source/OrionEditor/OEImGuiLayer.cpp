@@ -72,6 +72,12 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
+	bool OEImGuiLayer::DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer)
+	{
+		m_Viewport.ShowViewport(framebuffer);
+		return true;
+	}
+
 	bool OEImGuiLayer::CreateDockspace()
 	{
 		ImGuiWindowFlags windowFlags =
