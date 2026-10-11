@@ -100,8 +100,24 @@ namespace OrionEngine
 
         void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value) noexcept
         {
+            //OE_CORE_ASSERT(m_RendererID != 0, "Shader program not created!");
+            //glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
+
             OE_CORE_ASSERT(m_RendererID != 0, "Shader program not created!");
-            glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &value[0][0]);
+
+            GLint currentProgram = 0;
+            glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+
+            GLint location = GetUniformLocation(name);
+
+            ORION_ENGINE_INFO("SetMat4: name={0}, program={1}, active={2}, location={3}", name, m_RendererID, currentProgram, location);
+            glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+
+            GLenum error = glGetError();
+
+            if (error != GL_NO_ERROR)
+                ORION_ENGINE_ERROR("OpenGL error in SetMat4: {0}",static_cast<unsigned int>(error));
+            
         }
 
         void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) noexcept

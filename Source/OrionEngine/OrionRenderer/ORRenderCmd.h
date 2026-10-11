@@ -11,6 +11,12 @@
 
 #pragma once
 
+#include <cstdint>
+#include "ORShader.h"
+#include "ORVertexArray.h"
+
+#include <glm/glm.hpp>
+
 namespace OrionEngine::OrionRenderer
 {
 	enum class ORRenderCmdType : uint8_t

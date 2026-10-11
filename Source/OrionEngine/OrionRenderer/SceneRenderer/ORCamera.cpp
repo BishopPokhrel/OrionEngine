@@ -13,7 +13,7 @@ namespace OrionEngine
 	{
 		ORCamera::ORCamera(float left, float right, float top, float bottom) noexcept
 		{
-			glm::mat4 P = glm::ortho(left, right, bottom, top);
+			glm::mat4 P = glm::ortho(left, right, bottom, top, 0.1f, 100.0f);
 
 			m_Projection = P;
 			m_View = glm::mat4(1.0f);

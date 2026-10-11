@@ -50,9 +50,10 @@ namespace OrionEngine
 
 			void Submit(const Ref<ORShader>& shader, const Ref<ORVertexArray>& vertexArray, const glm::mat4& transform)
 			{
+				// TODO: Later add m_SceneData.ViewProjectionMatrix in shader->SetMat4() and transform in the next shader->SetMat4()
 				shader->Bind();
-				//shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
-				//shader->SetMat4("u_Transform", transform);
+				shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
+				shader->SetMat4("u_Transform", transform);
 
 				vertexArray->Bind();
 				

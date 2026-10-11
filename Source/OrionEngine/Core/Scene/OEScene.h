@@ -39,6 +39,6 @@ namespace OrionEngine
 		Scope<ECS::OEECSRegistry> m_Registry; // each scene owns each ECS registrry
 		bool m_Created;
 
-		OrionRenderer::ORCamera m_Camera = OrionRenderer::ORCamera(0.0f, 0.0f, 0.0f, 0.0f);
+		OrionRenderer::ORCamera m_Camera = OrionRenderer::ORCamera(-8.0f, 8.0f, 4.5f, -4.5f);
 	};
 }  
