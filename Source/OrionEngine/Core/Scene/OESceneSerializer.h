@@ -6,21 +6,36 @@
 #include <filesystem>
 #include "OEScene.h"
 
+#include <OrionEngine/Core/OEAssert.h>
+
 namespace OrionEngine
 {
+	using YAMLNode = YAML::Node;
+
 	class OESceneSerializer
 	{
 	public:
 
+		explicit OESceneSerializer(OEScene* scene)
+			: m_Scene(scene)
+		{
+			OE_CORE_ASSERT(m_Scene, "Scene is null!");
+		}
+
 		bool CreateOEProjectDirectory(const std::string& projectName);
 		bool SerializeEntities(YAML::Emitter& out, const std::filesystem::path& path);
 		bool SerializeScene();
+		bool DeserializeScene(const std::filesystem::path& scenePath);
 
 		bool DoesProjectExist(const std::string& projectName);
 
 	private:
 
-		OEScene m_Scene; // Allocate it on the stack so we dont get any seg fault or nullptr errors
+		bool DeserializeEntities(const YAMLNode& entityNodes); 
+
+	private:
+
+		OEScene* m_Scene = nullptr; // Allocate it on the stack so we dont get any seg fault or nullptr errors
 		
 		struct DirectoriesCreated
 		{
