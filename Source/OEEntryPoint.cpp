@@ -32,24 +32,22 @@ static int OEngineMain(int argc, char** argv)
 	}
 	catch (const OEBaseException& e)
 	{
-		OE_CORE_ASSERT(false, "Engine Exception occurred!");
 		if (app)
 			app->EngineShutdown();
-		
+
 		ORION_ENGINE_ERROR(e.what());
 		return ENGINE_FAILURE;
 	}
 	catch (const std::exception& e)
 	{
-		OE_CORE_ASSERT(false, "Standard Expection occurred!");
 		if (app)
 			app->EngineShutdown();
+
 		ORION_ENGINE_ERROR(e.what());
 		return ENGINE_FAILURE;
 	}
 	catch (...)
 	{
-		OE_CORE_ASSERT(false, "Unknown exception occurred!");
 		if (app)
 			app->EngineShutdown();
 
