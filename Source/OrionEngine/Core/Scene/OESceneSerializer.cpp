@@ -142,247 +142,245 @@ namespace OrionEngine
 
 	bool OESceneSerializer::SerializeEntities(YAML::Emitter& out, const std::filesystem::path& path)
 	{
-		OE_CORE_ASSERT(m_Scene, "Scene is null!"); // just in case
+		OE_CORE_ASSERT(m_Scene, "Scene is null!");
 
 		try
 		{
-
 			out << YAML::BeginMap;
 
 			for (const auto& entity : m_Scene->GetRegistry().GetAllGameEntities())
 			{
 				ECS::OEGameEntityID id = entity.ID;
-				out << YAML::Key << "Game Entity " + entity.Name;
-				out << YAML::Value;
 
-				// Transform Component
-				out << YAML::BeginMap;
+				out << YAML::Key << "Game Entity " + entity.Name;
+				out << YAML::Value << YAML::BeginMap;
+
+				// =================== TRANSFORM COMPONENT ================= //
+
+				auto* transform = m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id);
+
+				OE_CORE_ASSERT(transform, "Game Entity is missing its Transform Component!");
 
 				out << YAML::Key << "Transform Component";
-				out << YAML::Value;
+				out << YAML::Value << YAML::BeginMap;
 
-				// Position:
 				out << YAML::Key << "Position";
-				out << YAML::Value;
-				out << YAML::Flow << YAML::BeginSeq
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Position.x
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Position.y
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Position.z
+				out << YAML::Value << YAML::Flow << YAML::BeginSeq
+					<< transform->Position.x
+					<< transform->Position.y
+					<< transform->Position.z
 					<< YAML::EndSeq;
 
-				// Rotation:
 				out << YAML::Key << "Rotation";
-				out << YAML::Value;
-				out << YAML::Flow << YAML::BeginSeq
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Rotation.x
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Rotation.y
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Rotation.z
+				out << YAML::Value << YAML::Flow << YAML::BeginSeq
+					<< transform->Rotation.x
+					<< transform->Rotation.y
+					<< transform->Rotation.z
 					<< YAML::EndSeq;
 
 				out << YAML::Key << "Scale";
-				out << YAML::Value;
-				out << YAML::Flow << YAML::BeginSeq
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Scale.x
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Scale.y
-					<< m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(id)->Scale.z
+				out << YAML::Value << YAML::Flow << YAML::BeginSeq
+					<< transform->Scale.x
+					<< transform->Scale.y
+					<< transform->Scale.z
 					<< YAML::EndSeq;
 
-				out << YAML::EndMap;
+				out << YAML::EndMap; // Transform Component
 
-				// Physics Component
-				if (m_Scene->GetRegistry().HasComponent<ECS::OEPhysicsComponent>(entity.ID))
+				// =================== PHYSICS COMPONENT ================= //
+
+				if (m_Scene->GetRegistry().HasComponent<ECS::OEPhysicsComponent>(id))
 				{
+					auto* physics = m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(id);
+
 					out << YAML::Key << "Physics Component";
-					out << YAML::Value;
-					out << YAML::BeginMap;
+					out << YAML::Value << YAML::BeginMap;
 
-					// Mass
 					out << YAML::Key << "Mass";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Mass;
+					out << YAML::Value << physics->Mass;
 
-					// Velocity
 					out << YAML::Key << "Velocity";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq
-						<< m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Velocity.x
-						<< m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Velocity.y
-						<< m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Velocity.z
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq
+						<< physics->Velocity.x
+						<< physics->Velocity.y
+						<< physics->Velocity.z
 						<< YAML::EndSeq;
 
-					// Accleration
 					out << YAML::Key << "Acceleration";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq
-						<< m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Accleration.x
-						<< m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Accleration.y
-						<< m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Accleration.z
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq
+						<< physics->Accleration.x
+						<< physics->Accleration.y
+						<< physics->Accleration.z
 						<< YAML::EndSeq;
 
-					// Is Static
 					out << YAML::Key << "Is Static";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->IsStatic;
+					out << YAML::Value << physics->IsStatic;
 
 					out << YAML::Key << "Linear Drag";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->LinearDrag;
+					out << YAML::Value << physics->LinearDrag;
 
 					out << YAML::Key << "Radius";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entity.ID)->Radius;
+					out << YAML::Value << physics->Radius;
 
-					out << YAML::EndMap;
+					out << YAML::EndMap; // Physics Component
 				}
 
-				// Renderable Component
-				if (m_Scene->GetRegistry().GetComponent<ECS::OERenderableComponent>(entity.ID))
+				// ================= RENDERABLE COMPONENT ================= //
+
+				if (m_Scene->GetRegistry().HasComponent<ECS::OERenderableComponent>(id))
 				{
+					auto* renderable = m_Scene->GetRegistry().GetComponent<ECS::OERenderableComponent>(id);
+
 					out << YAML::Key << "Renderable Component";
-					out << YAML::Value;
-					out << YAML::BeginMap;
+					out << YAML::Value << YAML::BeginMap;
 
-					// Visible
 					out << YAML::Key << "Visible";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OERenderableComponent>(entity.ID)->b_Visible;
+					out << YAML::Value << renderable->b_Visible;
 
-					out << YAML::EndMap;
+					out << YAML::EndMap; // Renderable Component
 				}
 
-				// Camera Component
-				if (m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID))
+				// =================== CAMERA COMPONENT ================== //
+
+				if (m_Scene->GetRegistry().HasComponent<ECS::OECameraComponent>(id))
 				{
+					auto* cameraComponent = m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(id);
+
 					out << YAML::Key << "Camera Component";
-					out << YAML::Value;
-					out << YAML::BeginMap;
+					out << YAML::Value << YAML::BeginMap;
 
-					// Primary
 					out << YAML::Key << "Primary";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Primary;
+					out << YAML::Value << cameraComponent->Primary;
 
-					// Near Clip
 					out << YAML::Key << "Near Clip";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->NearClip;
+					out << YAML::Value << cameraComponent->NearClip;
 
-					// Far Clip
 					out << YAML::Key << "Far Clip";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->FarClip;
+					out << YAML::Value << cameraComponent->FarClip;
 
-					// ACTUAL CAMERA PROPERTIES
 					out << YAML::Key << "Camera";
-					out << YAML::Value;
-					out << YAML::BeginMap;
+					out << YAML::Value << YAML::BeginMap;
 
-					const glm::mat4& projectionMatrix = m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetProjection();
-					const glm::mat4& viewMatrix = m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetView();
-					const glm::mat4& viewProjectionMatrix = m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetViewProjection();
+					const glm::mat4& projectionMatrix = cameraComponent->Camera.GetProjection();
+					const glm::mat4& viewMatrix = cameraComponent->Camera.GetView();
+					const glm::mat4& viewProjectionMatrix = cameraComponent->Camera.GetViewProjection();
 
-					// PROJECTION MATRIX
+					// Projection Matrix
 					out << YAML::Key << "Projection Matrix";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq;
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq;
 
 					for (int i = 0; i < 4; i++)
 					{
 						out << YAML::Flow << YAML::BeginSeq;
+
 						for (int j = 0; j < 4; j++)
 						{
 							out << projectionMatrix[i][j];
 						}
+
 						out << YAML::EndSeq;
 					}
 
-					out << YAML::EndSeq; // END PROJECTION MATRIX SEQ
+					out << YAML::EndSeq;
 
-					// VIEW MATRIX
+					// View Matrix
 					out << YAML::Key << "View Matrix";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq;
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq;
 
 					for (int i = 0; i < 4; i++)
 					{
 						out << YAML::Flow << YAML::BeginSeq;
+
 						for (int j = 0; j < 4; j++)
 						{
 							out << viewMatrix[i][j];
 						}
+
 						out << YAML::EndSeq;
 					}
 
-					out << YAML::EndSeq; // END VIEW MATRIX SEQ
+					out << YAML::EndSeq;
 
-					// VIEW PROJECTION MATRIX
+					// View Projection Matrix
 					out << YAML::Key << "View Projection Matrix";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq;
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq;
 
 					for (int i = 0; i < 4; i++)
 					{
 						out << YAML::Flow << YAML::BeginSeq;
+
 						for (int j = 0; j < 4; j++)
 						{
 							out << viewProjectionMatrix[i][j];
 						}
+
 						out << YAML::EndSeq;
 					}
 
-					out << YAML::EndSeq; // END VIEW PROJECTION MATRIX SEQ
+					out << YAML::EndSeq;
 
-					// POSITION 
+					// Camera Position
+					const glm::vec3 cameraPosition = cameraComponent->Camera.GetPosition();
+
 					out << YAML::Key << "Position";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetPosition().x
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetPosition().y
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetPosition().z
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq
+						<< cameraPosition.x
+						<< cameraPosition.y
+						<< cameraPosition.z
 						<< YAML::EndSeq;
 
-					// YAW
+					// Camera Orientation
 					out << YAML::Key << "Yaw";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetYaw();
+					out << YAML::Value << cameraComponent->Camera.GetYaw();
 
-					// PITCH
 					out << YAML::Key << "Pitch";
-					out << YAML::Value << m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetPitch();
+					out << YAML::Value << cameraComponent->Camera.GetPitch();
 
-					// FORWARD
+					// Forward
+					const glm::vec3 cameraForward = cameraComponent->Camera.GetForward();
+
 					out << YAML::Key << "Forward";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetForward().x
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetForward().y
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetForward().z
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq
+						<< cameraForward.x
+						<< cameraForward.y
+						<< cameraForward.z
 						<< YAML::EndSeq;
 
-					// RIGHT
+					// Right
+					const glm::vec3 cameraRight = cameraComponent->Camera.GetRight();
+
 					out << YAML::Key << "Right";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetRight().x
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetRight().y
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetRight().z
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq
+						<< cameraRight.x
+						<< cameraRight.y
+						<< cameraRight.z
 						<< YAML::EndSeq;
 
-					// UP
+					// Up
+					const glm::vec3 cameraUp = cameraComponent->Camera.GetUp();
+
 					out << YAML::Key << "Up";
-					out << YAML::Value;
-					out << YAML::Flow << YAML::BeginSeq
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetUp().x
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetUp().y
-						<< m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entity.ID)->Camera.GetUp().z
+					out << YAML::Value << YAML::Flow << YAML::BeginSeq
+						<< cameraUp.x
+						<< cameraUp.y
+						<< cameraUp.z
 						<< YAML::EndSeq;
 
-
-					out << YAML::EndMap; // CAMERA MAP END
-
-					out << YAML::EndMap; // CAMERA COMPONENT MAP END
+					out << YAML::EndMap; // Camera data
+					out << YAML::EndMap; // Camera Component
 				}
+
+				out << YAML::EndMap; // Game Entity
 			}
 
-			out << YAML::EndMap;
+			out << YAML::EndMap; // Entities map
 
 			return true;
 		}
 		catch (const YAML::Exception& exception)
 		{
 			ORION_ENGINE_ERROR("YAML Exception occurred: ", exception.what());
-			return false; 
+			return false;
 		}
 	}
 
@@ -396,19 +394,37 @@ namespace OrionEngine
 
 			out << YAML::BeginMap;
 
+			// Scene name
 			out << YAML::Key << "Scene";
 			out << YAML::Value << m_Scene->GetSceneName();
 
+			// Entities map
+			out << YAML::Key << "Entities";
+			out << YAML::Value;
+
 			if (!SerializeEntities(out, m_ScenePath))
 			{
-				ORION_ENGINE_ERROR("Failed to serialize entities.");
-				return false; 
+				ORION_ENGINE_ERROR("Failed to serialize entities!");
+				return false;
 			}
 
 			out << YAML::EndMap;
 
 			std::ofstream finalSceneFile(m_ScenePath);
+
+			if (!finalSceneFile.is_open())
+			{
+				ORION_ENGINE_ERROR("Failed to open scene file: ", m_ScenePath.string());
+				return false;
+			}
+
 			finalSceneFile << out.c_str();
+
+			if (!finalSceneFile.good())
+			{
+				ORION_ENGINE_ERROR("Failed to write scene data!");
+				return false;
+			}
 
 			return true;
 		}
@@ -428,11 +444,13 @@ namespace OrionEngine
 			for (auto entity : entityNodes)
 			{
 				std::string entityKey = entity.first.as<std::string>();
-
-				if (entityKey == "Scene")
-					continue;
-
 				constexpr std::string_view prefix = "Game Entity ";
+
+				if (!entityKey.starts_with(prefix))
+				{
+					ORION_ENGINE_ERROR("Invalid entity key: ", entityKey);
+					return false;
+				}
 
 				std::string entityName = entityKey.substr(prefix.size());
 				ECS::OEGameEntityID entityID = m_Scene->GetRegistry().CreateGameEntity(entityName);
@@ -495,6 +513,7 @@ namespace OrionEngine
 					YAMLNode radiusNode = physicsNode["Radius"];
 
 					float massPC = massNode.as<float>();
+
 					glm::vec3 velocityPC(
 						velocityNode[0].as<float>(),
 						velocityNode[1].as<float>(),
@@ -644,7 +663,15 @@ namespace OrionEngine
 
 			ORION_ENGINE_INFO("Deserializing scene: ", sceneName);
 
-			if (!DeserializeEntities(data))
+			YAMLNode entitiesNode = data["Entities"];
+
+			if (!entitiesNode || !entitiesNode.IsMap())
+			{
+				ORION_ENGINE_ERROR("Invalid or missing Entities map!");
+				return false;
+			}
+
+			if (!DeserializeEntities(entitiesNode))
 			{
 				ORION_ENGINE_ERROR("Failed to deserialize entities");
 				return false;
