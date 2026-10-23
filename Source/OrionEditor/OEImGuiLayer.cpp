@@ -4,6 +4,10 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#if defined(_WIN64)
+#include <OrionEngine/OS/Windows/WindowsOSAPI.h>
+#endif
+
 namespace OrionEngine::OrionEditor
 {
 	bool OEImGuiLayer::InitImGui(GLFWwindow* window)
@@ -78,6 +82,61 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
+	void OEImGuiLayer::CreateMenuBar(OEScene* scene)
+	{
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Create New Project..."))
+					m_OEMMBDN.OpenProjectNamePopup = true;
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Save Scene...", "Ctrl+S"))
+					scene->SerializeScene();
+
+				if (ImGui::MenuItem("Open Scene...", "Ctrl+O"))
+					m_OEMMBDN.OpenSceneFilePopup = true;
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMainMenuBar();
+		}
+
+		if (m_OEMMBDN.OpenProjectNamePopup)
+		{
+			ImGui::OpenPopup("Create New Project");
+			m_OEMMBDN.OpenProjectNamePopup = false;
+		}
+
+		if (ImGui::BeginPopupModal("Create New Project", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::InputText("Project Name...", m_OEMMBDN.ProjectNameBuffer, sizeof(m_OEMMBDN.ProjectNameBuffer));
+
+			if (ImGui::Button("Create"))
+			{
+				std::string projectName = m_OEMMBDN.ProjectNameBuffer;
+				scene->CreateProjectDir(projectName);
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
+			ImGui::EndPopup();
+		}
+
+		if (m_OEMMBDN.OpenSceneFilePopup)
+		{
+			m_OEMMBDN.OpenSceneFilePopup = false;
+
+			const std::filesystem::path scenePath = OS::OpenWindowsFileDialog(L"Orion Scene (*.oescene)\0*.oescene\0All Files (*.*)\0*.*\0\0");
+			if (!scenePath.empty())
+				scene->DeserializeScene(scenePath);
+		}
+	}
+
 	bool OEImGuiLayer::CreateDockspace()
 	{
 		ImGuiWindowFlags windowFlags =
@@ -91,8 +150,8 @@ namespace OrionEngine::OrionEditor
 
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
 		ImGui::SetNextWindowViewport(viewport->ID);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);

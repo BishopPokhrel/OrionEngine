@@ -34,6 +34,17 @@ namespace OrionEngine::OrionEditor
 
 		bool CreateDockspace();
 
+		void CreateMenuBar(OEScene* scene);
+
+	private:
+
+		struct OEMainMenuBarDataNeeded
+		{
+			char ProjectNameBuffer[1024];
+			bool OpenProjectNamePopup;
+			bool OpenSceneFilePopup;
+		};
+
 	private:
 
 		Scope<OEEditorContext> m_EditorContext = CreateScope<OEEditorContext>();
@@ -44,5 +55,7 @@ namespace OrionEngine::OrionEditor
 		OECommandPanel m_CommandPanel;
 
 		OEViewport m_Viewport;
+
+		OEMainMenuBarDataNeeded m_OEMMBDN;
 	};
 }
