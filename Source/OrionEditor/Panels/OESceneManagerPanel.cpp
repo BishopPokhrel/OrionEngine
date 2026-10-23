@@ -115,6 +115,8 @@ namespace OrionEngine::OrionEditor
 
     bool OESceneManagerPanel::DrawSceneMetadata()
     {
+        m_SceneName = m_CurrentScene->GetSceneName(); 
+
         ImGui::Text("Scene %s Metadata. Read Only.", m_SceneName.c_str());
         ImGui::Text("Scene Name: %s", m_SceneName);
 
