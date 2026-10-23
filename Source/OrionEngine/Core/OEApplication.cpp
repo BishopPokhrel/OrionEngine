@@ -41,6 +41,7 @@ namespace OrionEngine
 			m_ImGuiLayer.StartImGuiNewFrame();
 
 			m_ImGuiLayer.CreateDockspace();
+			m_ImGuiLayer.CreateMenuBar(m_OEngine->GetScene());
 
 			m_ImGuiLayer.DrawViewport(m_OEngine->GetFrameBuffer());
 
