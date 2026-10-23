@@ -216,6 +216,7 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCamera.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCameraController.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.h" />
+    <ClInclude Include="Source\OrionEngine\OS\Windows\WindowsOSAPI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
