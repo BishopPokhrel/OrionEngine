@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #include <OrionEngine/Core/ECS/OEGameEntity.h>
 #include <OrionEngine/Core/OERef.h>
@@ -9,17 +10,19 @@
 
 namespace OrionEngine::ECS
 {
-	class OEECSRegistry;
+	class OEECSRegistry; 
 }
 
 namespace OrionEngine
 {
+	class OESceneSerializer;
+
 	class OEScene
 	{
 	public:
 		
-		OEScene() = default;
-		~OEScene() = default;
+		OEScene();
+		~OEScene();
 
 		void InitScene(const std::string& name = "NewScene") noexcept; // this function acts as the constructor
 
@@ -34,9 +37,14 @@ namespace OrionEngine
 
 		std::string GetSceneName() const noexcept { return m_OESceneName; }
 
+		void SerializeScene();
+		void DeserializeScene(const std::filesystem::path& scenePath);
+		void CreateProjectDir(const std::string& projName);
+
 	private:
 		std::string m_OESceneName;
 		Scope<ECS::OEECSRegistry> m_Registry; // each scene owns each ECS registrry
+		Scope<OESceneSerializer> m_Serializer;
 		bool m_Created;
 
 		OrionRenderer::ORCamera m_Camera = OrionRenderer::ORCamera(-8.0f, 8.0f, 4.5f, -4.5f);
