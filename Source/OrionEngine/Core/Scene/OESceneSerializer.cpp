@@ -47,7 +47,7 @@ namespace OrionEngine
 		}
 
 		// Create scene file
-		m_ScenePath = m_Scene->GetSceneName() + ".oescene";
+		m_ScenePath = std::filesystem::path(projectName) / (m_Scene->GetSceneName() + ".oescene");
 		if (!m_DirectoriesCreated.pFilesCreated->SceneFileCreated)
 		{
 			if (!std::filesystem::exists(m_ScenePath))
@@ -410,6 +410,7 @@ namespace OrionEngine
 
 			out << YAML::EndMap;
 
+			ORION_ENGINE_INFO("Attempting to save scene at ", m_ScenePath.string());
 			std::ofstream finalSceneFile(m_ScenePath);
 
 			if (!finalSceneFile.is_open())
@@ -435,15 +436,22 @@ namespace OrionEngine
 		}
 	}
 
+
 	bool OESceneSerializer::DeserializeEntities(const YAMLNode& entityNodes)
 	{
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
 
 		try
 		{
-			for (auto entity : entityNodes)
+			auto& registry = m_Scene->GetRegistry();
+
+			for (const auto& entity : entityNodes)
 			{
 				std::string entityKey = entity.first.as<std::string>();
+
+				if (entityKey == "Scene")
+					continue;
+
 				constexpr std::string_view prefix = "Game Entity ";
 
 				if (!entityKey.starts_with(prefix))
@@ -453,8 +461,8 @@ namespace OrionEngine
 				}
 
 				std::string entityName = entityKey.substr(prefix.size());
-				ECS::OEGameEntityID entityID = m_Scene->GetRegistry().CreateGameEntity(entityName);
 
+				ECS::OEGameEntityID entityID = registry.CreateGameEntity(entityName);
 				YAMLNode entityNode = entity.second;
 
 				YAMLNode transformNode = entityNode["Transform Component"];
@@ -476,7 +484,6 @@ namespace OrionEngine
 						positionNode[2].as<float>()
 					);
 
-
 					glm::vec3 rotationTC(
 						rotationNode[0].as<float>(),
 						rotationNode[1].as<float>(),
@@ -489,141 +496,85 @@ namespace OrionEngine
 						scaleNode[2].as<float>()
 					);
 
-					// Pass the data into the registry
-					if (m_Scene->GetRegistry().HasComponent<ECS::OETransformComponent>(entityID))
-					{
-						auto* transform = m_Scene->GetRegistry().GetComponent<ECS::OETransformComponent>(entityID);
+					ECS::OETransformComponent transformComponent{};
+					transformComponent.Position = positionTC;
+					transformComponent.Rotation = rotationTC;
+					transformComponent.Scale = scaleTC;
 
-						transform->Position = positionTC;
-						transform->Rotation = rotationTC;
-						transform->Scale = scaleTC;
-
-					}
+					registry.TransformComponent.AddComponent(entityID, transformComponent);
 				}
 
-				// ============== PHYSICS COMPONENT ============== //
+				// =================== PHYSICS COMPONENT ==================== //
 
 				if (physicsNode)
 				{
-					YAMLNode massNode = physicsNode["Mass"];
 					YAMLNode velocityNode = physicsNode["Velocity"];
 					YAMLNode accelerationNode = physicsNode["Acceleration"];
-					YAMLNode isStaticNode = physicsNode["Is Static"];
-					YAMLNode linearDragNode = physicsNode["Linear Drag"];
-					YAMLNode radiusNode = physicsNode["Radius"];
 
-					float massPC = massNode.as<float>();
+					ECS::OEPhysicsComponent physicsComponent{};
 
-					glm::vec3 velocityPC(
+					physicsComponent.Mass = physicsNode["Mass"].as<float>();
+
+					physicsComponent.Velocity = glm::vec3(
 						velocityNode[0].as<float>(),
 						velocityNode[1].as<float>(),
 						velocityNode[2].as<float>()
 					);
 
-					glm::vec3 accelerationPC(
+					physicsComponent.Accleration = glm::vec3(
 						accelerationNode[0].as<float>(),
 						accelerationNode[1].as<float>(),
 						accelerationNode[2].as<float>()
 					);
 
-					bool isStaticPC = isStaticNode.as<bool>();
-					float linearDragPC = linearDragNode.as<float>();
-					float radiusPC = radiusNode.as<float>();
+					physicsComponent.IsStatic = physicsNode["Is Static"].as<bool>();
+					physicsComponent.LinearDrag = physicsNode["Linear Drag"].as<float>();
+					physicsComponent.Radius = physicsNode["Radius"].as<float>();
 
-					// Pass the data into the registry
-					if (m_Scene->GetRegistry().HasComponent<ECS::OEPhysicsComponent>(entityID))
-					{
-						auto* physics = m_Scene->GetRegistry().GetComponent<ECS::OEPhysicsComponent>(entityID);
-
-						physics->Mass = massPC;
-						physics->Velocity = velocityPC;
-						physics->Accleration = accelerationPC;
-						physics->IsStatic = isStaticPC;
-						physics->LinearDrag = linearDragPC;
-						physics->Radius = radiusPC;
-
-					}
+					registry.PhysicsComponent.AddComponent(entityID, physicsComponent);
 				}
 
-				// ============= RENDERABLE COMPONENT ============= //
+				// ================== RENDERABLE COMPONENT ================== //
 
 				if (renderNode)
 				{
-					YAMLNode visibleNode = renderNode["Visible"];
-					bool visibleRC = visibleNode.as<bool>();
+					ECS::OERenderableComponent renderComponent{};
+					renderComponent.b_Visible = renderNode["Visible"].as<bool>();
 
-					// Pass the data into the registry
-					if (m_Scene->GetRegistry().HasComponent<ECS::OERenderableComponent>(entityID))
-					{
-						auto* render = m_Scene->GetRegistry().GetComponent<ECS::OERenderableComponent>(entityID);
-						render->b_Visible = visibleRC;
-					}
+					// Shader and VertexArray are not serialized.
+					// Initialize them using Orion's existing default renderer resources.
+
+					registry.RenderableComponent.AddComponent(entityID, renderComponent);
 				}
 
-				// ============ CAMERA COMPONENT =============== //
+				// ==================== CAMERA COMPONENT ==================== //
 
 				if (cameraNode)
 				{
-					YAMLNode primaryNode = cameraNode["Primary"];
-					YAMLNode nearClipNode = cameraNode["Near Clip"];
-					YAMLNode farClipNode = cameraNode["Far Clip"];
+					ECS::OECameraComponent cameraComponent{};
 
-					bool primaryCC = primaryNode.as<bool>();
-					float nearClipCC = nearClipNode.as<float>();
-					float farClipCC = farClipNode.as<float>();
+					cameraComponent.Primary = cameraNode["Primary"].as<bool>();
+					cameraComponent.NearClip = cameraNode["Near Clip"].as<float>();
+					cameraComponent.FarClip = cameraNode["Far Clip"].as<float>();
 
 					YAMLNode cameraDataNode = cameraNode["Camera"];
 
-					YAMLNode positionNode = cameraDataNode["Position"];
-					YAMLNode yawNode = cameraDataNode["Yaw"];
-					YAMLNode pitchNode = cameraDataNode["Pitch"];
-					YAMLNode forwardNode = cameraDataNode["Forward"];
-					YAMLNode rightNode = cameraDataNode["Right"];
-					YAMLNode upNode = cameraDataNode["Up"];
-
 					glm::vec3 positionCC(
-						positionNode[0].as<float>(),
-						positionNode[1].as<float>(),
-						positionNode[2].as<float>()
+						cameraDataNode["Position"][0].as<float>(),
+						cameraDataNode["Position"][1].as<float>(),
+						cameraDataNode["Position"][2].as<float>()
 					);
 
-					float yawCC = yawNode.as<float>();
-					float pitchCC = pitchNode.as<float>();
+					float yawCC = cameraDataNode["Yaw"].as<float>();
+					float pitchCC = cameraDataNode["Pitch"].as<float>();
 
-					glm::vec3 forwardCC(
-						forwardNode[0].as<float>(),
-						forwardNode[1].as<float>(),
-						forwardNode[2].as<float>()
+					cameraComponent.Camera.SetPosition(positionCC);
+					cameraComponent.Camera.Rotate(
+						yawCC - cameraComponent.Camera.GetYaw(),
+						pitchCC - cameraComponent.Camera.GetPitch()
 					);
 
-					glm::vec3 rightCC(
-						rightNode[0].as<float>(),
-						rightNode[1].as<float>(),
-						rightNode[2].as<float>()
-					);
-
-					glm::vec3 upCC(
-						upNode[0].as<float>(),
-						upNode[1].as<float>(),
-						upNode[2].as<float>()
-					);
-
-					// Pass the data into the registry
-					if (m_Scene->GetRegistry().HasComponent<ECS::OECameraComponent>(entityID))
-					{
-						auto* camera = m_Scene->GetRegistry().GetComponent<ECS::OECameraComponent>(entityID);
-
-						camera->FarClip = farClipCC;
-						camera->NearClip = nearClipCC;
-						camera->Primary = primaryCC;
-
-						// Restore the internal camera state
-						camera->Camera.SetPosition(positionCC);
-						camera->Camera.Rotate(
-							yawCC - camera->Camera.GetYaw(),
-							pitchCC - camera->Camera.GetPitch()
-						);
-					}
+					registry.CameraComponent.AddComponent(entityID, cameraComponent);
 				}
 			}
 
@@ -631,11 +582,11 @@ namespace OrionEngine
 		}
 		catch (const YAML::Exception& exception)
 		{
-			ORION_ENGINE_ERROR("YAML Exception occurred:", exception.what());
+			ORION_ENGINE_ERROR("YAML Exception occurred: ", exception.what());
 			return false;
 		}
-
 	}
+
 
 	bool OESceneSerializer::DeserializeScene(const std::filesystem::path& scenePath)
 	{
