@@ -16,6 +16,8 @@ namespace OrionEngine
 		m_Registry = CreateScope<ECS::OEECSRegistry>();
 		m_Serializer = CreateScope<OESceneSerializer>(this);
 		m_Created = true;
+
+		m_Camera.Rotate(glm::radians(-25.0f), glm::radians(20.0f));
 	}
 
 	void OEScene::DeleteScene() noexcept
