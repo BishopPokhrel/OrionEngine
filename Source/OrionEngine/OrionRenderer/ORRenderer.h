@@ -9,6 +9,7 @@
 #include "ORIndexBuffer.h"
 #include "ORVertexBuffer.h"
 #include "ORSceneData.h"
+#include "ORMesh.h"
 
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/Core/OEAssert.h>
@@ -48,17 +49,18 @@ namespace OrionEngine
 
 			}
 
-			void Submit(const Ref<ORShader>& shader, const Ref<ORVertexArray>& vertexArray, const glm::mat4& transform)
+			void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const glm::mat4& transform)
 			{
-				// TODO: Later add m_SceneData.ViewProjectionMatrix in shader->SetMat4() and transform in the next shader->SetMat4()
+				OE_CORE_ASSERT(shader, "Submit received a null shader!");
+				OE_CORE_ASSERT(mesh, "Submit received a null mesh!");
+
 				shader->Bind();
 				shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
 				shader->SetMat4("u_Transform", transform);
 
-				vertexArray->Bind();
+				mesh->Bind();
 				
-				OE_CORE_ASSERT(vertexArray->GetIndexBuffer(), "VertexArray is missing IndexBuffer!");
-				uint32_t indexCount = vertexArray->GetIndexBuffer()->GetCount();
+				uint32_t indexCount = mesh->GetIndexCount();
 
 				ORRenderCommand::DrawIndexed(indexCount);
 			}
