@@ -1,8 +1,10 @@
 #pragma once
 
-#include <OrionEngine/OrionRenderer/ORShader.h>
-#include <OrionEngine/OrionRenderer/ORVertexArray.h>
 #include <OrionEngine/Core/OERef.h>
+
+#include "ORShader.h"
+#include "ORVertexArray.h"
+#include "ORMesh.h"
 
 namespace OrionEngine::OrionRenderer
 {
@@ -14,6 +16,7 @@ namespace OrionEngine::OrionRenderer
 
 		static const Ref<ORShader>& GetDefaultShader() noexcept;
 		static const Ref<ORVertexArray>& GetDefaultVertexArray() noexcept;
+		static const Ref<ORMesh>& GetDefaultMesh() noexcept; 
 
 		static void Shutdown() noexcept;
 
@@ -21,5 +24,6 @@ namespace OrionEngine::OrionRenderer
 
 		inline static Ref<ORShader> s_DefaultShader;
 		inline static Ref<ORVertexArray> s_DefaultVertexArray;
+		inline static Ref<ORMesh> s_DefaultMesh;
 	};
 }

@@ -47,31 +47,55 @@ namespace OrionEngine::OrionRenderer
 		s_DefaultVertexArray = CreateRef<OpenGLVertexArray>();
 
 		// Vertex Buffer
-		
+
 		const float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, -0.0f
+			// Front face (Z+)
+			-0.5f, -0.5f,  0.5f, // 0
+			 0.5f, -0.5f,  0.5f, // 1
+			 0.5f,  0.5f,  0.5f, // 2
+			-0.5f,  0.5f,  0.5f, // 3
+
+			// Back face (Z-)
+			-0.5f, -0.5f, -0.5f, // 4
+			 0.5f, -0.5f, -0.5f, // 5
+			 0.5f,  0.5f, -0.5f, // 6
+			-0.5f,  0.5f, -0.5f  // 7
 		};
 
 		Ref<OpenGLVertexBuffer> VBO = CreateRef<OpenGLVertexBuffer>(vertices, sizeof(vertices));
 
 		ORVertexBufferLayout layout;
 		layout.Push<glm::vec3>("a_Position");
-		
-		VBO->SetLayout(layout);
 
+		VBO->SetLayout(layout);
 		s_DefaultVertexArray->AddVertexBuffer(VBO);
 
 		// Index Buffer
 
 		const uint32_t indices[] = {
-			0, 1, 2
+			// Front face
+			0, 1, 2, 2, 3, 0,
+
+			// Back face
+			5, 4, 7, 7, 6, 5,
+
+			// Left face
+			4, 0, 3, 3, 7, 4,
+
+			// Right face
+			1, 5, 6, 6, 2, 1,
+
+			// Top face
+			3, 2, 6, 6, 7, 3,
+
+			// Bottom face
+			4, 5, 1, 1, 0, 4
 		};
 
 		Ref<OpenGLIndexBuffer> IBO = CreateRef<OpenGLIndexBuffer>(indices, sizeof(indices) / sizeof(uint32_t));
 		s_DefaultVertexArray->SetIndexBuffer(IBO);
-		
+
+		s_DefaultMesh = CreateRef<ORMesh>(s_DefaultVertexArray);
 	}
 
 	const Ref<ORShader>& ORDefaultRendererResources::GetDefaultShader() noexcept
@@ -84,9 +108,15 @@ namespace OrionEngine::OrionRenderer
 		return s_DefaultVertexArray;
 	}
 
+	const Ref<ORMesh>& ORDefaultRendererResources::GetDefaultMesh() noexcept
+	{
+		return s_DefaultMesh;
+	}
+
 	void ORDefaultRendererResources::Shutdown() noexcept
 	{
 		s_DefaultShader.reset();
 		s_DefaultVertexArray.reset();
+		s_DefaultMesh.reset();
 	}
 }
