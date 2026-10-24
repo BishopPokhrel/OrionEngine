@@ -1,8 +1,10 @@
 #pragma once
 
 #include "ORVertexArray.h"
+#include "ORIndexBuffer.h"
 
 #include <OrionEngine/Core/OEAssert.h>
+#include <OrionEngine/Core/OERef.h>
 
 namespace OrionEngine
 {
@@ -12,21 +14,33 @@ namespace OrionEngine
 		{
 		public:
 
-			explicit ORMesh(ORVertexArray* vao, uint32_t indexCount)
-				: m_VAO(vao), m_IndexCount(indexCount)
-			{}
-
-			void Bind() const noexcept
+			explicit ORMesh(const Ref<ORVertexArray>& VAO)
 			{
-				OE_CORE_ASSERT(m_VAO, "Vertex Array is null!");
+				OE_CORE_ASSERT(VAO, "VAO is null!");
+				OE_CORE_ASSERT(VAO->GetIndexBuffer(), "Current mesh does not have index buffer!");
+				
+				m_VAO = VAO; 
+			}
+
+			void Bind()
+			{
+				OE_CORE_ASSERT(m_VAO, "VAO is null!");
 				m_VAO->Bind();
 			}
-			uint32_t GetIndexCount() const noexcept { return m_IndexCount; }
+
+			uint32_t GetIndexCount()
+			{
+				OE_CORE_ASSERT(m_VAO, "VAO is null!");
+				OE_CORE_ASSERT(m_VAO->GetIndexBuffer(), "Index Buffer is null!");
+
+				return m_VAO->GetIndexBuffer()->GetCount();
+			}
+
+			const Ref<ORVertexArray>& GetVertexArray() const noexcept { return m_VAO;  }
 
 		private:
 
-			ORVertexArray* m_VAO = nullptr;
-			uint32_t m_IndexCount = 0;
+			Ref<ORVertexArray> m_VAO;
 		};
 	}
 }
