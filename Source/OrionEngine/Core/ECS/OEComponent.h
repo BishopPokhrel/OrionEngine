@@ -8,6 +8,7 @@
 
 #include <OrionEngine/OrionRenderer/ORVertexArray.h>
 #include <OrionEngine/OrionRenderer/ORShader.h>
+#include <OrionEngine/OrionRenderer/ORMesh.h>
 #include <OrionEngine/OrionRenderer/SceneRenderer/ORCamera.h>
 #include <OrionEngine/Core/OERef.h>
 
@@ -36,7 +37,7 @@ namespace OrionEngine
 		{
 			bool b_Visible = false;
 			Ref<OrionRenderer::ORShader> Shader;
-			Ref<OrionRenderer::ORVertexArray> VertexArray;
+			Ref<OrionRenderer::ORMesh> Mesh;
 		};
 
 		struct OECameraComponent
