@@ -17,7 +17,7 @@ namespace OrionEngine::OrionEditor
 
 		OEImGuiLayer()
 			: m_SceneHierarchyPanel(m_EditorContext.get()), m_DetailsPanel(m_EditorContext.get()), 
-			m_CommandPanel(m_EditorContext.get())
+			m_CommandPanel(m_EditorContext.get()), m_Viewport(m_EditorContext.get())
 		{ }
 
 		bool InitImGui(GLFWwindow* window);
@@ -30,7 +30,7 @@ namespace OrionEngine::OrionEditor
 		bool ShowDetailsPanel(OEScene* scene);
 		bool ShowSceneManagerPanel(OEScene* scene);
 		bool ShowCommandPanel(OEScene* scene);
-		bool DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer);
+		bool DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene);
 
 		bool CreateDockspace();
 

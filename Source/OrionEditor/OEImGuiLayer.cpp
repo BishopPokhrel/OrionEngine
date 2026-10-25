@@ -76,9 +76,9 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
-	bool OEImGuiLayer::DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer)
+	bool OEImGuiLayer::DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene)
 	{
-		m_Viewport.ShowViewport(framebuffer);
+		m_Viewport.ShowViewport(framebuffer, scene);
 		return true;
 	}
 
