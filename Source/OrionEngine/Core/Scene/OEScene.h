@@ -33,7 +33,8 @@ namespace OrionEngine
 		bool IsCreated() const noexcept { return m_Created; }
 		void SetSceneName(const std::string& name) { m_OESceneName = name; }
 		
-		OrionRenderer::ORCamera GetCurrentCamera() const noexcept { return m_Camera; }
+		OrionRenderer::ORCamera& GetCurrentCamera() noexcept { return m_Camera; }
+		const OrionRenderer::ORCamera& GetCurrentCamera() const noexcept { return m_Camera; }
 
 		std::string GetSceneName() const noexcept { return m_OESceneName; }
 
