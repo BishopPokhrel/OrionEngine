@@ -8,6 +8,8 @@
 #include <limits>
 
 #include <OrionEngine/Core/ECS/OEECSRegistry.h>
+#include <OrionEngine/Core/OETime.h>
+#include <OrionEngine/Core/OELogging.h>
 
 namespace OrionEngine::OrionEditor
 {
@@ -109,13 +111,51 @@ namespace OrionEngine::OrionEditor
 
                 m_EditorContext->SelectedEntity = closetEntity;
             }
+
+            // Camera movement
+            OrionRenderer::ORCamera& camera = scene->GetCurrentCamera();
+
+            static bool isRotatingCamera = false;
+            static ImVec2 lastMousePosition(0.0f, 0.0f);
+
+            if (isItemHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            {
+                lastMousePosition = ImGui::GetMousePos();
+                isRotatingCamera = true;
+            }
+
+            if (isRotatingCamera && ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            {
+                glm::vec3 movement(0.0f);
+
+                if (ImGui::IsKeyDown(ImGuiKey_W)) movement += camera.GetForward();
+                if (ImGui::IsKeyDown(ImGuiKey_S)) movement -= camera.GetForward();
+                if (ImGui::IsKeyDown(ImGuiKey_A)) movement -= camera.GetRight();
+                if (ImGui::IsKeyDown(ImGuiKey_D)) movement += camera.GetRight();
+
+                if (glm::length(movement) > 0.0f)
+                    camera.Translate(glm::normalize(movement) * 5.0f * OETime::OEGetDeltaTime());
+
+                ImVec2 mousePosition = ImGui::GetMousePos();
+
+                float deltaX = mousePosition.x - lastMousePosition.x;
+                float deltaY = mousePosition.y - lastMousePosition.y;
+
+                constexpr float sensitivity = 0.003f;
+
+                camera.Rotate(deltaX * sensitivity, -deltaY * sensitivity);
+
+                lastMousePosition = mousePosition;
+            }
+
+            if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+                isRotatingCamera = false;
         }
 
         ImGui::End();
 
         return true;
     }
-
 
     OERay OEViewport::CreateRayFromCamera(const glm::vec2& mousePos, const glm::vec2& viewportPos, const glm::vec2& viewportSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
     {
