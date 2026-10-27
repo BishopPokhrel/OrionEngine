@@ -8,6 +8,8 @@ namespace OrionEngine
 	{
 		ORION_ENGINE_INFO("Orion Engine is initializing!");
 
+		OETime::OETimeInit();
+
 		// Intialize or create the window
 		m_WindowProps.Width = 1280;
 		m_WindowProps.Height = 800;
@@ -30,6 +32,7 @@ namespace OrionEngine
 
 		while (m_Running && !m_Window->ShouldClose())
 		{
+			OETime::OETimeUpdate();
 			float dt = OETime::OEGetDeltaTime();
 
 			m_OEngine->OBeginFrame();
