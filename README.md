@@ -12,6 +12,7 @@ Please follow the steps below to build **Orion Engine**
 - GLFW & GLAD
 - GLM
 - YAML
+- ImGuizmo
 
 ---
 
