@@ -38,6 +38,7 @@ namespace OrionEngine::OrionEditor
 
         enum class OEGizmoOperations
         {
+            None = 0,
             Translate = ImGuizmo::TRANSLATE,
             Rotation = ImGuizmo::ROTATE,
             Scale = ImGuizmo::SCALE
@@ -45,6 +46,7 @@ namespace OrionEngine::OrionEditor
 
         enum class OEGizmoSpace
         {
+            None = 0,
             World = ImGuizmo::WORLD,
             Local = ImGuizmo::LOCAL
         };
@@ -52,7 +54,7 @@ namespace OrionEngine::OrionEditor
     private:
         
         OEEditorContext* m_EditorContext = nullptr;
-        OEGizmoOperations m_GizmoOperations = OEGizmoOperations::Translate;
-        OEGizmoSpace m_GizmoSpace = OEGizmoSpace::World;
+        OEGizmoOperations m_GizmoOperations = OEGizmoOperations::None;
+        OEGizmoSpace m_GizmoSpace = OEGizmoSpace::None;
     };
 }

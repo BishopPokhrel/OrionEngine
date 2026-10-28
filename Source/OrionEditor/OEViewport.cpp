@@ -1,9 +1,13 @@
 #include "OEViewport.h"
 
 #include <imgui.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -126,10 +130,10 @@ namespace OrionEngine::OrionEditor
             {
                 glm::vec3 movement(0.0f);
 
-                if (ImGui::IsKeyDown(ImGuiKey_W)) movement += camera.GetForward();
-                if (ImGui::IsKeyDown(ImGuiKey_S)) movement -= camera.GetForward();
-                if (ImGui::IsKeyDown(ImGuiKey_A)) movement -= camera.GetRight();
-                if (ImGui::IsKeyDown(ImGuiKey_D)) movement += camera.GetRight();
+                if (ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_UpArrow)) movement += camera.GetForward();
+                if (ImGui::IsKeyDown(ImGuiKey_S) || ImGui::IsKeyDown(ImGuiKey_DownArrow)) movement -= camera.GetForward();
+                if (ImGui::IsKeyDown(ImGuiKey_A) || ImGui::IsKeyDown(ImGuiKey_LeftArrow)) movement -= camera.GetRight();
+                if (ImGui::IsKeyDown(ImGuiKey_D) || ImGui::IsKeyDown(ImGuiKey_RightArrow)) movement += camera.GetRight();
 
                 if (glm::length(movement) > 0.0f)
                     camera.Translate(glm::normalize(movement) * 5.0f * OETime::OEGetDeltaTime());
@@ -152,6 +156,13 @@ namespace OrionEngine::OrionEditor
             // Gizmos
             if (m_EditorContext->SelectedEntity != ECS::INVALID_GAME_ENTITY_ID)
             {
+                // Gizmo Operation Mode
+
+                if (ImGui::IsKeyPressed(ImGuiKey_W)) m_GizmoOperations = OEGizmoOperations::Translate;
+                if (ImGui::IsKeyPressed(ImGuiKey_E)) m_GizmoOperations = OEGizmoOperations::Rotation;
+                if (ImGui::IsKeyPressed(ImGuiKey_R)) m_GizmoOperations = OEGizmoOperations::Scale;
+                if (ImGui::IsKeyPressed(ImGuiKey_Q)) m_GizmoOperations = OEGizmoOperations::None;
+
                 // Camera 
                 const OrionRenderer::ORCamera& camera = scene->GetCurrentCamera();
                 const glm::mat4& projectionMatrix = camera.GetProjection();
@@ -171,8 +182,24 @@ namespace OrionEngine::OrionEditor
                     ImGuizmo::SetDrawlist();
                     ImGuizmo::SetRect(viewportImagePos.x, viewportImagePos.y, viewportImageSize.x, viewportImageSize.y);
 
-                    if (ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(modelMatrix)))
-                        transform->Position = glm::vec3(modelMatrix[3]);
+                    if (m_GizmoOperations != OEGizmoOperations::None)
+                    {
+                        if (ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(m_GizmoOperations), ImGuizmo::LOCAL, glm::value_ptr(modelMatrix)))
+                        {
+                            glm::vec3 position;
+                            glm::quat rotation;
+                            glm::vec3 scale;
+                            glm::vec3 skew;
+                            glm::vec4 perspective;
+
+                            if (glm::decompose(modelMatrix, scale, rotation, position, skew, perspective))
+                            {
+                                transform->Position = position;
+                                transform->Rotation = glm::eulerAngles(rotation);
+                                transform->Scale = scale;
+                            }
+                        }
+                    }
                 }
             }
         }
