@@ -2,6 +2,8 @@
 
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -41,7 +43,7 @@ namespace OrionEngine::OrionEditor
             const bool isItemHovered = ImGui::IsItemHovered();
 
             // Entity selection
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && isItemHovered)
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && isItemHovered && !ImGuizmo::IsOver() && !ImGuizmo::IsUsing())
             {
                 const ImVec2 mousPosition = ImGui::GetMousePos();
 
@@ -76,14 +78,10 @@ namespace OrionEngine::OrionEditor
                     if (!render->b_Visible == true || !render->Mesh)
                         continue;
 
-                    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), transform->Position);
-                    glm::mat4 rotationMatrix = glm::mat4(1.0f);
-                    rotationMatrix = glm::rotate(rotationMatrix, transform->Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-                    rotationMatrix = glm::rotate(rotationMatrix, transform->Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-                    rotationMatrix = glm::rotate(rotationMatrix, transform->Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-                    glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), transform->Scale);
+                    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), transform->Position)
+                        * glm::mat4_cast(glm::quat(transform->Rotation))
+                        * glm::scale(glm::mat4(1.0f), transform->Scale);
 
-                    glm::mat4 modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
                     glm::mat4 inverseModelMatrix = glm::inverse(modelMatrix);
 
                     glm::vec4 localOrigin4 = inverseModelMatrix * glm::vec4(ray.Origin, 1);
@@ -150,6 +148,33 @@ namespace OrionEngine::OrionEditor
 
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
                 isRotatingCamera = false;
+
+            // Gizmos
+            if (m_EditorContext->SelectedEntity != ECS::INVALID_GAME_ENTITY_ID)
+            {
+                // Camera 
+                const OrionRenderer::ORCamera& camera = scene->GetCurrentCamera();
+                const glm::mat4& projectionMatrix = camera.GetProjection();
+                const glm::mat4& viewMatrix = camera.GetView();
+
+                // ECS (Transform and Renderable)
+                ECS::OEECSRegistry& registry = scene->GetRegistry();
+                ECS::OETransformComponent* transform = registry.HasComponent<ECS::OETransformComponent>(m_EditorContext->SelectedEntity) ? registry.GetComponent<ECS::OETransformComponent>(m_EditorContext->SelectedEntity) : nullptr;
+                ECS::OERenderableComponent* render = registry.HasComponent<ECS::OERenderableComponent>(m_EditorContext->SelectedEntity) ? registry.GetComponent<ECS::OERenderableComponent>(m_EditorContext->SelectedEntity) : nullptr;
+
+                if (transform && render && render->b_Visible)
+                {
+                    // Construct the Model matrix
+                    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), transform->Position) * glm::mat4_cast(glm::quat(transform->Rotation)) * glm::scale(glm::mat4(1.0f), transform->Scale);
+
+                    ImGuizmo::SetOrthographic(true);
+                    ImGuizmo::SetDrawlist();
+                    ImGuizmo::SetRect(viewportImagePos.x, viewportImagePos.y, viewportImageSize.x, viewportImageSize.y);
+
+                    if (ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(modelMatrix)))
+                        transform->Position = glm::vec3(modelMatrix[3]);
+                }
+            }
         }
 
         ImGui::End();
