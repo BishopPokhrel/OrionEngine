@@ -1,5 +1,6 @@
 #include "OEImGuiLayer.h"
 
+#include <ImGuizmo.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -7,6 +8,8 @@
 #if defined(_WIN64)
 #include <OrionEngine/OS/Windows/WindowsOSAPI.h>
 #endif
+
+#include <OrionEngine/Core/OELogging.h>
 
 namespace OrionEngine::OrionEditor
 {
@@ -38,6 +41,7 @@ namespace OrionEngine::OrionEditor
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 		return true;
 	}
 
