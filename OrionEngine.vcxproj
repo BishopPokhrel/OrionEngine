@@ -190,6 +190,7 @@
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OESceneSerializer.h" />
     <ClInclude Include="Source\OrionEngine\Engine\OEngine.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\OEDirectionalLight.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORGraphicsAPI.h" />

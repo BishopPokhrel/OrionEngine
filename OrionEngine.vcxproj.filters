@@ -271,5 +271,8 @@
     <ClInclude Include="Source\OrionEngine\OS\Windows\WindowsOSAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\OEDirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
