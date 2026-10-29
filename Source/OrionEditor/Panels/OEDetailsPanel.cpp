@@ -8,26 +8,158 @@ namespace OrionEngine::OrionEditor
 	{
 		if (m_EditorContext->SelectedEntity == ECS::INVALID_GAME_ENTITY_ID)
 		{
-			ImGui::Text("No entities selected yet.");
+			ImGui::TextDisabled("No entities selected yet.");
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 1.000f, 1.000f, 0.164f));
+			ImGui::TextWrapped("Try selecting entities in the Scene Hierarchy Panel to inspect its properties here");
+			ImGui::PopStyleColor();
 			return false;
 		}
 
-		ImGui::Text("Game Entity Name: "); 
-		ImGui::SameLine();
+		const ECS::OEGameEntityID entityID = m_EditorContext->SelectedEntity;
+		const std::string entityName = m_Registry->GetEntityNameByID(entityID);
 
-		std::string entityName = m_Registry->GetEntityNameByID(m_EditorContext->SelectedEntity);
-		if (ImGui::InputText(entityName.c_str(), m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer, sizeof(m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer)))
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.012f, 0.016f, 0.051f, 1.000f));
+		ImGui::BeginChild("EntityHeader", ImVec2(0.0f, 82.0f), true);
+
+		ImGui::TextColored(ImVec4(0.056f, 0.048f, 0.188f, 1.000f), "GAME ENTITY");
+		ImGui::SameLine();
+		ImGui::TextDisabled("| ID: %llu", static_cast<unsigned long long>(entityID));
+
+		if (ImGui::InputText("##EntityName", m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer, sizeof(m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer)))
 			m_Registry->SetEntityName(m_EditorContext->SelectedEntity, std::string(m_OEDPDataNeeded.GameEntityDataNeeded->GameEntityNameBuffer));
 
-		ImGui::Text("Game Entity ID: %d", m_EditorContext->SelectedEntity); 
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
 
 		if (ImGui::CollapsingHeader("Transform Component"))
 		{
 			if (ECS::OETransformComponent* transform = m_Registry->TransformComponent.GetComponent(m_EditorContext->SelectedEntity))
 			{
-				ImGui::DragFloat3("Position: ", &transform->Position[0], 0.1f);
-				ImGui::DragFloat3("Rotation: ", &transform->Rotation[0], 0.1f);
-				ImGui::DragFloat3("Scale: ", &transform->Scale[0], 0.1f);
+				if (ImGui::BeginTable("PositionTable", 4, ImGuiTableFlags_SizingStretchProp))
+				{
+					ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+					ImGui::TableSetupColumn("X");
+					ImGui::TableSetupColumn("Y");
+					ImGui::TableSetupColumn("Z");
+
+					ImGui::TableNextRow();
+
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text("Position");
+
+					ImGui::TableSetColumnIndex(1);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					ImGui::Button("X", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##PositionX", &transform->Position.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(2);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+					ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##PositionY", &transform->Position.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(3);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+					ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##PositionZ", &transform->Position.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::EndTable();
+				}
+
+				if (ImGui::BeginTable("RotationTable", 4, ImGuiTableFlags_SizingStretchProp))
+				{
+					ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+					ImGui::TableSetupColumn("X");
+					ImGui::TableSetupColumn("Y");
+					ImGui::TableSetupColumn("Z");
+
+					ImGui::TableNextRow();
+
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text("Rotation");
+
+					ImGui::TableSetColumnIndex(1);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					ImGui::Button("X", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##RotationX", &transform->Rotation.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(2);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+					ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##RotationY", &transform->Rotation.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(3);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+					ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##RotationZ", &transform->Rotation.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::EndTable();
+				}
+
+				if (ImGui::BeginTable("ScaleTable", 4, ImGuiTableFlags_SizingStretchProp))
+				{
+					ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+					ImGui::TableSetupColumn("X");
+					ImGui::TableSetupColumn("Y");
+					ImGui::TableSetupColumn("Z");
+
+					ImGui::TableNextRow();
+
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text("Scale");
+
+					ImGui::TableSetColumnIndex(1);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					ImGui::Button("X", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##ScaleX", &transform->Scale.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(2);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+					ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##ScaleY", &transform->Scale.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(3);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+					ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##ScaleZ", &transform->Scale.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::EndTable();
+				}
 			}
 		}
 
@@ -35,12 +167,112 @@ namespace OrionEngine::OrionEditor
 		{
 			if (ECS::OEPhysicsComponent* physics = m_Registry->PhysicsComponent.GetComponent(m_EditorContext->SelectedEntity))
 			{
-				ImGui::DragFloat("Mass: ", &physics->Mass, 0.1f);
-				ImGui::DragFloat3("Velocity: ", &physics->Velocity[0], 0.1f);
-				ImGui::DragFloat3("Accleration: ", &physics->Accleration[0], 0.1f);
-				if (ImGui::Checkbox("Is Static: ", &physics->IsStatic)) {}
-				ImGui::DragFloat("Linear Drag: ", &physics->LinearDrag, 0.1f);
-				ImGui::DragFloat("Radius: ", &physics->Radius, 0.1f);
+				
+				ImGui::Text("Mass");
+				ImGui::SameLine(100.0f);
+				ImGui::SetNextItemWidth(-1.0f);
+				ImGui::DragFloat("##Mass: ", &physics->Mass, 0.1f, 0.0f, 0.0f, "%.2f");
+
+				// Velocity
+				if (ImGui::BeginTable("VelocityTable", 4, ImGuiTableFlags_SizingStretchProp))
+				{
+					ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+					ImGui::TableSetupColumn("X");
+					ImGui::TableSetupColumn("Y");
+					ImGui::TableSetupColumn("Z");
+
+					ImGui::TableNextRow();
+
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text("Velocity");
+
+					ImGui::TableSetColumnIndex(1);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					ImGui::Button("X", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##VelocityX", &physics->Velocity.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(2);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+					ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##VelocityY", &physics->Velocity.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(3);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+					ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##VelocityZ", &physics->Velocity.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::EndTable();
+				}
+
+				// Acceleration
+
+				if (ImGui::BeginTable("AccelerationTable", 4, ImGuiTableFlags_SizingStretchProp))
+				{
+					ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+					ImGui::TableSetupColumn("X");
+					ImGui::TableSetupColumn("Y");
+					ImGui::TableSetupColumn("Z");
+
+					ImGui::TableNextRow();
+
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text("Acceleration");
+
+					ImGui::TableSetColumnIndex(1);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+					ImGui::Button("X", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##AccelerationX", &physics->Accleration.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(2);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+					ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##AccelerationY", &physics->Accleration.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::TableSetColumnIndex(3);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+					ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+					ImGui::PopStyleColor(2);
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					ImGui::DragFloat("##AccelerationZ", &physics->Accleration.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+					ImGui::EndTable();
+				}
+
+				ImGui::Text("Is Static");
+				ImGui::SameLine(100.0f);
+				ImGui::Checkbox("##IsStatic", &physics->IsStatic);
+
+				ImGui::Text("Linear Drag");
+				ImGui::SameLine(100.0f);
+				ImGui::SetNextItemWidth(-1.0f);
+				ImGui::DragFloat("##LinearDrag", &physics->LinearDrag, 0.1f, 0.0f, 0.0f, "%.2f");
+
+				ImGui::Text("Radius");
+				ImGui::SameLine(100.0f);
+				ImGui::SetNextItemWidth(-1.0f);
+				ImGui::DragFloat("##Radius", &physics->Radius, 0.1f, 0.0f,0.0f, "%.2f");
 			}
 		}
 
@@ -48,7 +280,9 @@ namespace OrionEngine::OrionEditor
 		{
 			if (ECS::OERenderableComponent* render = m_Registry->RenderableComponent.GetComponent(m_EditorContext->SelectedEntity))
 			{
-				if (ImGui::Checkbox("Is Visible", &render->b_Visible)) {}
+				ImGui::Text("Is Visible");
+				ImGui::SameLine(100.0f);
+				ImGui::Checkbox("##IsVisible", &render->b_Visible);
 			}
 		}
 
@@ -56,13 +290,23 @@ namespace OrionEngine::OrionEditor
 		{
 			if (ECS::OECameraComponent* camera = m_Registry->CameraComponent.GetComponent(m_EditorContext->SelectedEntity))
 			{
-				if (ImGui::Checkbox("Primary: ", &camera->Primary)) {}
-				ImGui::DragFloat("Near Clip: ", &camera->NearClip, 0.1f);
-				ImGui::DragFloat("Far Clip: ", &camera->FarClip, 0.1f);
+				ImGui::Text("Primary");
+				ImGui::SameLine(100.0f);
+				ImGui::Checkbox("##Primary", &camera->Primary);
+
+				ImGui::Text("Near Clip");
+				ImGui::SameLine(100.0f);
+				ImGui::SetNextItemWidth(-1.0f);
+				ImGui::DragFloat("##NearClip", &camera->NearClip, 0.1f, 0.0f, 0.0f, "%.2f");
+
+				ImGui::Text("Far Clip");
+				ImGui::SameLine(100.0f);
+				ImGui::SetNextItemWidth(-1.0f);
+				ImGui::DragFloat("##FarClip", &camera->FarClip, 0.1f, 0.0f, 0.0f, "%.2f");
 			}
 		}
 
-		if (ImGui::Button("Add New Component"))
+		if (ImGui::Button("+ Add New Component"))
 			ImGui::OpenPopup("New Component");
 
 		if (ImGui::BeginPopupModal("New Component", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -101,7 +345,7 @@ namespace OrionEngine::OrionEditor
 						m_Registry->TransformComponent.AddComponent(m_EditorContext->SelectedEntity, transform);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Transform Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %llu already has a Transform Component!", entityName.c_str(), static_cast<unsigned long long>(m_EditorContext->SelectedEntity));
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 1)
 				{
@@ -113,7 +357,7 @@ namespace OrionEngine::OrionEditor
 						m_Registry->PhysicsComponent.AddComponent(m_EditorContext->SelectedEntity, physics);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Physics Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %llu already has a Physics Component!", entityName.c_str(), static_cast<unsigned long long>(m_EditorContext->SelectedEntity));
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 2)
 				{
@@ -133,7 +377,7 @@ namespace OrionEngine::OrionEditor
 						m_Registry->RenderableComponent.AddComponent(m_EditorContext->SelectedEntity, render);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Renderable Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %llu already has a Renderable Component!", entityName.c_str(), static_cast<unsigned long long>(m_EditorContext->SelectedEntity));
 				}
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeCreationIndex == 3)
 				{
@@ -149,9 +393,8 @@ namespace OrionEngine::OrionEditor
 						m_Registry->CameraComponent.AddComponent(m_EditorContext->SelectedEntity, cameraComp);
 					}
 					else
-						ImGui::Text("Entity %s with ID %d already has a Camera Component!", entityName, m_EditorContext->SelectedEntity);
+						ImGui::Text("Entity %s with ID %llu already has a Camera Component!", entityName.c_str(), static_cast<unsigned long long>(m_EditorContext->SelectedEntity));
 				}
-				else; // do nothing (lol)
 				ImGui::CloseCurrentPopup();
 
 				// cleanup after clsoing popup
@@ -198,7 +441,6 @@ namespace OrionEngine::OrionEditor
 					m_Registry->RenderableComponent.DeleteComponent(m_EditorContext->SelectedEntity);
 				else if (m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeDeletionIndex == 3)
 					m_Registry->CameraComponent.DeleteComponent(m_EditorContext->SelectedEntity);
-				else; // do nothing (lol)
 				ImGui::CloseCurrentPopup();
 
 				// Cleanup after closing popup
