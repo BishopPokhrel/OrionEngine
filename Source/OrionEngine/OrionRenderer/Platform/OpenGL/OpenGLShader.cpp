@@ -30,6 +30,14 @@ namespace OrionEngine
 {
     namespace OrionRenderer
     {
+        static void CheckOpenGLError(const char* location)
+        {
+            GLenum error = GL_NO_ERROR;
+
+            while ((error = glGetError()) != GL_NO_ERROR)
+                ORION_ENGINE_ERROR("OpenGL error at ", location, ": ", static_cast<unsigned int>(error));
+        }
+
         GLuint OpenGLShader::CompileAndLinkViaGLSLShaderFiles(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) noexcept
         {
             if (vertexShaderSource.empty() || fragmentShaderSource.empty())
@@ -102,17 +110,34 @@ namespace OrionEngine
         {
             OE_CORE_ASSERT(m_RendererID != 0, "Shader program not created!");
 
+            GLenum error = GL_NO_ERROR;
+
+            while ((error = glGetError()) != GL_NO_ERROR)
+                ORION_ENGINE_ERROR("Pre-existing OpenGL error before SetMat4 ", name, ": ", static_cast<unsigned int>(error));
+
             GLint currentProgram = 0;
             glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
 
+            if (static_cast<GLuint>(currentProgram) != m_RendererID)
+            {
+                ORION_ENGINE_ERROR("Wrong shader bound in SetMat4: ", name, ", expected program ", m_RendererID, ", active program ", currentProgram);
+                return;
+            }
+
             GLint location = GetUniformLocation(name);
+
+            if (location == -1)
+            {
+                ORION_ENGINE_ERROR("Uniform not found or inactive ", name);
+                return;
+            }
 
             glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
 
-            GLenum error = glGetError();
+            error = glGetError();
 
             if (error != GL_NO_ERROR)
-                ORION_ENGINE_ERROR("OpenGL error in SetMat4: {0}", static_cast<unsigned int>(error));
+                ORION_ENGINE_ERROR("OpenGL error after SetMat4 ", name, ": ", static_cast<unsigned int>(error));
         }
 
         void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) noexcept
@@ -123,11 +148,13 @@ namespace OrionEngine
         void OpenGLShader::SetFloat(const std::string& name, float value) noexcept
         {
             glUniform1f(GetUniformLocation(name), value);
+
         }
 
         void OpenGLShader::Bind() noexcept
         {
             glUseProgram(m_RendererID);
+            CheckOpenGLError("OpenGL error - Bind() function");
         }
 
         void OpenGLShader::Unbind() noexcept

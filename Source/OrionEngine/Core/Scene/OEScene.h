@@ -7,6 +7,9 @@
 #include <OrionEngine/Core/ECS/OEGameEntity.h>
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/OrionRenderer/SceneRenderer/ORCamera.h>
+#include <OrionEngine/OrionRenderer/OEDirectionalLight.h>
+
+#include <glm/glm.hpp>
 
 namespace OrionEngine::ECS
 {
@@ -49,5 +52,6 @@ namespace OrionEngine
 		bool m_Created;
 
 		OrionRenderer::ORCamera m_Camera = OrionRenderer::ORCamera(-8.0f, 8.0f, 4.5f, -4.5f);
+		OrionRenderer::OEDirectionalLight m_DirectionalLight;
 	};
 }  

@@ -15,10 +15,23 @@
 #include <OrionEngine/Core/OEAssert.h>
 #include <OrionEngine/Core/OELogging.h>
 
+// for diagnosis only
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+
 namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
+		static void CheckSubmitError(const char* location)
+		{
+			GLenum error = GL_NO_ERROR;
+
+			while ((error = glGetError()) != GL_NO_ERROR)
+				ORION_ENGINE_ERROR("OpenGL error at ", location, ": ", static_cast<unsigned int>(error));
+		}
+
 		class ORRenderer
 		{
 		public:
@@ -57,12 +70,13 @@ namespace OrionEngine
 				shader->Bind();
 				shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
 				shader->SetMat4("u_Transform", transform);
+				shader->SetVec3("u_LightDirection", glm::vec3(-0.5f, -1.0f, -0.5f));
+				shader->SetVec3("u_LightColor", glm::vec3(1.0f));
+				shader->SetFloat("u_LightIntensity", 1.0f);
 
 				mesh->Bind();
-				
-				uint32_t indexCount = mesh->GetIndexCount();
 
-				ORRenderCommand::DrawIndexed(indexCount);
+				ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
 			}
 
 			void SetGraphicsAPI(ORGraphicsAPI API) noexcept

@@ -36,28 +36,35 @@ namespace OrionEngine
 			m_IndexBuffer = IBO;
 		}
 
-		void OpenGLVertexArray::AddVertexBuffer(
-			const Ref<ORVertexBuffer>& VBO
-		) noexcept
+		void OpenGLVertexArray::AddVertexBuffer(const Ref<ORVertexBuffer>& VBO) noexcept
 		{
+			OE_CORE_ASSERT(VBO, "Vertex buffer is null!");
+
 			Bind();
 			VBO->Bind();
 
-			uint32_t stride = 3 * sizeof(float);
+			const ORVertexBufferLayout& layout = VBO->GetLayout();
+			const auto& elements = layout.GetElements();
 
-			glEnableVertexAttribArray(0);
+			uint32_t index = 0;
 
-			glVertexAttribPointer(
-				0,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				stride,
-				(const void*)0
-			);
+			for (const VertexBufferElement& element : elements)
+			{
+				glEnableVertexAttribArray(index);
+
+				glVertexAttribPointer(
+					index,
+					static_cast<GLint>(ShaderDataTypeComponentCount(element.Type)),
+					GL_FLOAT,
+					element.Normalized ? GL_TRUE : GL_FALSE,
+					static_cast<GLsizei>(layout.GetStride()),
+					reinterpret_cast<const void*>(static_cast<uintptr_t>(element.Offset))
+				);
+
+				++index;
+			}
 
 			m_VertexBuffers.push_back(VBO);
 		}
-
 	}
 }
