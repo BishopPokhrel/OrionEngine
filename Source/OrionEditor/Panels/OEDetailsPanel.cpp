@@ -9,7 +9,7 @@ namespace OrionEngine::OrionEditor
 		if (m_EditorContext->SelectedEntity == ECS::INVALID_GAME_ENTITY_ID)
 		{
 			ImGui::TextDisabled("No entities selected yet.");
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 1.000f, 1.000f, 0.704f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 1.000f, 1.000f, 0.300));
 			ImGui::TextWrapped("Try selecting entities in the Scene Hierarchy Panel to inspect its properties here");
 			ImGui::PopStyleColor();
 			return false;
@@ -18,10 +18,10 @@ namespace OrionEngine::OrionEditor
 		const ECS::OEGameEntityID entityID = m_EditorContext->SelectedEntity;
 		const std::string entityName = m_Registry->GetEntityNameByID(entityID);
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.000f, 0.000f, 0.183f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.000f, 0.000f, 0.091f, 1.000f));
 		ImGui::BeginChild("EntityHeader", ImVec2(0.0f, 82.0f), true);
 
-		ImGui::TextColored(ImVec4(0.000f, 0.000f, 0.323f, 1.000f), "GAME ENTITY");
+		ImGui::TextColored(ImVec4(0.423f, 0.149f, 0.652f, 0.726f), "GAME ENTITY");
 		ImGui::SameLine();
 		ImGui::TextDisabled("| ID: %llu", static_cast<unsigned long long>(entityID));
 
