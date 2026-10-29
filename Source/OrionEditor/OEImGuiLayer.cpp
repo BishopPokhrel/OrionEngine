@@ -1,4 +1,5 @@
 #include "OEImGuiLayer.h"
+#include "UI/OEEditorTheme.h"
 
 #include <ImGuizmo.h>
 #include <imgui.h>
@@ -20,7 +21,7 @@ namespace OrionEngine::OrionEditor
 		ImGuiIO& io = ImGui::GetIO(); 
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-		ImGui::StyleColorsDark();
+		OEEditorTheme::ApplyTheme();
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 330 core");
