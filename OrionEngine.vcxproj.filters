@@ -119,6 +119,9 @@
     <ClCompile Include="Source\OrionEditor\OEViewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEditor\UI\OEEditorTheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
@@ -272,6 +275,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\OrionRenderer\OEDirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEditor\UI\OEEditorTheme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
