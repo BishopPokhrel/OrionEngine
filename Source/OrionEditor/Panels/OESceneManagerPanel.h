@@ -39,7 +39,6 @@ namespace OrionEngine::OrionEditor
 
 		void SetScene(OEScene* scene) { m_CurrentScene = scene; }
 
-		bool DrawSceneCreation();
 		bool DrawSceneDeletion();
 		bool DrawSceneMetadata();
 		bool DrawSceneEdit();

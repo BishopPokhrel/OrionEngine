@@ -1,5 +1,7 @@
 #include "OECommandPanel.h"
 
+#include <OrionEditor/UI/OEEditorTheme.h>
+
 #include <imgui.h>
 
 namespace OrionEngine::OrionEditor
@@ -18,7 +20,9 @@ namespace OrionEngine::OrionEditor
 
 			if (ImGui::BeginPopupModal("New Game Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
-				ImGui::InputText("Name...", m_OECPDataNeeded.GameEntityActionDataNeeded.GameEntityNameBuffer,
+				ImGui::Text("Name...");
+				ImGui::SameLine(100.0f);
+				ImGui::InputText("##Name", m_OECPDataNeeded.GameEntityActionDataNeeded.GameEntityNameBuffer,
 					sizeof(m_OECPDataNeeded.GameEntityActionDataNeeded.GameEntityNameBuffer));
 
 				if (ImGui::Button("Create"))
@@ -28,6 +32,7 @@ namespace OrionEngine::OrionEditor
 					ImGui::CloseCurrentPopup();
 				}
 
+				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
 				ImGui::EndPopup();
 			}
@@ -39,10 +44,7 @@ namespace OrionEngine::OrionEditor
 				ECS::OEGameEntityID id = m_EditorContext->SelectedEntity;
 
 				if (id != ECS::INVALID_GAME_ENTITY_ID)
-				{
-					m_Registry->DeleteGameEntity(id);
-					m_EditorContext->SelectedEntity = ECS::INVALID_GAME_ENTITY_ID;
-				}
+					ImGui::OpenPopup("? Confirm");
 				else
 					ImGui::OpenPopup("Entity Not Selected");
 			}
@@ -57,7 +59,9 @@ namespace OrionEngine::OrionEditor
 
 			if (ImGui::BeginPopupModal("Rename Game Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
-				ImGui::InputText("Name...", m_OECPDataNeeded.GameEntityActionDataNeeded.GameEntityNameBufferForRenaming,
+				ImGui::Text("Name...");
+				ImGui::SameLine(100.0f);
+				ImGui::InputText("##Name", m_OECPDataNeeded.GameEntityActionDataNeeded.GameEntityNameBufferForRenaming,
 					sizeof(m_OECPDataNeeded.GameEntityActionDataNeeded.GameEntityNameBufferForRenaming));
 
 				if (ImGui::Button("OK"))
@@ -74,8 +78,28 @@ namespace OrionEngine::OrionEditor
 						ImGui::OpenPopup("Entity Not Selected");
 				}
 
+				ImGui::SameLine();
 				if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
 
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::BeginPopupModal("? Confirm", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text("Are you sure you want to delete Game Entity ");
+				ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+				ImGui::SameLine();
+				ImGui::Text("%s?", m_Registry->GetEntityNameByID(m_EditorContext->SelectedEntity));
+				ImGui::PopFont();
+
+				if (ImGui::Button("OK"))
+				{
+					m_Registry->DeleteGameEntity(m_EditorContext->SelectedEntity);
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
 				ImGui::EndPopup();
 			}
 
@@ -100,8 +124,10 @@ namespace OrionEngine::OrionEditor
 			const char* components[] = {
 				"Transform Component", "Physics Component", "Renderable Component", "Camera Component"
 			};
-
-			if (ImGui::BeginCombo("Components", components[m_OECPDataNeeded.ComponentActionDataNeeded.ComponentTypesIndex]))
+			
+			ImGui::Text("Components");
+			ImGui::SameLine(100.0f);
+			if (ImGui::BeginCombo("##Components", components[m_OECPDataNeeded.ComponentActionDataNeeded.ComponentTypesIndex]))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(components); n++)
 				{

@@ -6,6 +6,8 @@
 #include <OrionEngine/Core/OETime.h>
 #include <OrionEngine/Core/ECS/OEECSRegistry.h>
 
+#include <OrionEditor/UI/OEEditorTheme.h>
+
 namespace EditorUtils
 {
     static void DrawMat4ReadOnly(const char* label, const glm::mat4& matrix)
@@ -30,30 +32,6 @@ namespace EditorUtils
 
 namespace OrionEngine::OrionEditor
 {
-    bool OESceneManagerPanel::DrawSceneCreation()
-    {
-        if (ImGui::Button("Create Scene"))
-            ImGui::OpenPopup("New Scene");
-
-        if (ImGui::BeginPopupModal("New Scene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::InputText("Scene Name...", m_OESMPDataNeeded.CreationDataNeeded->NewSceneNameBuffer, sizeof(m_OESMPDataNeeded.CreationDataNeeded->NewSceneNameBuffer));
-
-            if (ImGui::Button("OK"))
-            {
-                m_SceneName = m_OESMPDataNeeded.CreationDataNeeded->NewSceneNameBuffer;
-                m_CurrentScene->SetSceneName(m_SceneName);
-                ImGui::CloseCurrentPopup();
-            }
-
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel")) { ImGui::CloseCurrentPopup(); }
-            ImGui::EndPopup();
-        }
-
-        return true;
-    }
-
     bool OESceneManagerPanel::DrawSceneDeletion()
     {
         std::string dialogTxt = "Are you sure you want to delete Scene: " + m_SceneName + "?";
@@ -66,7 +44,7 @@ namespace OrionEngine::OrionEditor
         {
             if (ImGui::Button("Yes"))
             {
-                m_CurrentScene->IsCreated() ? m_CurrentScene->DeleteScene() : ImGui::Text("No scene exists, cannot delete scene %s", m_SceneName);
+                m_CurrentScene->DeleteScene();
                 ImGui::CloseCurrentPopup();
             }
 
@@ -86,7 +64,9 @@ namespace OrionEngine::OrionEditor
         // Some things or metadata, like Counts of game entities, delta time, elsaped time, frame count, FPS, etc. are not going to be editable
         // These things are meant to be read only, not editable. 
 
-        if (ImGui::InputText("Scene Name...", m_OESMPDataNeeded.EditableDataNeeded->EditableSceneNameBuffer, sizeof(m_OESMPDataNeeded.EditableDataNeeded->EditableSceneNameBuffer)))
+        ImGui::Text("Scene Name...");
+        ImGui::SameLine(100.0f);
+        if (ImGui::InputText("##SceneName", m_OESMPDataNeeded.EditableDataNeeded->EditableSceneNameBuffer, sizeof(m_OESMPDataNeeded.EditableDataNeeded->EditableSceneNameBuffer)))
         {
             m_SceneName = m_OESMPDataNeeded.EditableDataNeeded->EditableSceneNameBuffer;
             m_CurrentScene->SetSceneName(m_SceneName);
@@ -102,12 +82,182 @@ namespace OrionEngine::OrionEditor
             float yaw = m_CurrentScene->GetCurrentCamera().GetYaw();
             float pitch = m_CurrentScene->GetCurrentCamera().GetPitch();
 
-            if (ImGui::DragFloat3("Position: ", &position[0], 0.1f)) m_CurrentScene->GetCurrentCamera().SetPosition(position);
-            ImGui::DragFloat("Yaw: ", &yaw, 0.1f);
-            ImGui::DragFloat("Pitch: ", &pitch, 0.1f);
-            ImGui::DragFloat3("Forward: ", &forward[0], 0.1f);
-            ImGui::DragFloat3("Right: ", &right[0], 0.1f);
-            ImGui::DragFloat3("Up: ", &up[0], 0.1f);
+            if (ImGui::BeginTable("CameraEditPositionTable", 4, ImGuiTableFlags_SizingStretchProp))
+            {
+                ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                ImGui::TableSetupColumn("X");
+                ImGui::TableSetupColumn("Y");
+                ImGui::TableSetupColumn("Z");
+
+                ImGui::TableNextRow();
+                
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Position");
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##CameraEditPositionX", &position.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##CameraEditPositionY", &position.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##CameraPositionZ", &position.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                m_CurrentScene->GetCurrentCamera().SetPosition(position);
+
+                ImGui::EndTable();
+            }
+            ImGui::Text("Yaw");
+            ImGui::SameLine(100.0f);
+            ImGui::DragFloat("##Yaw", &yaw, 0.1f, 0.0f, 0.0f, "%.2f");
+
+            ImGui::Text("Pitch");
+            ImGui::SameLine(100.0f);
+            ImGui::DragFloat("##Pitch", &pitch, 0.1f, 0.0f, 0.0f, "%.2f");
+
+            if (ImGui::BeginTable("ForwardTable", 4, ImGuiTableFlags_SizingStretchProp))
+            {
+                ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                ImGui::TableSetupColumn("X");
+                ImGui::TableSetupColumn("Y");
+                ImGui::TableSetupColumn("Z");
+
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Forward");
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##ForwardX", &forward.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##ForwardY", &forward.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##ForwardZ", &forward.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::EndTable();
+            }
+
+            if (ImGui::BeginTable("RightTable", 4, ImGuiTableFlags_SizingStretchProp))
+            {
+                ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                ImGui::TableSetupColumn("X");
+                ImGui::TableSetupColumn("Y");
+                ImGui::TableSetupColumn("Z");
+
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Right");
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##RightX", &right.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##RightY", &right.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##RightZ", &right.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::EndTable();
+            }
+
+            if (ImGui::BeginTable("UpTable", 4, ImGuiTableFlags_SizingStretchProp))
+            {
+                ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                ImGui::TableSetupColumn("X");
+                ImGui::TableSetupColumn("Y");
+                ImGui::TableSetupColumn("Z");
+
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Up");
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##UpX", &up.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##UpY", &up.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                ImGui::PopStyleColor(2);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(-1.0f);
+                ImGui::DragFloat("##UpZ", &up.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+                ImGui::EndTable();
+            }
         }
 
         return true;
@@ -117,24 +267,63 @@ namespace OrionEngine::OrionEditor
     {
         m_SceneName = m_CurrentScene->GetSceneName(); 
 
-        ImGui::Text("Scene %s Metadata. Read Only.", m_SceneName.c_str());
-        ImGui::Text("Scene Name: %s", m_SceneName);
+        ImGui::Text("Scene Metadata. Read Only.");
+
+        ImGui::Text("Scene Name:");
+        ImGui::SameLine();
+        ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+        ImGui::Text("%s", m_SceneName.c_str());
+        ImGui::PopFont();
 
         if (ImGui::CollapsingHeader("Scene Registry"))
         {
-            ImGui::Text("Current Registry (Pointer): %p", m_CurrentScene->GetRegistry());
-            ImGui::Text("Game Entity Count: %zu", m_CurrentScene->GetRegistry().GetEntityCount());
+            ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+            ImGui::Text("Current Registry (Pointer):");
+            ImGui::PopFont();
+            ImGui::SameLine();
+            ImGui::Text("%p", m_CurrentScene->GetRegistry());
+
+            ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+            ImGui::Text("Game Entity Count:");
+            ImGui::PopFont();
+            ImGui::SameLine();
+            ImGui::Text("%zu", m_CurrentScene->GetRegistry().GetEntityCount());
         }
 
         float dt = OETime::OEGetDeltaTime();
-        ImGui::Text("Delta Time: %f", dt);
-        ImGui::Text("Elapsed Time: %f", OETime::OEGetTime()); // OEGetTime returns s_TimeSinceStart, which is the elapsed time. See OETime.h for further details.
-        ImGui::Text("Frame Count: %f", OETime::OEGetFrameCount());
-        ImGui::Text("FPS: %f", dt > 0.0f ? 1.0f / dt : 0.0f);
+
+        ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+        ImGui::Text("Delta Time:");
+        ImGui::PopFont();
+        ImGui::SameLine();
+        ImGui::Text("%f", dt);
+
+        ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+        ImGui::Text("Elapsed Time:"); // OEGetTime returns s_TimeSinceStart, which is the elapsed time. See OETime.h for further details.
+        ImGui::PopFont();
+        ImGui::SameLine();
+        ImGui::Text("%f", OETime::OEGetTime());
+
+        ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+        ImGui::Text("Frame Count:");
+        ImGui::PopFont();
+        ImGui::SameLine();
+        ImGui::Text("%llu", static_cast<unsigned long long>(OETime::OEGetFrameCount()));
+        
+        ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+        ImGui::Text("FPS:");
+        ImGui::PopFont();
+        ImGui::SameLine();
+        ImGui::Text("%f", dt > 0.0f ? 1.0f / dt : 0.0f);
 
         if (ImGui::CollapsingHeader("Camera Metadata"))
         {
-            ImGui::Text("Current Camera (Pointer): %p", m_CurrentScene->GetCurrentCamera());
+            ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+            ImGui::Text("Current Camera (Pointer):");
+            ImGui::PopFont();
+            ImGui::SameLine();
+            ImGui::Text("%p", m_CurrentScene->GetCurrentCamera());
+
 
             EditorUtils::DrawMat4ReadOnly("Projection Matrix", m_CurrentScene->GetCurrentCamera().GetProjection());
             EditorUtils::DrawMat4ReadOnly("View Matrix", m_CurrentScene->GetCurrentCamera().GetView());
@@ -142,34 +331,182 @@ namespace OrionEngine::OrionEditor
 
             if (ImGui::CollapsingHeader("Position"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetPosition().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetPosition().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetPosition().z);
+                if (ImGui::BeginTable("CameraPositionTable", 3, ImGuiTableFlags_SizingStretchProp))
+                {
+                    ImGui::TableSetupColumn("X");
+                    ImGui::TableSetupColumn("Y");
+                    ImGui::TableSetupColumn("Z");
+
+                    ImGui::TableNextRow();
+
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                    ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetPosition().x);
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                    ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetPosition().y);
+
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                    ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetPosition().z);
+
+                    ImGui::EndTable();
+                }
             }
 
             ImGui::Spacing();
-            ImGui::Text("Yaw: %f", m_CurrentScene->GetCurrentCamera().GetYaw());
-            ImGui::Text("Pitch: %f", m_CurrentScene->GetCurrentCamera().GetPitch());
+
+            ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+            ImGui::Text("Yaw:");
+            ImGui::PopFont();
+            ImGui::SameLine();
+            ImGui::Text("%f", m_CurrentScene->GetCurrentCamera().GetYaw());
+            ImGui::Spacing();
+
+            ImGui::PushFont(OEEditorTheme::SemiBoldFont);
+            ImGui::Text("Pitch:");
+            ImGui::PopFont();
+            ImGui::SameLine();
+            ImGui::Text("%f", m_CurrentScene->GetCurrentCamera().GetPitch());
+            ImGui::Spacing();
 
             if (ImGui::CollapsingHeader("Forward"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetForward().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetForward().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetForward().z);
+                if (ImGui::BeginTable("CameraForwardTable", 3, ImGuiTableFlags_SizingStretchProp))
+                {
+                    ImGui::TableSetupColumn("X");
+                    ImGui::TableSetupColumn("Y");
+                    ImGui::TableSetupColumn("Z");
+
+                    ImGui::TableNextRow();
+
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                    ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetForward().x);
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                    ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetForward().y);
+
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                    ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetForward().z);
+
+                    ImGui::EndTable();
+                }
             }
 
             if (ImGui::CollapsingHeader("Right"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetRight().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetRight().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetRight().z);
+                if (ImGui::BeginTable("CameraRightTable", 3, ImGuiTableFlags_SizingStretchProp))
+                {
+                    ImGui::TableSetupColumn("X");
+                    ImGui::TableSetupColumn("Y");
+                    ImGui::TableSetupColumn("Z");
+
+                    ImGui::TableNextRow();
+
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                    ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetRight().x);
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                    ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetRight().y);
+
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 1.0f, 1.0f));
+                    ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetRight().z);
+
+                    ImGui::EndTable();
+                }
             }
 
             if (ImGui::CollapsingHeader("Up"))
             {
-                ImGui::Text("X: %f", m_CurrentScene->GetCurrentCamera().GetUp().x);
-                ImGui::Text("Y: %f", m_CurrentScene->GetCurrentCamera().GetUp().y);
-                ImGui::Text("Z: %f", m_CurrentScene->GetCurrentCamera().GetUp().z);
+                if (ImGui::BeginTable("CameraUpTable", 3, ImGuiTableFlags_SizingStretchProp))
+                {
+                    ImGui::TableSetupColumn("X");
+                    ImGui::TableSetupColumn("Y");
+                    ImGui::TableSetupColumn("Z");
+
+                    ImGui::TableNextRow();
+
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                    ImGui::Button("X", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetUp().x);
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                    ImGui::Button("Y", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("%.3f", m_CurrentScene->GetCurrentCamera().GetUp().y);
+
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                    ImGui::Button("Z", ImVec2(24.0f, 22.0f));
+                    ImGui::PopStyleColor(2);
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(-1.0f);
+                    ImGui::Text("% .3f", m_CurrentScene->GetCurrentCamera().GetUp().z);
+
+                    ImGui::EndTable();
+                }
             }
         }
 
@@ -180,20 +517,16 @@ namespace OrionEngine::OrionEditor
     {
         if (ImGui::Begin("Scene Manager Panel"))
         {
-            if (!m_CurrentScene->IsCreated())
-            {
-                ImGui::Text("No scene currently created.");
-                DrawSceneCreation();
-            }
-            else
-            {
-                if (ImGui::CollapsingHeader("Metadata"))
-                    DrawSceneMetadata();
-                DrawSceneEdit();
-            }
+            if (ImGui::CollapsingHeader("Metadata"))
+                DrawSceneMetadata();
+            
+            DrawSceneEdit();
+            
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
 
-            if (ImGui::Button("Delete Scene", ImVec2(-1, 0)))
-                DrawSceneDeletion();
+            DrawSceneDeletion();
         }
 
         ImGui::End();

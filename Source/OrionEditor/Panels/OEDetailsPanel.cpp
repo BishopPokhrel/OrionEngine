@@ -1,5 +1,7 @@
 #include "OEDetailsPanel.h"
 
+#include <OrionEditor/UI/OEEditorTheme.h>
+
 #include <imgui.h>
 
 namespace OrionEngine::OrionEditor
@@ -21,7 +23,9 @@ namespace OrionEngine::OrionEditor
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.000f, 0.000f, 0.091f, 1.000f));
 		ImGui::BeginChild("EntityHeader", ImVec2(0.0f, 82.0f), true);
 
+		ImGui::PushFont(OEEditorTheme::SemiBoldFont);
 		ImGui::TextColored(ImVec4(0.423f, 0.149f, 0.652f, 0.726f), "GAME ENTITY");
+		ImGui::PopFont();
 		ImGui::SameLine();
 		ImGui::TextDisabled("| ID: %llu", static_cast<unsigned long long>(entityID));
 
@@ -457,7 +461,7 @@ namespace OrionEngine::OrionEditor
 
 	bool OEDetailsPanel::DrawDetailsPanel()
 	{
-		ImGui::Begin("Details Panel");
+		ImGui::Begin("Details");
 
 		DrawEntityDetails();
 
