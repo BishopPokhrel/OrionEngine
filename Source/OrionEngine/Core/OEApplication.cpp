@@ -39,7 +39,9 @@ namespace OrionEngine
 			m_OEngine->OTick(dt);
 			m_OEngine->GetInputSystem()->Update(m_Window->GetNativeWindow());
 
+			m_OEngine->GetFrameBuffer()->Bind();
 			m_OEngine->Render();
+			m_OEngine->GetFrameBuffer()->Unbind();
 
 			m_ImGuiLayer.StartImGuiNewFrame();
 

@@ -52,8 +52,6 @@ namespace OrionEngine
 		OE_CORE_ASSERT(m_SceneRenderer, "Scene renderer is null!");
 		OE_CORE_ASSERT(m_ViewportFramebuffer, "Viewport framebuffer is null!");
 
-		m_ViewportFramebuffer->Bind();
-
 		OrionRenderer::ORRenderCommand::SetClearColor(
 			0.2f,
 			0.3f,
@@ -68,7 +66,5 @@ namespace OrionEngine
 			m_Scene->GetCurrentCamera(),
 			m_Scene->GetCurrentCamera().GetViewProjection()
 		);
-
-		m_ViewportFramebuffer->Unbind();
 	}
 }
