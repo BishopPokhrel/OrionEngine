@@ -1,9 +1,14 @@
 #include "OEEditorTheme.h"
 
-#include <imgui.h>
+#include <OrionEngine/Core/OEAssert.h>
 
 namespace OrionEngine::OrionEditor
 {
+    ImFont* OEEditorTheme::RegularFont = nullptr;
+    ImFont* OEEditorTheme::MediumFont = nullptr;
+    ImFont* OEEditorTheme::SemiBoldFont = nullptr;
+    ImFont* OEEditorTheme::ItalicFont = nullptr;
+
     void OEEditorTheme::ApplyTheme()
     {
         ImGui::StyleColorsDark();
@@ -99,5 +104,22 @@ namespace OrionEngine::OrionEditor
         style.IndentSpacing = 18.0f;
         style.ScrollbarSize = 12.0f;
         style.GrabMinSize = 10.0f;
+    }
+
+    void OEEditorTheme::LoadFonts()
+    {
+        ImGuiIO& io = ImGui::GetIO();
+
+        RegularFont = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Inter/static/Inter_18pt-Regular.ttf", 16.0f);
+        MediumFont = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Inter/static/Inter_18pt-Medium.ttf", 16.0f);
+        SemiBoldFont = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Inter/static/Inter_18pt-SemiBold.ttf", 16.0f);
+        ItalicFont = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Inter/static/Inter_18pt-Italic.ttf", 16.0f);
+
+        OE_CORE_ASSERT(RegularFont != nullptr, "Failed to load Inter Regular font!");
+        OE_CORE_ASSERT(MediumFont != nullptr, "Failed to load Inter Medium font!");
+        OE_CORE_ASSERT(SemiBoldFont != nullptr, "Failed to load Inter SemiBold font!");
+        OE_CORE_ASSERT(ItalicFont != nullptr, "Failed to load Inter Italic font!");
+
+        io.FontDefault = RegularFont;
     }
 }

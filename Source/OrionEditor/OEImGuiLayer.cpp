@@ -22,6 +22,7 @@ namespace OrionEngine::OrionEditor
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		OEEditorTheme::ApplyTheme();
+		OEEditorTheme::LoadFonts();
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 330 core");
