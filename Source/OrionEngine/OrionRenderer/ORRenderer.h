@@ -24,14 +24,6 @@ namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
-		static void CheckSubmitError(const char* location)
-		{
-			GLenum error = GL_NO_ERROR;
-
-			while ((error = glGetError()) != GL_NO_ERROR)
-				ORION_ENGINE_ERROR("OpenGL error at ", location, ": ", static_cast<unsigned int>(error));
-		}
-
 		class ORRenderer
 		{
 		public:

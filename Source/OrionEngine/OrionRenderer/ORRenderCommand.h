@@ -42,6 +42,11 @@
 				{
 					s_RendererAPI->DrawIndexed(indexCount);
 				}
+
+				static void DrawArrays(uint32_t vertexCount)
+				{
+					s_RendererAPI->DrawArrays(vertexCount);
+				}
 			};
 		}
 	}

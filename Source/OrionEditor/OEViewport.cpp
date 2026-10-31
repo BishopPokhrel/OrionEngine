@@ -31,6 +31,19 @@ namespace OrionEngine::OrionEditor
         }
 
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+
+        const uint32_t viewportWidth = static_cast<uint32_t>(viewportSize.x);
+        const uint32_t viewportHeight = static_cast<uint32_t>(viewportSize.y);
+
+        if (viewportWidth > 0 && viewportHeight > 0)
+        {
+            if (framebuffer->GetWidth() != viewportWidth || framebuffer->GetHeight() != viewportHeight)
+            {
+                framebuffer->Resize(viewportWidth, viewportHeight);
+                scene->GetCurrentCamera().SetAspectRatio(static_cast<float>(viewportWidth) / static_cast<float>(viewportHeight));
+            }
+        }
+
         bool imageSubmitted = false;
 
         if (viewportSize.x > 0.0f && viewportSize.y > 0.0f)
@@ -130,8 +143,10 @@ namespace OrionEngine::OrionEditor
             {
                 glm::vec3 movement(0.0f);
 
-                if (ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_UpArrow)) movement += camera.GetForward();
-                if (ImGui::IsKeyDown(ImGuiKey_S) || ImGui::IsKeyDown(ImGuiKey_DownArrow)) movement -= camera.GetForward();
+                glm::vec3 horizontalForward = glm::normalize(glm::vec3(camera.GetForward().x, 0.0f, camera.GetForward().z));
+
+                if (ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_UpArrow)) movement += horizontalForward;
+                if (ImGui::IsKeyDown(ImGuiKey_S) || ImGui::IsKeyDown(ImGuiKey_DownArrow)) movement -= horizontalForward;
                 if (ImGui::IsKeyDown(ImGuiKey_A) || ImGui::IsKeyDown(ImGuiKey_LeftArrow)) movement -= camera.GetRight();
                 if (ImGui::IsKeyDown(ImGuiKey_D) || ImGui::IsKeyDown(ImGuiKey_RightArrow)) movement += camera.GetRight();
 
@@ -148,6 +163,15 @@ namespace OrionEngine::OrionEditor
                 camera.Rotate(deltaX * sensitivity, -deltaY * sensitivity);
 
                 lastMousePosition = mousePosition;
+            }
+
+            // Camera zooming
+            if (isItemHovered)
+            {
+                const float scroll = ImGui::GetIO().MouseWheel;
+
+                if (scroll != 0.0f)
+                    scene->GetCurrentCamera().SetZoom(scene->GetCurrentCamera().GetZoom() + scroll * 0.1f);
             }
 
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))

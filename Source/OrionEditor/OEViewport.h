@@ -24,11 +24,12 @@ namespace OrionEngine::OrionEditor
     class OEViewport
     {
     public:
-        
+
         explicit OEViewport(OEEditorContext* context)
             : m_EditorContext(context)
-        { }
-        
+        {
+        }
+
         bool ShowViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene);
 
     private:
@@ -52,9 +53,9 @@ namespace OrionEngine::OrionEditor
         };
 
     private:
-        
+
         OEEditorContext* m_EditorContext = nullptr;
         OEGizmoOperations m_GizmoOperations = OEGizmoOperations::None;
         OEGizmoSpace m_GizmoSpace = OEGizmoSpace::None;
     };
-}
+};

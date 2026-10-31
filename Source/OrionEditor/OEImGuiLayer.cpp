@@ -27,6 +27,8 @@ namespace OrionEngine::OrionEditor
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 330 core");
 
+		m_GridRenderer.Init();
+
 		return true;
 	}
 
@@ -85,6 +87,12 @@ namespace OrionEngine::OrionEditor
 	bool OEImGuiLayer::DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene)
 	{
 		m_Viewport.ShowViewport(framebuffer, scene);
+		return true;
+	}
+
+	bool OEImGuiLayer::ShowViewportGrid(OEScene* scene)
+	{
+		m_GridRenderer.RenderGrid(scene->GetCurrentCamera());
 		return true;
 	}
 

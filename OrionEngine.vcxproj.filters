@@ -18,6 +18,8 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="imgui.ini" />
+    <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridFragmentShader.glsl" />
+    <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridVertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\OEEntryPoint.cpp">
@@ -120,6 +122,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\OrionEditor\UI\OEEditorTheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -278,6 +283,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEditor\UI\OEEditorTheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLVertexArrayAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

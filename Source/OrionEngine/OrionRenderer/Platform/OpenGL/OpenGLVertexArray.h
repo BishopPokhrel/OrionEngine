@@ -11,19 +11,19 @@ namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
-		class OpenGLVertexArray : public ORVertexArray
+		class OpenGLVertexArray
 		{
 		public:
 
 			OpenGLVertexArray() noexcept;
-			~OpenGLVertexArray() noexcept override;
+			~OpenGLVertexArray() noexcept;
 
-			void Bind() const noexcept override;
-			void Unbind() const noexcept override;
+			void Bind() const noexcept;
+			void Unbind() const noexcept;
 
-			void AddVertexBuffer(const Ref<ORVertexBuffer>& VBO) noexcept override;
-			void SetIndexBuffer(const Ref<ORIndexBuffer>& IBO) noexcept override;
-			const Ref<ORIndexBuffer>& GetIndexBuffer() const noexcept override { return m_IndexBuffer; }
+			void AddVertexBuffer(const Ref<ORVertexBuffer>& VBO) noexcept;
+			void SetIndexBuffer(const Ref<ORIndexBuffer>& IBO) noexcept;
+			const Ref<ORIndexBuffer>& GetIndexBuffer() const noexcept { return m_IndexBuffer; }
 
 		private:
 

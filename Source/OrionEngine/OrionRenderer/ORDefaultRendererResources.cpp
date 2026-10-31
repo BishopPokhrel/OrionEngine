@@ -2,7 +2,7 @@
 #include "OROpenGLShaderAPI.h"
 #include "ORVertexBufferLayout.h"
 
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "OROpenGLVertexArrayAPI.h"
 #include "Platform/OpenGL/OpenGLIndexBuffer.h"
 
 namespace OrionEngine::OrionRenderer
@@ -63,7 +63,7 @@ namespace OrionEngine::OrionRenderer
 			}
 		);
 
-		s_DefaultVertexArray = CreateRef<OpenGLVertexArray>();
+		s_DefaultVertexArray = CreateRef<OROpenGLVertexArrayAPI>();
 
 		// Vertex Buffer
 

@@ -130,8 +130,11 @@
     <None Include=".gitignore" />
     <None Include="imgui.ini" />
     <None Include="README.md" />
+    <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridFragmentShader.glsl" />
+    <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridVertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.cpp" />
     <ClCompile Include="Source\OrionEditor\OEViewport.cpp" />
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.cpp" />
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.h" />
@@ -168,6 +171,7 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.h" />
     <ClInclude Include="Source\OrionEditor\OEEditorContext.h" />
     <ClInclude Include="Source\OrionEditor\OEImGuiLayer.h" />
     <ClInclude Include="Source\OrionEditor\OEViewport.h" />
@@ -199,6 +203,7 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORMesh.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLShaderAPI.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLVertexArrayAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCmd.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderer.h" />

@@ -5,6 +5,8 @@
 #include "Panels/OESceneManagerPanel.h"
 #include "Panels/OECommandPanel.h"
 
+#include "EditorSpecificRendering/OEGridRenderer.h"
+
 #include "OEViewport.h"
 
 #include <GLFW/glfw3.h>
@@ -31,6 +33,7 @@ namespace OrionEngine::OrionEditor
 		bool ShowSceneManagerPanel(OEScene* scene);
 		bool ShowCommandPanel(OEScene* scene);
 		bool DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene);
+		bool ShowViewportGrid(OEScene* scene);
 
 		bool CreateDockspace();
 
@@ -55,6 +58,7 @@ namespace OrionEngine::OrionEditor
 		OECommandPanel m_CommandPanel;
 
 		OEViewport m_Viewport;
+		OEGridRenderer m_GridRenderer;
 
 		OEMainMenuBarDataNeeded m_OEMMBDN;
 	};

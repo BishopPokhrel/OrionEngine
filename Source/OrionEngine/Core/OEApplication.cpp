@@ -41,6 +41,7 @@ namespace OrionEngine
 
 			m_OEngine->GetFrameBuffer()->Bind();
 			m_OEngine->Render();
+			m_ImGuiLayer.ShowViewportGrid(m_OEngine->GetScene());
 			m_OEngine->GetFrameBuffer()->Unbind();
 
 			m_ImGuiLayer.StartImGuiNewFrame();

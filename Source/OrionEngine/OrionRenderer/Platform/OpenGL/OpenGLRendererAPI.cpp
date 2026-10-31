@@ -34,5 +34,10 @@ namespace OrionEngine
 		{
 			glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 		}
+
+		void OpenGLRendererAPI::DrawArrays(uint32_t vertexCount)
+		{
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+		}
 	}
 }
