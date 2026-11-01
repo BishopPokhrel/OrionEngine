@@ -144,6 +144,9 @@
     <ClCompile Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneManagerPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\UI\OEEditorTheme.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\AssetManagement\AssetLoaders\OEMeshLoader.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\AssetManagement\DefaultEngineAssetTypes\OEMesh.cpp" />
+    <ClCompile Include="Source\OrionEngine\Core\AssetManagement\OEAssetManager.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\ECS\OEECSRegistry.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\ECS\OESystem.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\OEGlobals.h" />
@@ -180,6 +183,14 @@
     <ClInclude Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.h" />
     <ClInclude Include="Source\OrionEditor\Panels\OESceneManagerPanel.h" />
     <ClInclude Include="Source\OrionEditor\UI\OEEditorTheme.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\AssetLoaders\OEAssetLoader.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\AssetLoaders\OEMeshLoader.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\DefaultEngineAssetTypes\OEMesh.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\OEAsset.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\OEAssetIdentifierHandle.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\OEAssetManager.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\OEAssetMetadata.h" />
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\OEAssetTypeResolver.h" />
     <ClInclude Include="Source\OrionEngine\Core\Assets\OEAsset.h" />
     <ClInclude Include="Source\OrionEngine\Core\Assets\OEAssetManager.h" />
     <ClInclude Include="Source\OrionEngine\Core\Assets\OEAssetType.h" />
