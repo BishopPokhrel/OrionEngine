@@ -628,6 +628,9 @@ namespace OrionEngine
 				return false;
 			}
 
+			m_ScenePath = scenePath;
+			m_Scene->SetSceneName(sceneName);
+
 			ORION_ENGINE_INFO("Successfully deserialized ", sceneName);
 		}
 		catch (const YAML::Exception& exception)
