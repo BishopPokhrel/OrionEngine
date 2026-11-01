@@ -13,6 +13,7 @@ Please follow the steps below to build **Orion Engine**
 - GLM
 - YAML
 - ImGuizmo
+- tinyobjloader
 
 ---
 
