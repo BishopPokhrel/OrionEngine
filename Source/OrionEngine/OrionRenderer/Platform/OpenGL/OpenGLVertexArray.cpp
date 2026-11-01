@@ -1,5 +1,4 @@
 #include "OpenGLVertexArray.h"
-#include "OpenGLVertex.h"
 
 namespace OrionEngine
 {
