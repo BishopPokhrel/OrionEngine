@@ -9,6 +9,7 @@
 #include <OrionEngine/Core/OEInputSystem.h>
 #include <OrionEngine/Core/Scene/OEScene.h>
 #include <OrionEngine/Core/OERef.h>
+#include <OrionEngine/Core/AssetManagement/OEAssetManager.h>
 
 namespace OrionEngine
 {
@@ -18,7 +19,7 @@ namespace OrionEngine
 
 		OEngine()
 			: m_Renderer(CreateScope<OrionRenderer::ORRenderer>()), m_InputSystem(CreateScope<OEInputSystem>()), m_Scene(CreateScope<OEScene>()),
-			m_SceneRenderer(nullptr)
+			m_AssetManager(CreateScope<AssetManagement::OEAssetManager>()), m_SceneRenderer(nullptr)
 		{ 
 		}
 
@@ -33,15 +34,19 @@ namespace OrionEngine
 
 		void Render();
 
-		OEInputSystem* GetInputSystem() const { return m_InputSystem.get(); }
-		OEScene* GetScene() const { return m_Scene.get(); }
-		Ref<OrionRenderer::ORFrameBuffer> GetFrameBuffer() const { return m_ViewportFramebuffer; }
+		OEInputSystem* GetInputSystem() const noexcept { return m_InputSystem.get(); }
+		OEScene* GetScene() const noexcept { return m_Scene.get(); }
+		AssetManagement::OEAssetManager* GetAssetManager() { return m_AssetManager.get(); }
+
+		Ref<OrionRenderer::ORFrameBuffer> GetFrameBuffer() const noexcept { return m_ViewportFramebuffer; }
 
 	private:
 
 		Scope<OrionRenderer::ORRenderer> m_Renderer; 
 		Scope<OEInputSystem> m_InputSystem;
 		Scope<OEScene> m_Scene; // there will only be one scene 
+		Scope<AssetManagement::OEAssetManager> m_AssetManager;
+
 		Scope<OrionRenderer::ORSceneRenderer> m_SceneRenderer;
 		Ref<OrionRenderer::ORFrameBuffer> m_ViewportFramebuffer;
 	};

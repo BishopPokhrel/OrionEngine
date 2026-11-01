@@ -2,14 +2,19 @@
 
 #include <OrionEngine/Core/OELogging.h>
 #include <OrionEngine/Core/OEAssert.h>
+#include <OrionEngine/Core/AssetManagement/AssetLoaders/OEMeshLoader.h>
 
 namespace OrionEngine
 {
 	void OEngine::OInitEngineSubsystems()
 	{
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
+		OE_CORE_ASSERT(m_InputSystem, "Input System is null!");
+		OE_CORE_ASSERT(m_AssetManager, "Asset Manager is null!");
+
 		m_Scene->InitScene();
 		m_Renderer->Init(OrionRenderer::ORGraphicsAPI::OpenGL);
+		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Mesh, CreateScope<AssetManagement::OEMeshLoader>());
 		OrionRenderer::ORDefaultRendererResources::Initialize();
 		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get()); 
 		m_ViewportFramebuffer = OrionRenderer::ORFrameBuffer::CreateFrameBuffer(1280, 720, m_Renderer->GetGraphicsAPI());
