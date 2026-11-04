@@ -31,7 +31,7 @@ namespace Utils
     }
 }
 
-namespace OrionEngine::OrionEditor 
+namespace OrionEngine::OrionEditor::EditorSpecificRendering
 {
     void OEGridRenderer::Init()
     {

@@ -26,19 +26,4 @@ namespace OrionEngine
 		m_Registry->DeleteRegistry();
 		m_Created = false;
 	}
-
-	void OEScene::SerializeScene()
-	{
-		m_Serializer->SerializeScene();
-	}
-
-	void OEScene::DeserializeScene(const std::filesystem::path& scenePath)
-	{
-		m_Serializer->DeserializeScene(scenePath);
-	}
-
-	void OEScene::CreateProjectDir(const std::string& projName)
-	{
-		m_Serializer->CreateOEProjectDirectory(projName);
-	}
 }

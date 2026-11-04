@@ -58,7 +58,7 @@ namespace OrionEngine::OrionEditor
 		OECommandPanel m_CommandPanel;
 
 		OEViewport m_Viewport;
-		OEGridRenderer m_GridRenderer;
+		EditorSpecificRendering::OEGridRenderer m_GridRenderer;
 
 		OEMainMenuBarDataNeeded m_OEMMBDN;
 	};

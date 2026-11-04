@@ -11,6 +11,7 @@
 #endif
 
 #include <OrionEngine/Core/OELogging.h>
+#include <OrionEngine/Core/Scene/OESceneSerializer.h>
 
 namespace OrionEngine::OrionEditor
 {
@@ -108,7 +109,7 @@ namespace OrionEngine::OrionEditor
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("Save Scene...", "Ctrl+S"))
-					scene->SerializeScene();
+					scene->GetSerializer()->SerializeScene();
 
 				if (ImGui::MenuItem("Open Scene...", "Ctrl+O"))
 					m_OEMMBDN.OpenSceneFilePopup = true;
@@ -132,7 +133,7 @@ namespace OrionEngine::OrionEditor
 			if (ImGui::Button("Create"))
 			{
 				std::string projectName = m_OEMMBDN.ProjectNameBuffer;
-				scene->CreateProjectDir(projectName);
+				scene->GetSerializer()->CreateOEProjectDirectory(projectName);
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -147,7 +148,7 @@ namespace OrionEngine::OrionEditor
 
 			const std::filesystem::path scenePath = OS::OpenWindowsFileDialog(L"Orion Scene (*.oescene)\0*.oescene\0All Files (*.*)\0*.*\0\0");
 			if (!scenePath.empty())
-				scene->DeserializeScene(scenePath);
+				scene->GetSerializer()->DeserializeScene(scenePath);
 		}
 	}
 

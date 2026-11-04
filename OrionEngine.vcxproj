@@ -135,12 +135,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.cpp" />
+    <ClCompile Include="Source\OrionEditor\EditorSpecificRendering\OpenGLUsage\OEEditorIconRenderer.cpp" />
     <ClCompile Include="Source\OrionEditor\OEViewport.cpp" />
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.cpp" />
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.h" />
     <ClCompile Include="Source\OrionEditor\OEImGuiLayer.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OECommandPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OEDetailsPanel.cpp" />
+    <ClCompile Include="Source\OrionEditor\Panels\OEResourceBrowserPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneManagerPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\UI\OEEditorTheme.cpp" />
@@ -172,14 +174,17 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCamera.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCameraController.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OS\Windows\WindowsOSAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\OrionEditor\EditorSpecificRendering\OpenGLUsage\OEEditorIconRenderer.h" />
     <ClInclude Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.h" />
     <ClInclude Include="Source\OrionEditor\OEEditorContext.h" />
     <ClInclude Include="Source\OrionEditor\OEImGuiLayer.h" />
     <ClInclude Include="Source\OrionEditor\OEViewport.h" />
     <ClInclude Include="Source\OrionEditor\Panels\OECommandPanel.h" />
     <ClInclude Include="Source\OrionEditor\Panels\OEDetailsPanel.h" />
+    <ClInclude Include="Source\OrionEditor\Panels\OEResourceBrowserPanel.h" />
     <ClInclude Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.h" />
     <ClInclude Include="Source\OrionEditor\Panels\OESceneManagerPanel.h" />
     <ClInclude Include="Source\OrionEditor\UI\OEEditorTheme.h" />

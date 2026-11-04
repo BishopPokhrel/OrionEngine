@@ -9,6 +9,8 @@ namespace OrionEngine::OrionEditor
     ImFont* OEEditorTheme::SemiBoldFont = nullptr;
     ImFont* OEEditorTheme::ItalicFont = nullptr;
 
+    Scope<EditorSpecificRendering::OEEditorIconRenderer> OEEditorTheme::m_EditorIconRenderer = CreateScope<EditorSpecificRendering::OEEditorIconRenderer>();
+
     void OEEditorTheme::ApplyTheme()
     {
         ImGui::StyleColorsDark();
@@ -121,5 +123,15 @@ namespace OrionEngine::OrionEditor
         OE_CORE_ASSERT(ItalicFont != nullptr, "Failed to load Inter Italic font!");
 
         io.FontDefault = RegularFont;
+    }
+
+    void OEEditorTheme::LoadEditorIcon(const std::string& iconName)
+    {
+        m_EditorIconRenderer->LoadEditorIcon(iconName);
+    }
+
+    unsigned int OEEditorTheme::GetEditorIcon(const std::string& iconName)
+    {
+        return m_EditorIconRenderer->GetIcon(iconName);
     }
 }

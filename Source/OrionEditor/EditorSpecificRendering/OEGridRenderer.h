@@ -7,7 +7,7 @@
 #include <OrionEngine/OrionRenderer/ORShader.h>
 #include <OrionEngine/Core/OERef.h>
 
-namespace OrionEngine::OrionEditor
+namespace OrionEngine::OrionEditor::EditorSpecificRendering
 {
 	class OEGridRenderer
 	{

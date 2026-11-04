@@ -40,10 +40,7 @@ namespace OrionEngine
 		const OrionRenderer::ORCamera& GetCurrentCamera() const noexcept { return m_Camera; }
 
 		std::string GetSceneName() const noexcept { return m_OESceneName; }
-
-		void SerializeScene();
-		void DeserializeScene(const std::filesystem::path& scenePath);
-		void CreateProjectDir(const std::string& projName);
+		OESceneSerializer* GetSerializer() const noexcept { return m_Serializer.get(); }
 
 	private:
 		std::string m_OESceneName;
