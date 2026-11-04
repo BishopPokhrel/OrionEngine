@@ -14,6 +14,7 @@ Please follow the steps below to build **Orion Engine**
 - YAML
 - ImGuizmo
 - tinyobjloader
+- stb_image
 
 ---
 
