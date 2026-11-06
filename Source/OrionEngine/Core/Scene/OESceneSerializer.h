@@ -23,11 +23,14 @@ namespace OrionEngine
 		}
 
 		bool CreateOEProjectDirectory(const std::string& projectName);
+		bool OpenOEProjectDirectory(const std::filesystem::path& projectPath);
 		bool SerializeEntities(YAML::Emitter& out, const std::filesystem::path& path);
 		bool SerializeScene();
 		bool DeserializeScene(const std::filesystem::path& scenePath);
 
 		bool DoesProjectExist(const std::string& projectName);
+
+		const std::filesystem::path& GetCurrentProjectPath() const noexcept { return m_ProjectPath;  }
 
 	private:
 

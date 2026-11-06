@@ -18,126 +18,156 @@ namespace OrionEngine
 		OE_CORE_ASSERT(m_DirectoriesCreated.pFilesCreated, "pFilesCreated is null!");
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
 
-		if (!std::filesystem::create_directory(projectName))
+		try
 		{
-			if (DoesProjectExist(projectName))
-				return false;
+			if (projectName.empty()) return false;
 
-			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory = true;
-		}
-		else
-		{
-			m_ProjectPath = projectName + "/" + projectName + ".oeproj";
-			m_DirectoriesCreated.ProjectDirectoryCreated = true;
-		}
-		
-		if (!m_DirectoriesCreated.pFilesCreated->ProjectFileCreated)
-		{
-			if (!std::filesystem::exists(m_ProjectPath))
+			if (!std::filesystem::create_directory(projectName))
 			{
-				std::ofstream projectFile(m_ProjectPath);
-				if (!projectFile)
-					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile = true;
+				if (DoesProjectExist(projectName))
+					return false;
 
-				ORION_ENGINE_INFO("Successfully created project file: ", m_ProjectPath);
-				m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = true;
+				m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory = true;
 			}
 			else
-				m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = true;
-		}
-
-		// Create scene file
-		m_ScenePath = std::filesystem::path(projectName) / (m_Scene->GetSceneName() + ".oescene");
-		if (!m_DirectoriesCreated.pFilesCreated->SceneFileCreated)
-		{
-			if (!std::filesystem::exists(m_ScenePath))
 			{
-				std::ofstream sceneFile(m_ScenePath);
-				if (!sceneFile)
-					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile = true;
-				ORION_ENGINE_INFO("Successfully created scene file: ", m_ScenePath);
-				m_DirectoriesCreated.pFilesCreated->SceneFileCreated = true;
+				m_ProjectPath = projectName + "/" + projectName + ".oeproj";
+				m_DirectoriesCreated.ProjectDirectoryCreated = true;
 			}
-			else
-				m_DirectoriesCreated.pFilesCreated->SceneFileCreated = true;
-		}
 
-		// Create directories first
-		// Asset Directory
-
-		if (!m_DirectoriesCreated.AssetDirectoryCreated) // so we dont create the directory more than once
-		{
-			std::filesystem::path assetDirPath = projectName + "/Assets";
-			if (!std::filesystem::exists(assetDirPath))
+			if (!m_DirectoriesCreated.pFilesCreated->ProjectFileCreated)
 			{
-				if (!std::filesystem::create_directory(assetDirPath))
-					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory = true;
+				if (!std::filesystem::exists(m_ProjectPath))
+				{
+					std::ofstream projectFile(m_ProjectPath);
+					if (!projectFile)
+						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile = true;
 
-				ORION_ENGINE_INFO("Successfully created directory: ", assetDirPath);
-				m_DirectoriesCreated.AssetDirectoryCreated = true;
+					ORION_ENGINE_INFO("Successfully created project file: ", m_ProjectPath);
+					m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = true;
+				}
+				else
+					m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = true;
 			}
-			else
-				m_DirectoriesCreated.AssetDirectoryCreated = true;
-		}
 
-		// Scripts Directory
-
-		if (!m_DirectoriesCreated.ScriptsDirectoryCreated)
-		{
-			std::filesystem::path scriptsDirPath = projectName + "/Scripts";
-			if (!std::filesystem::exists(scriptsDirPath))
+			// Create scene file
+			m_ScenePath = std::filesystem::path(projectName) / (m_Scene->GetSceneName() + ".oescene");
+			if (!m_DirectoriesCreated.pFilesCreated->SceneFileCreated)
 			{
-				if (!std::filesystem::create_directory(scriptsDirPath))
-					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory = true;
-
-				ORION_ENGINE_INFO("Successfully created directory: ", scriptsDirPath);
-				m_DirectoriesCreated.ScriptsDirectoryCreated = true;
+				if (!std::filesystem::exists(m_ScenePath))
+				{
+					std::ofstream sceneFile(m_ScenePath);
+					if (!sceneFile)
+						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile = true;
+					ORION_ENGINE_INFO("Successfully created scene file: ", m_ScenePath);
+					m_DirectoriesCreated.pFilesCreated->SceneFileCreated = true;
+				}
+				else
+					m_DirectoriesCreated.pFilesCreated->SceneFileCreated = true;
 			}
-			else
-				m_DirectoriesCreated.ScriptsDirectoryCreated = true;
+
+			// Create directories first
+			// Asset Directory
+
+			if (!m_DirectoriesCreated.AssetDirectoryCreated) // so we dont create the directory more than once
+			{
+				std::filesystem::path assetDirPath = projectName + "/Assets";
+				if (!std::filesystem::exists(assetDirPath))
+				{
+					if (!std::filesystem::create_directory(assetDirPath))
+						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory = true;
+
+					ORION_ENGINE_INFO("Successfully created directory: ", assetDirPath);
+					m_DirectoriesCreated.AssetDirectoryCreated = true;
+				}
+				else
+					m_DirectoriesCreated.AssetDirectoryCreated = true;
+			}
+
+			// Scripts Directory
+
+			if (!m_DirectoriesCreated.ScriptsDirectoryCreated)
+			{
+				std::filesystem::path scriptsDirPath = projectName + "/Scripts";
+				if (!std::filesystem::exists(scriptsDirPath))
+				{
+					if (!std::filesystem::create_directory(scriptsDirPath))
+						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory = true;
+
+					ORION_ENGINE_INFO("Successfully created directory: ", scriptsDirPath);
+					m_DirectoriesCreated.ScriptsDirectoryCreated = true;
+				}
+				else
+					m_DirectoriesCreated.ScriptsDirectoryCreated = true;
+			}
+
+			bool ADCreated = m_DirectoriesCreated.AssetDirectoryCreated; // AD = Asset Directory, so AssetDirectoryCreated
+			bool SDCreated = m_DirectoriesCreated.ScriptsDirectoryCreated; // SD = Scripts Directory, so ScriptsDirectoryCreated
+			bool PDCreated = m_DirectoriesCreated.ProjectDirectoryCreated;
+			bool PFCreated = m_DirectoriesCreated.pFilesCreated->ProjectFileCreated; // PF = Project File, so ProjectFileCreated
+			bool SFCreated = m_DirectoriesCreated.pFilesCreated->SceneFileCreated; // SF = Scene File, so SceneFileCreated
+
+			bool allDirectoriesCreatedAndFiles = ADCreated && SDCreated && PFCreated && SFCreated && PDCreated;
+
+			if (allDirectoriesCreatedAndFiles)
+			{
+				ORION_ENGINE_INFO("All directories and files created successfully!");
+			}
+
+			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory)
+				ORION_ENGINE_WARNING("Failed to create directory Asset Directory");
+
+			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory)
+				ORION_ENGINE_WARNING("Failed to create Scripts Directory");
+
+			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory)
+				ORION_ENGINE_FATAL_ERROR("Failed to create Project: ", projectName, " directory!");
+
+			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile)
+				ORION_ENGINE_FATAL_ERROR("Failed to create Project File!"); // TODO: Throw an exception later
+
+			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile)
+				ORION_ENGINE_FATAL_ERROR("Failed to create Scene File!");
 		}
-
-		bool ADCreated = m_DirectoriesCreated.AssetDirectoryCreated; // AD = Asset Directory, so AssetDirectoryCreated
-		bool SDCreated = m_DirectoriesCreated.ScriptsDirectoryCreated; // SD = Scripts Directory, so ScriptsDirectoryCreated
-		bool PDCreated = m_DirectoriesCreated.ProjectDirectoryCreated;
-		bool PFCreated = m_DirectoriesCreated.pFilesCreated->ProjectFileCreated; // PF = Project File, so ProjectFileCreated
-		bool SFCreated = m_DirectoriesCreated.pFilesCreated->SceneFileCreated; // SF = Scene File, so SceneFileCreated
-
-		bool allDirectoriesCreatedAndFiles = ADCreated && SDCreated && PFCreated && SFCreated && PDCreated;
-
-		if (allDirectoriesCreatedAndFiles)
+		catch (const std::filesystem::filesystem_error& err)
 		{
-			ORION_ENGINE_INFO("All directories and files created successfully!");
+			ORION_ENGINE_ERROR("Filesystem error: ", err.code().message());
+			return false;
 		}
-
-		if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory)
-			ORION_ENGINE_WARNING("Failed to create directory Asset Directory");
-
-		if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory)
-			ORION_ENGINE_WARNING("Failed to create Scripts Directory");
-
-		if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory)
-			ORION_ENGINE_FATAL_ERROR("Failed to create Project: ", projectName, " directory!");
-
-		if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile)
-			ORION_ENGINE_FATAL_ERROR("Failed to create Project File!"); // TODO: Throw an exception later
-
-		if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile)
-			ORION_ENGINE_FATAL_ERROR("Failed to create Scene File!");
-
-		bool everythingFailed = (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory && 
-			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory && 
-			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile && 
-			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile &&
-			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory) ? true : false;
-
-		if (everythingFailed)
+		catch (const std::exception& e)
 		{
-			ORION_ENGINE_FATAL_ERROR("Internal Engine Error: Failed to create all Asset files and directories");
-			std::exit(0);
+			ORION_ENGINE_ERROR(e.what());
+			return false;
 		}
 
 		return true;
+	}
+
+	bool OESceneSerializer::OpenOEProjectDirectory(const std::filesystem::path& projectPath)
+	{
+		try
+		{
+			if (projectPath.empty() || projectPath.extension() != ".oeproj" || !std::filesystem::exists(projectPath) || !std::filesystem::is_regular_file(projectPath))
+				return false;
+
+			const std::filesystem::path projectPathDirectory = projectPath.parent_path();
+
+			if (!std::filesystem::is_directory(projectPathDirectory / "Assets") || !std::filesystem::is_directory(projectPathDirectory / "Scripts"))
+				return false;
+
+			m_ProjectPath = std::filesystem::absolute(projectPath).lexically_normal();
+			return true;
+		}
+		catch (const std::filesystem::filesystem_error& err)
+		{
+			ORION_ENGINE_ERROR(err.code().message());
+			return false;
+		}
+		catch (const std::exception& e)
+		{
+			ORION_ENGINE_ERROR(e.what());
+			return false;
+		}
 	}
 
 	bool OESceneSerializer::SerializeEntities(YAML::Emitter& out, const std::filesystem::path& path)
