@@ -28,12 +28,6 @@ namespace OrionEngine::OrionEditor
 			char CurrentDirectoryPathBuffer[1024];
 		};
 
-		struct OERBPDCDN // OERBPDCDN = Orion Engine Resource Browser Panel Directory Contents Data Needed 
-		{
-			bool IsFolderSelected = false;
-			bool IsFileSelected = false;
-		};
-
 	private:
 
 		bool RefreshDirectoryEntries();
@@ -42,7 +36,6 @@ namespace OrionEngine::OrionEditor
 		bool DrawDirectoryContents();
 		bool DrawDirectoryToolbar();
 
-		bool HandleFileDrop(const std::filesystem::path& filePath);
 		bool ImportAsset(const std::filesystem::path& filePath);
 
 	private:
@@ -53,9 +46,10 @@ namespace OrionEngine::OrionEditor
 		std::filesystem::path m_ProjectPath;
 		std::filesystem::path m_ScenePath;
 		std::filesystem::path m_CurrentDirectory;
+		std::filesystem::path m_SelectedEntry;
+
 		std::vector<std::filesystem::directory_entry> m_DirectoryEntries;
 
 		OERBPDTDPDN m_OERBPDTDPDN;
-		OERBPDCDN m_OERBPDCDN;
 	};
 }
