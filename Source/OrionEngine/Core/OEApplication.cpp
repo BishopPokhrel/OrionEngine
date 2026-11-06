@@ -49,12 +49,13 @@ namespace OrionEngine
 			m_ImGuiLayer.CreateDockspace();
 			m_ImGuiLayer.CreateMenuBar(m_OEngine->GetScene());
 
-			m_ImGuiLayer.DrawViewport(m_OEngine->GetFrameBuffer(), m_OEngine->GetScene());
+			m_ImGuiLayer.DrawViewport(m_OEngine->GetFrameBuffer(), m_OEngine->GetScene(), m_OEngine->GetAssetManager());
 
 			m_ImGuiLayer.ShowSceneHierarchyPanel(m_OEngine->GetScene());
 			m_ImGuiLayer.ShowDetailsPanel(m_OEngine->GetScene());
 			m_ImGuiLayer.ShowSceneManagerPanel(m_OEngine->GetScene());
 			m_ImGuiLayer.ShowCommandPanel(m_OEngine->GetScene());
+			m_ImGuiLayer.ShowResourceBrowserPanel(m_OEngine->GetAssetManager(), m_OEngine->GetScene());
 
 			m_ImGuiLayer.RenderImGui();
 
