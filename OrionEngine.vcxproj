@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="Source\OrionEditor\EditorSpecificRendering\OpenGLUsage\OEEditorIconRenderer.h" />
     <ClInclude Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.h" />
+    <ClInclude Include="Source\OrionEditor\OEEditorAssetInternalImportor.h" />
     <ClInclude Include="Source\OrionEditor\OEEditorContext.h" />
     <ClInclude Include="Source\OrionEditor\OEImGuiLayer.h" />
     <ClInclude Include="Source\OrionEditor\OEViewport.h" />
