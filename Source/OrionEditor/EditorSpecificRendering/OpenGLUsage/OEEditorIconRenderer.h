@@ -14,7 +14,7 @@ namespace OrionEngine::OrionEditor::EditorSpecificRendering
 	public:
 
 		OEEditorIconRenderer() = default;
-		~OEEditorIconRenderer() = default;
+		~OEEditorIconRenderer();
 
 		void LoadEditorIcon(const std::string& iconName);
 		
@@ -24,7 +24,7 @@ namespace OrionEngine::OrionEditor::EditorSpecificRendering
 
 	private:
 
-		std::unordered_map<std::string, GLint> m_IconTextures;
+		std::unordered_map<std::string, GLuint> m_IconTextures;
 	
 	};
 }
