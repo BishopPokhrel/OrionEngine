@@ -85,9 +85,21 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
-	bool OEImGuiLayer::DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene)
+	bool OEImGuiLayer::ShowResourceBrowserPanel(AssetManagement::OEAssetManager* assetManager, OEScene* scene)
 	{
-		m_Viewport.ShowViewport(framebuffer, scene);
+		if (!m_ResourceBrowserPanel.has_value())
+			m_ResourceBrowserPanel.emplace(assetManager, scene);
+		
+		m_ResourceBrowserPanel->DrawResourceBrowserPanel();
+		return true;
+	}
+
+	bool OEImGuiLayer::DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene, AssetManagement::OEAssetManager* assetManager)
+	{
+		if (!m_Viewport.has_value())
+			m_Viewport.emplace(m_EditorContext.get(), scene, assetManager);
+
+		m_Viewport->ShowViewport(framebuffer, scene);
 		return true;
 	}
 
@@ -105,6 +117,9 @@ namespace OrionEngine::OrionEditor
 			{
 				if (ImGui::MenuItem("Create New Project..."))
 					m_OEMMBDN.OpenProjectNamePopup = true;
+
+				if (ImGui::MenuItem("Open Project..."))
+					m_OEMMBDN.OpenProjectFilePopup = true; 
 
 				ImGui::Separator();
 
@@ -128,12 +143,15 @@ namespace OrionEngine::OrionEditor
 
 		if (ImGui::BeginPopupModal("Create New Project", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::InputText("Project Name...", m_OEMMBDN.ProjectNameBuffer, sizeof(m_OEMMBDN.ProjectNameBuffer));
+			ImGui::Text("Project Name...");
+			ImGui::SameLine();
+			ImGui::InputText("##ProjectName", m_OEMMBDN.ProjectNameBuffer, sizeof(m_OEMMBDN.ProjectNameBuffer));
 
 			if (ImGui::Button("Create"))
 			{
 				std::string projectName = m_OEMMBDN.ProjectNameBuffer;
-				scene->GetSerializer()->CreateOEProjectDirectory(projectName);
+				if (scene->GetSerializer()->CreateOEProjectDirectory(projectName))
+					m_ResourceBrowserPanel->SetProjectPath(scene->GetSerializer()->GetCurrentProjectPath());
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -146,9 +164,21 @@ namespace OrionEngine::OrionEditor
 		{
 			m_OEMMBDN.OpenSceneFilePopup = false;
 
-			const std::filesystem::path scenePath = OS::OpenWindowsFileDialog(L"Orion Scene (*.oescene)\0*.oescene\0All Files (*.*)\0*.*\0\0");
-			if (!scenePath.empty())
+			const std::filesystem::path& scenePath = OS::OpenWindowsFileDialog(L"Orion Scene (*.oescene)\0*.oescene\0All Files (*.*)\0*.*\0\0");
+			if (!scenePath.empty() && !std::filesystem::is_directory(scenePath))
 				scene->GetSerializer()->DeserializeScene(scenePath);
+		}
+
+		if (m_OEMMBDN.OpenProjectFilePopup)
+		{
+			m_OEMMBDN.OpenProjectFilePopup = false;
+
+			const std::filesystem::path& projectPath = OS::OpenWindowsFileDialog(L"Orion Project (*.oeproj)\0*.oeproj\0All Files (*.*)\0*.*\0\0");
+			if (!projectPath.empty() && !std::filesystem::is_directory(projectPath))
+			{
+				if (scene->GetSerializer()->OpenOEProjectDirectory(projectPath))
+					m_ResourceBrowserPanel->SetProjectPath(scene->GetSerializer()->GetCurrentProjectPath());
+			}
 		}
 	}
 

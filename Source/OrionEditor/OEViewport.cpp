@@ -59,6 +59,23 @@ namespace OrionEngine::OrionEditor
             const ImVec2 viewportImageSize = ImGui::GetItemRectSize();
             const bool isItemHovered = ImGui::IsItemHovered();
 
+            // RBP - Asset dragging into viewport for rendering
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("OE_GAME_ASSET"))
+                {
+                    if (payload->IsDelivery())
+                    {
+                        const std::filesystem::path filePath(static_cast<const char*>(payload->Data));
+
+                        if (!HandleAssetDrop(filePath, m_Scene, m_AssetManager))
+                            ORION_ENGINE_ERROR("Failed to load asset ", filePath.stem().string(), " in viewport. Asset path: ", filePath);
+                    }
+                }
+
+                ImGui::EndDragDropTarget();
+            }
+
             // Entity selection
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && isItemHovered && !ImGuizmo::IsOver() && !ImGuizmo::IsUsing())
             {

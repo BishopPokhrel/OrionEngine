@@ -12,6 +12,7 @@
 #include <OrionEngine/Core/Scene/OEScene.h>
 
 #include "OEEditorContext.h"
+#include "OEEditorAssetInternalImportor.h"
 
 namespace OrionEngine::OrionEditor
 {
@@ -25,8 +26,8 @@ namespace OrionEngine::OrionEditor
     {
     public:
 
-        explicit OEViewport(OEEditorContext* context)
-            : m_EditorContext(context)
+        explicit OEViewport(OEEditorContext* context, OEScene* scene, AssetManagement::OEAssetManager* assetManager)
+            : m_EditorContext(context), m_Scene(scene), m_AssetManager(assetManager)
         {
         }
 
@@ -57,5 +58,9 @@ namespace OrionEngine::OrionEditor
         OEEditorContext* m_EditorContext = nullptr;
         OEGizmoOperations m_GizmoOperations = OEGizmoOperations::None;
         OEGizmoSpace m_GizmoSpace = OEGizmoSpace::None;
+
+        // For Asset drag and drop
+        OEScene* m_Scene = nullptr;
+        AssetManagement::OEAssetManager* m_AssetManager = nullptr;
     };
 };
