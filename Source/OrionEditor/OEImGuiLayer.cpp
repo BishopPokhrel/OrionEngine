@@ -94,6 +94,12 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
+	bool OEImGuiLayer::ShowConsolePanel()
+	{
+		m_ConsolePanel.DrawConsolePanel();
+		return true;
+	}
+
 	bool OEImGuiLayer::DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene, AssetManagement::OEAssetManager* assetManager)
 	{
 		if (!m_Viewport.has_value())

@@ -6,6 +6,7 @@
 #include "Panels/OESceneManagerPanel.h"
 #include "Panels/OECommandPanel.h"
 #include "Panels/OEResourceBrowserPanel.h"
+#include "Panels/OEConsolePanel.h"
 
 #include "EditorSpecificRendering/OEGridRenderer.h"
 
@@ -36,6 +37,7 @@ namespace OrionEngine::OrionEditor
 		bool ShowSceneManagerPanel(OEScene* scene);
 		bool ShowCommandPanel(OEScene* scene);
 		bool ShowResourceBrowserPanel(AssetManagement::OEAssetManager* assetManager, OEScene* scene);
+		bool ShowConsolePanel();
 
 		bool DrawViewport(const Ref<OrionRenderer::ORFrameBuffer>& framebuffer, OEScene* scene, AssetManagement::OEAssetManager* assetManager);
 		bool ShowViewportGrid(OEScene* scene);
@@ -63,6 +65,7 @@ namespace OrionEngine::OrionEditor
 		OESceneManagerPanel m_SceneManagerPanel;
 		std::optional<OEResourceBrowserPanel> m_ResourceBrowserPanel;
 		OECommandPanel m_CommandPanel;
+		OEConsolePanel m_ConsolePanel; 
 
 		std::optional<OEViewport> m_Viewport;
 		EditorSpecificRendering::OEGridRenderer m_GridRenderer;
