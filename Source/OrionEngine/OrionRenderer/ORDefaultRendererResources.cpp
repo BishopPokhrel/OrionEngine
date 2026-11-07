@@ -22,46 +22,173 @@ namespace OrionEngine::OrionRenderer
 					uniform mat4 u_ViewProjection;
 					uniform mat4 u_Transform;
 
+					out vec3 v_FragPosition;
 					out vec3 v_Normal;
 
 					void main()
 					{
+						vec4 worldPosition = u_Transform * vec4(a_Position, 1.0);
+
+						v_FragPosition = worldPosition.xyz;
+
 						mat3 normalMatrix = transpose(inverse(mat3(u_Transform)));
 						v_Normal = normalize(normalMatrix * a_Normal);
 
-						gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-					}                
+						gl_Position = u_ViewProjection * worldPosition;
+					}
 				)"
 			},
 
 			FragmentShader
 			{
 				R"(
-					#version 330 core
 
-					in vec3 v_Normal;
+					#version 330 core
 
 					out vec4 o_Color;
 
+					in vec3 v_FragPosition;
+					in vec3 v_Normal;
+
+					// Camera
+					uniform vec3 u_CameraForward;
+
+					// Directional Light
 					uniform vec3 u_LightDirection;
 					uniform vec3 u_LightColor;
 					uniform float u_LightIntensity;
 
+					// Material
+					uniform vec4 u_AlbedoColor;
+					uniform float u_Metallic;
+					uniform float u_Roughness;
+					uniform float u_AmbientOcclusion;
+
+					const float PI = 3.14159265359;
+
+					// --------------------------------------------------
+					// GGX Normal Distribution
+					// --------------------------------------------------
+
+					float DistributionGGX(vec3 normal, vec3 halfway, float roughness)
+					{
+						float a = roughness * roughness;
+						float a2 = a * a;
+
+						float NdotH = max(dot(normal, halfway), 0.0);
+						float NdotH2 = NdotH * NdotH;
+
+						float denominator = NdotH2 * (a2 - 1.0) + 1.0;
+
+						return a2 / max(PI * denominator * denominator, 0.000001);
+					}
+
+					// --------------------------------------------------
+					// Schlick-GGX Geometry
+					// --------------------------------------------------
+
+					float GeometrySchlickGGX(float NdotV, float roughness)
+					{
+						float r = roughness + 1.0;
+						float k = (r * r) / 8.0;
+
+						return NdotV / max(NdotV * (1.0 - k) + k, 0.000001);
+					}
+
+					// --------------------------------------------------
+					// Smith Geometry
+					// --------------------------------------------------
+
+					float GeometrySmith(
+						vec3 normal,
+						vec3 viewDirection,
+						vec3 lightDirection,
+						float roughness)
+					{
+						float NdotV = max(dot(normal, viewDirection), 0.0);
+						float NdotL = max(dot(normal, lightDirection), 0.0);
+
+						float geometryView = GeometrySchlickGGX(NdotV, roughness);
+						float geometryLight = GeometrySchlickGGX(NdotL, roughness);
+
+						return geometryView * geometryLight;
+					}
+
+					// --------------------------------------------------
+					// Schlick Fresnel
+					// --------------------------------------------------
+
+					vec3 FresnelSchlick(float cosTheta, vec3 F0)
+					{
+						return F0 + (1.0 - F0) *
+							pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+					}
+
+					// --------------------------------------------------
+					// Main
+					// --------------------------------------------------
+
 					void main()
 					{
+						vec3 albedo = u_AlbedoColor.rgb;
+						float metallic = clamp(u_Metallic, 0.0, 1.0);
+						float roughness = clamp(u_Roughness, 0.04, 1.0);
+						float ao = clamp(u_AmbientOcclusion, 0.0, 1.0);
+
 						vec3 normal = normalize(v_Normal);
 						vec3 lightDirection = normalize(-u_LightDirection);
+						vec3 viewDirection = normalize(-u_CameraForward);
 
-						float diffuse = max(dot(normal, lightDirection), 0.0);
+						float NdotL = max(dot(normal, lightDirection), 0.0);
+						float NdotV = max(dot(normal, viewDirection), 0.0);
 
-						vec3 ambient = vec3(0.1);
-						vec3 lighting = ambient + u_LightColor * diffuse * u_LightIntensity;
+						vec3 halfway = normalize(viewDirection + lightDirection);
 
-						o_Color = vec4(vec3(0.8) * lighting, 1.0);
-					}				
+						vec3 F0 = mix(vec3(0.04), albedo, metallic);
+
+						vec3 F = FresnelSchlick(
+							max(dot(halfway, viewDirection), 0.0),
+							F0
+						);
+
+						float NDF = DistributionGGX(normal, halfway, roughness);
+
+						float G = GeometrySmith(
+							normal,
+							viewDirection,
+							lightDirection,
+							roughness
+						);
+
+						vec3 numerator = NDF * G * F;
+						float denominator = max(4.0 * NdotV * NdotL, 0.0001);
+
+						vec3 specular = numerator / denominator;
+
+						vec3 kS = F;
+						vec3 kD = (vec3(1.0) - kS) * (1.0 - metallic);
+
+						vec3 diffuse = kD * albedo / PI;
+
+						vec3 directLighting =
+							(diffuse + specular) *
+							u_LightColor *
+							u_LightIntensity *
+							NdotL;
+
+						vec3 ambient = vec3(0.03) * albedo * ao;
+
+						vec3 color = ambient + directLighting;
+
+						color = color / (color + vec3(1.0));
+						color = pow(color, vec3(1.0 / 2.2));
+
+						 o_Color = vec4(color, u_AlbedoColor.a);
+					}
 				)"
 			}
 		);
+
 
 		s_DefaultVertexArray = CreateRef<OROpenGLVertexArrayAPI>();
 
@@ -148,6 +275,7 @@ namespace OrionEngine::OrionRenderer
 		s_DefaultVertexArray->SetIndexBuffer(IBO);
 
 		s_DefaultMesh = CreateRef<ORMesh>(s_DefaultVertexArray);
+		s_DefaultMaterial = CreateRef<AssetManagement::OEMaterial>();
 	}
 
 	const Ref<ORShader>& ORDefaultRendererResources::GetDefaultShader() noexcept
@@ -165,10 +293,16 @@ namespace OrionEngine::OrionRenderer
 		return s_DefaultMesh;
 	}
 
+	const Ref<AssetManagement::OEMaterial>& ORDefaultRendererResources::GetDefaultMaterial() noexcept
+	{
+		return s_DefaultMaterial;
+	}
+
 	void ORDefaultRendererResources::Shutdown() noexcept
 	{
 		s_DefaultShader.reset();
 		s_DefaultVertexArray.reset();
 		s_DefaultMesh.reset();
+		s_DefaultMaterial.reset();
 	}
 }
