@@ -16,6 +16,11 @@ namespace OrionEngine::ECS
 	class OEECSRegistry; 
 }
 
+namespace OrionEngine::AssetManagement
+{
+	class OEAssetManager;
+}
+
 namespace OrionEngine
 {
 	class OESceneSerializer;
@@ -24,7 +29,7 @@ namespace OrionEngine
 	{
 	public:
 		
-		OEScene();
+		explicit OEScene(AssetManagement::OEAssetManager* assetManager);
 		~OEScene();
 
 		void InitScene(const std::string& name = "NewScene") noexcept; // this function acts as the constructor
@@ -44,6 +49,8 @@ namespace OrionEngine
 
 	private:
 		std::string m_OESceneName;
+		AssetManagement::OEAssetManager* m_AssetManager = nullptr; // The scene does not own the asset manager; OEngine does
+
 		Scope<ECS::OEECSRegistry> m_Registry; // each scene owns each ECS registrry
 		Scope<OESceneSerializer> m_Serializer;
 		bool m_Created;

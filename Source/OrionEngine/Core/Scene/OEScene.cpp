@@ -5,16 +5,21 @@
 #include <OrionEngine/Core/ECS/OESystem.h>
 #include <OrionEngine/Core/OEAssert.h>
 
+#include <OrionEngine/Core/AssetManagement/OEAssetManager.h>
+
 namespace OrionEngine
 {
-	OEScene::OEScene() = default;
+	OEScene::OEScene(AssetManagement::OEAssetManager* assetManager)
+		: m_AssetManager(assetManager)
+	{ }
+
 	OEScene::~OEScene() = default;
 
 	void OEScene::InitScene(const std::string& name) noexcept
 	{
 		m_OESceneName = name;
 		m_Registry = CreateScope<ECS::OEECSRegistry>();
-		m_Serializer = CreateScope<OESceneSerializer>(this);
+		m_Serializer = CreateScope<OESceneSerializer>(this, m_AssetManager);
 		m_Created = true;
 
 		m_Camera.Rotate(glm::radians(-25.0f), glm::radians(20.0f));
