@@ -3,6 +3,7 @@
 #include <OrionEngine/Core/OELogging.h>
 #include <OrionEngine/Core/OEAssert.h>
 #include <OrionEngine/Core/AssetManagement/AssetLoaders/OEMeshLoader.h>
+#include <OrionEngine/Core/AssetManagement/AssetLoaders/OEMaterialLoader.h>
 
 namespace OrionEngine
 {
@@ -20,6 +21,7 @@ namespace OrionEngine
 
 		m_Renderer->Init(OrionRenderer::ORGraphicsAPI::OpenGL);
 		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Mesh, CreateScope<AssetManagement::OEMeshLoader>());
+		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Material, CreateScope<AssetManagement::OEMaterialLoader>());
 
 		OrionRenderer::ORDefaultRendererResources::Initialize();
 
