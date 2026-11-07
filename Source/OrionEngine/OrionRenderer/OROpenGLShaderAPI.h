@@ -40,6 +40,11 @@ namespace OrionEngine
 				shaderAPI->SetVec3(name, value);
 			}
 
+			void SetVec4(const std::string& name, const glm::vec4& value) noexcept override
+			{
+				shaderAPI->SetVec4(name, value);
+			}
+
 			void SetFloat(const std::string& name, float value) noexcept override
 			{
 				shaderAPI->SetFloat(name, value);

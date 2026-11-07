@@ -32,6 +32,7 @@ namespace OrionEngine
 
 			void SetMat4(const std::string& name, const glm::mat4& value) noexcept;
 			void SetVec3(const std::string& name, const glm::vec3& value) noexcept;
+			void SetVec4(const std::string& name, const glm::vec4& value) noexcept;
 			void SetFloat(const std::string& name, float value) noexcept;
 
 			void Bind() noexcept;

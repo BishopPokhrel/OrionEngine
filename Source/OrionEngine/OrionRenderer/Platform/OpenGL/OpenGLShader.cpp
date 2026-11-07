@@ -1,5 +1,7 @@
 #include "OpenGLShader.h"
+
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <OrionEngine/Core/OELogging.h>
 #include <OrionEngine/Core/OEAssert.h>
@@ -145,10 +147,31 @@ namespace OrionEngine
             glUniform3fv(GetUniformLocation(name), 1, &value[0]);
         }
 
+        void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value) noexcept
+        {
+            GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+
+            if (location == -1)
+            {
+                ORION_ENGINE_ERROR("Uniform not found: ", name);
+                return;
+            }
+
+            GLint currentProgram = 0;
+            glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+
+            if (static_cast<GLuint>(currentProgram) != m_RendererID)
+            {
+                ORION_ENGINE_ERROR("Wrong shader bound for uniform: ", name);
+                return;
+            }
+
+            glUniform4fv(location, 1, glm::value_ptr(value));
+        }
+
         void OpenGLShader::SetFloat(const std::string& name, float value) noexcept
         {
             glUniform1f(GetUniformLocation(name), value);
-
         }
 
         void OpenGLShader::Bind() noexcept

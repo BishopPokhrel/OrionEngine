@@ -25,6 +25,7 @@ namespace OrionEngine
 			virtual void CompileAndLinkThroughShaderVariables(const VertexShader& vertexShader, const FragmentShader& fragmentShader) noexcept = 0;
 			virtual void SetMat4(const std::string& name, const glm::mat4& value) noexcept = 0;
 			virtual void SetVec3(const std::string& name, const glm::vec3& value) noexcept = 0;
+			virtual void SetVec4(const std::string& name, const glm::vec4& value) noexcept = 0;
 			virtual void SetFloat(const std::string& name, float value) noexcept = 0;
 
 			virtual void Bind() noexcept = 0;
