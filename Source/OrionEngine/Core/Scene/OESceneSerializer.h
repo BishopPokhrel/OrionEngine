@@ -7,6 +7,7 @@
 #include "OEScene.h"
 
 #include <OrionEngine/Core/OEAssert.h>
+#include <OrionEngine/Core/AssetManagement/OEAssetManager.h>
 
 namespace OrionEngine
 {
@@ -16,8 +17,8 @@ namespace OrionEngine
 	{
 	public:
 
-		explicit OESceneSerializer(OEScene* scene)
-			: m_Scene(scene)
+		explicit OESceneSerializer(OEScene* scene, AssetManagement::OEAssetManager* assetManager)
+			: m_Scene(scene), m_AssetManager(assetManager)
 		{
 			OE_CORE_ASSERT(m_Scene, "Scene is null!");
 		}
@@ -38,7 +39,8 @@ namespace OrionEngine
 
 	private:
 
-		OEScene* m_Scene = nullptr; // Allocate it on the stack so we dont get any seg fault or nullptr errors
+		OEScene* m_Scene = nullptr; 
+		AssetManagement::OEAssetManager* m_AssetManager = nullptr;
 		
 		struct DirectoriesCreated
 		{

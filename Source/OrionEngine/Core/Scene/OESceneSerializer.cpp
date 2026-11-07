@@ -173,6 +173,7 @@ namespace OrionEngine
 	bool OESceneSerializer::SerializeEntities(YAML::Emitter& out, const std::filesystem::path& path)
 	{
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
+		OE_CORE_ASSERT(m_AssetManager, "Asset Manager is null!");
 
 		try
 		{
@@ -266,6 +267,17 @@ namespace OrionEngine
 
 					out << YAML::Key << "Visible";
 					out << YAML::Value << renderable->b_Visible;
+
+					if (renderable->MeshIdenifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+					{
+						out << YAML::Key << "Mesh";
+						out << YAML::Value << YAML::BeginMap;
+
+						out << YAML::Key << "Path";
+						out << YAML::Value << std::filesystem::relative(m_AssetManager->GetAssetPath(renderable->MeshIdenifierHandle), m_ProjectPath.parent_path()).string();
+
+						out << YAML::EndMap;
+					}
 
 					out << YAML::EndMap; // Renderable Component
 				}
@@ -568,11 +580,22 @@ namespace OrionEngine
 
 				if (renderNode)
 				{
-					ECS::OERenderableComponent renderComponent{};
-					renderComponent.b_Visible = renderNode["Visible"].as<bool>();
+					YAMLNode meshNode = renderNode["Mesh"];
 
-					// Shader and VertexArray are not serialized.
-					// Initialize them using Orion's existing default renderer resources.
+					std::filesystem::path assetMeshPath(meshNode["Path"].as<std::string>());
+					AssetManagement::OEAssetIdentifierHandle assetMeshIdenifierHandle = m_AssetManager->GetAssetIdentifierHandle(assetMeshPath);
+
+					if (assetMeshIdenifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+						assetMeshIdenifierHandle = m_AssetManager->RegisterAsset(AssetManagement::OEAssetType::Mesh, assetMeshPath);
+
+					Ref<AssetManagement::OEMesh> assetMesh = m_AssetManager->LoadAsset<AssetManagement::OEMesh>(assetMeshIdenifierHandle);
+
+					OE_CORE_ASSERT(assetMesh, "Asset Mesh is null!");
+
+					ECS::OERenderableComponent renderComponent;
+					renderComponent.b_Visible = renderNode["Visible"].as<bool>();
+					renderComponent.MeshIdenifierHandle = assetMeshIdenifierHandle;
+					renderComponent.Mesh = assetMesh->GetMesh();
 
 					registry.RenderableComponent.AddComponent(entityID, renderComponent);
 				}
