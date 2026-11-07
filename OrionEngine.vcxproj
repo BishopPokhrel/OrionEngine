@@ -141,8 +141,6 @@
     <ClCompile Include="Source\OrionEditor\OEEditorRenderCommands.h" />
     <ClCompile Include="Source\OrionEditor\OEImGuiLayer.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OECommandPanel.cpp" />
-    <ClCompile Include="Source\OrionEditor\Panels\OEConsolePanel.cpp" />
-    <ClCompile Include="Source\OrionEditor\Panels\OEConsolePanel.h" />
     <ClCompile Include="Source\OrionEditor\Panels\OEDetailsPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OEResourceBrowserPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.cpp" />
