@@ -145,6 +145,15 @@
     <ClCompile Include="Source\OrionEditor\EditorSpecificRendering\OpenGLUsage\OEEditorIconRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEditor\Panels\OEConsolePanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\Core\AssetManagement\DefaultEngineAssetTypes\OEMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\Core\AssetManagement\AssetLoaders\OEMaterialLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
@@ -340,6 +349,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEditor\OEEditorAssetInternalImportor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEditor\Panels\OEConsolePanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\DefaultEngineAssetTypes\OEMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\AssetManagement\AssetLoaders\OEMaterialLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
