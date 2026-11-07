@@ -9,6 +9,10 @@ namespace OrionEngine::AssetManagement
 		if (assetType == OEAssetType::None || assetPath.empty() || m_NextAssetIdentifierHandle == INVALID_ASSET_IDENTIFIER_HANDLE)
 			return INVALID_ASSET_IDENTIFIER_HANDLE;
 
+		const OEAssetIdentifierHandle existingAssetIdentifierHandle = GetAssetIdentifierHandle(assetPath);
+		if (existingAssetIdentifierHandle != INVALID_ASSET_IDENTIFIER_HANDLE)
+			return existingAssetIdentifierHandle;
+
 		OEAssetMetadata metadata;
 		metadata.IdentifierHandle = m_NextAssetIdentifierHandle++;
 		metadata.Type = assetType;
@@ -33,6 +37,19 @@ namespace OrionEngine::AssetManagement
 		}
 
 		return INVALID_ASSET_IDENTIFIER_HANDLE;
+	}
+
+	std::filesystem::path OEAssetManager::GetAssetPath(OEAssetIdentifierHandle identifierHandle) const
+	{
+		if (identifierHandle == INVALID_ASSET_IDENTIFIER_HANDLE)
+			return {};
+
+		auto iterator = m_AssetRegistry.find(identifierHandle);
+
+		if (iterator != m_AssetRegistry.end())
+			return iterator->second.Path;
+
+		return {};
 	}
 
 	bool OEAssetManager::UnloadAsset(OEAssetIdentifierHandle identifierHandle)

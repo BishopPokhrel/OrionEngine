@@ -24,6 +24,7 @@ namespace OrionEngine::AssetManagement
 
 		OEAssetIdentifierHandle RegisterAsset(OEAssetType assetType, const std::filesystem::path& assetPath);
 		OEAssetIdentifierHandle GetAssetIdentifierHandle(const std::filesystem::path& assetPath) const;
+        std::filesystem::path GetAssetPath(OEAssetIdentifierHandle idenifierHandle) const;
 
 		bool RegisterLoader(OEAssetType assetType, Scope<OEAssetLoader> loader);
 
