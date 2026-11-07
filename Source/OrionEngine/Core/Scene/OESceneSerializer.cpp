@@ -268,13 +268,13 @@ namespace OrionEngine
 					out << YAML::Key << "Visible";
 					out << YAML::Value << renderable->b_Visible;
 
-					if (renderable->MeshIdenifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+					if (renderable->MeshIdentifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
 					{
 						out << YAML::Key << "Mesh";
 						out << YAML::Value << YAML::BeginMap;
 
 						out << YAML::Key << "Path";
-						out << YAML::Value << std::filesystem::relative(m_AssetManager->GetAssetPath(renderable->MeshIdenifierHandle), m_ProjectPath.parent_path()).string();
+						out << YAML::Value << std::filesystem::relative(m_AssetManager->GetAssetPath(renderable->MeshIdentifierHandle), m_ProjectPath.parent_path()).string();
 
 						out << YAML::EndMap;
 					}
@@ -594,7 +594,7 @@ namespace OrionEngine
 
 					ECS::OERenderableComponent renderComponent;
 					renderComponent.b_Visible = renderNode["Visible"].as<bool>();
-					renderComponent.MeshIdenifierHandle = assetMeshIdenifierHandle;
+					renderComponent.MeshIdentifierHandle = assetMeshIdenifierHandle;
 					renderComponent.Mesh = assetMesh->GetMesh();
 
 					registry.RenderableComponent.AddComponent(entityID, renderComponent);
