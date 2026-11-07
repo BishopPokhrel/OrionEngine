@@ -14,19 +14,28 @@ uniform float u_GridSpacing;
 uniform float u_FadeStart;
 uniform float u_FadeEnd;
 
-// Background
-const vec3 SKY_TOP      = vec3(0.105, 0.165, 0.255);
-const vec3 SKY_HORIZON  = vec3(0.045, 0.075, 0.120);
-const vec3 VOID_COLOR   = vec3(0.008, 0.012, 0.020);
+// --------------------------------------------------
+// Background colors
+// --------------------------------------------------
 
+const vec3 SKY_TOP = vec3(0.24, 0.38, 0.56);
+const vec3 SKY_HORIZON = vec3(0.48, 0.55, 0.63);
+
+const vec3 VOID_COLOR = vec3(0.008, 0.010, 0.015);
+
+// --------------------------------------------------
 // Grid colors
-const vec3 MINOR_COLOR  = vec3(0.20, 0.25, 0.32);
-const vec3 MAJOR_COLOR  = vec3(0.32, 0.39, 0.49);
+// --------------------------------------------------
+
+const vec3 MINOR_COLOR = vec3(0.24, 0.26, 0.29);
+const vec3 MAJOR_COLOR = vec3(0.36, 0.38, 0.41);
 
 // World axes
-const vec3 X_AXIS_COLOR = vec3(0.85, 0.24, 0.24);
-const vec3 Z_AXIS_COLOR = vec3(0.25, 0.43, 0.95);
+const vec3 X_AXIS_COLOR = vec3(0.90, 0.20, 0.18);
+const vec3 Y_AXIS_COLOR = vec3(0.20, 0.80, 0.35);
+const vec3 Z_AXIS_COLOR = vec3(0.20, 0.42, 0.95);
 
+// Grid settings
 const float MAJOR_GRID_INTERVAL = 10.0;
 const float AXIS_WIDTH = 1.5;
 
@@ -36,7 +45,11 @@ const float AXIS_WIDTH = 1.5;
 
 vec3 CalculateBackground()
 {
-    float horizonBlend = smoothstep(-0.12, 0.18, v_NDC.y);
+    float skyBlend = smoothstep(
+        -0.15,
+        0.65,
+        v_NDC.y
+    );
 
     vec3 sky = mix(
         SKY_HORIZON,
@@ -44,7 +57,11 @@ vec3 CalculateBackground()
         smoothstep(0.0, 1.0, v_NDC.y)
     );
 
-    return mix(VOID_COLOR, sky, horizonBlend);
+    return mix(
+        VOID_COLOR,
+        sky,
+        skyBlend
+    );
 }
 
 // --------------------------------------------------
@@ -53,18 +70,33 @@ vec3 CalculateBackground()
 
 float CalculateGridLine(vec2 coordinates)
 {
-    vec2 derivative = max(fwidth(coordinates), vec2(0.00001));
+    vec2 derivative = max(
+        fwidth(coordinates),
+        vec2(0.00001)
+    );
 
-    vec2 distanceToLine = abs(fract(coordinates - 0.5) - 0.5);
+    vec2 distanceToLine = abs(
+        fract(coordinates - 0.5) - 0.5
+    );
 
     vec2 lineDistance = distanceToLine / derivative;
 
-    return 1.0 - min(min(lineDistance.x, lineDistance.y), 1.0);
+    return 1.0 - min(
+        min(lineDistance.x, lineDistance.y),
+        1.0
+    );
 }
+
+// --------------------------------------------------
+// World axis lines
+// --------------------------------------------------
 
 float CalculateAxisLine(float coordinate)
 {
-    float derivative = max(fwidth(coordinate), 0.00001);
+    float derivative = max(
+        fwidth(coordinate),
+        0.00001
+    );
 
     return 1.0 - smoothstep(
         derivative * 0.5,
@@ -79,11 +111,15 @@ float CalculateAxisLine(float coordinate)
 
 void main()
 {
-    // Background is drawn at the far end of the depth range.
+    // Background
     o_Color = vec4(CalculateBackground(), 1.0);
+
     gl_FragDepth = 0.999999;
 
-    // Reconstruct near and far points.
+    // --------------------------------------------------
+    // World-space ray reconstruction
+    // --------------------------------------------------
+
     vec4 nearPoint = u_InverseViewProjection *
         vec4(v_NDC, -1.0, 1.0);
 
@@ -100,26 +136,37 @@ void main()
     farPoint /= farPoint.w;
 
     vec3 rayOrigin = nearPoint.xyz;
-    vec3 rayDirection = normalize(farPoint.xyz - nearPoint.xyz);
 
-    // Avoid unstable intersections with nearly horizontal rays.
+    vec3 rayDirection = normalize(
+        farPoint.xyz - nearPoint.xyz
+    );
+
     if (abs(rayDirection.y) < 0.0001)
     {
         return;
     }
 
-    // Intersect the ray with the XZ ground plane.
-    float intersectionDistance = -rayOrigin.y / rayDirection.y;
+    // --------------------------------------------------
+    // Ground plane intersection
+    // --------------------------------------------------
+
+    float intersectionDistance =
+        -rayOrigin.y / rayDirection.y;
 
     if (intersectionDistance <= 0.0)
     {
         return;
     }
 
-    vec3 worldPosition = rayOrigin + rayDirection * intersectionDistance;
+    vec3 worldPosition =
+        rayOrigin + rayDirection * intersectionDistance;
 
-    // Project the intersection back into clip space.
-    vec4 clipPosition = u_ViewProjection * vec4(worldPosition, 1.0);
+    // --------------------------------------------------
+    // Depth reconstruction
+    // --------------------------------------------------
+
+    vec4 clipPosition = u_ViewProjection *
+        vec4(worldPosition, 1.0);
 
     if (clipPosition.w <= 0.000001)
     {
@@ -128,7 +175,6 @@ void main()
 
     float ndcDepth = clipPosition.z / clipPosition.w;
 
-    // Respect the camera's near and far clipping planes.
     if (ndcDepth < -1.0 || ndcDepth > 1.0)
     {
         return;
@@ -161,9 +207,12 @@ void main()
 
     float spacing = max(u_GridSpacing, 0.0001);
 
-    vec2 gridCoordinates = worldPosition.xz / spacing;
+    vec2 gridCoordinates =
+        worldPosition.xz / spacing;
 
-    float minorGrid = CalculateGridLine(gridCoordinates);
+    float minorGrid = CalculateGridLine(
+        gridCoordinates
+    );
 
     float majorGrid = CalculateGridLine(
         gridCoordinates / MAJOR_GRID_INTERVAL
@@ -180,12 +229,10 @@ void main()
     // Grid composition
     // --------------------------------------------------
 
-    vec3 gridColor = MINOR_COLOR;
-
-    gridColor = mix(
-        gridColor,
+    vec3 gridColor = mix(
+        MINOR_COLOR,
         MAJOR_COLOR,
-        majorGrid * 0.65
+        majorGrid * 0.75
     );
 
     gridColor = mix(
@@ -200,21 +247,26 @@ void main()
         zAxis
     );
 
-    float gridAlpha = max(minorGrid * 0.45, majorGrid * 0.75);
+    float minorAlpha = minorGrid * 0.24;
+    float majorAlpha = majorGrid * 0.42;
 
-    gridAlpha = max(gridAlpha, xAxis);
-    gridAlpha = max(gridAlpha, zAxis);
+    float gridAlpha = max(
+        minorAlpha,
+        majorAlpha
+    );
+
+    gridAlpha = max(gridAlpha, xAxis * 0.90);
+    gridAlpha = max(gridAlpha, zAxis * 0.90);
 
     gridAlpha *= fade;
 
-    // Composite over the background.
+    // Composite grid over background
     o_Color.rgb = mix(
-
         o_Color.rgb,
         gridColor,
         gridAlpha
     );
 
-    // Write the actual ground intersection depth.
+    // Ground intersection depth
     gl_FragDepth = depth;
 }
