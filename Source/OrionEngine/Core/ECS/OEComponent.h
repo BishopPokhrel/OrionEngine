@@ -13,6 +13,7 @@
 
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/Core/AssetManagement/OEAssetIdentifierHandle.h>
+#include <OrionEngine/Core/AssetManagement/DefaultEngineAssetTypes/OEMaterial.h>
 
 namespace OrionEngine
 {
@@ -39,9 +40,12 @@ namespace OrionEngine
 		{
 			bool b_Visible = false;
 
-			AssetManagement::OEAssetIdentifierHandle MeshIdenifierHandle = AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE;
+			AssetManagement::OEAssetIdentifierHandle MeshIdentifierHandle = AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE;
+			AssetManagement::OEAssetIdentifierHandle MaterialIdentifierHandle = AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE;
+
 			Ref<OrionRenderer::ORShader> Shader;
 			Ref<OrionRenderer::ORMesh> Mesh;
+			Ref<AssetManagement::OEMaterial> Material;
 		};
 
 		struct OECameraComponent
