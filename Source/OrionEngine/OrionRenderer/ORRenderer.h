@@ -15,10 +15,7 @@
 #include <OrionEngine/Core/OEAssert.h>
 #include <OrionEngine/Core/OELogging.h>
 
-// for diagnosis only
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#include <OrionEngine/Core/AssetManagement/DefaultEngineAssetTypes/OEMaterial.h>
 
 namespace OrionEngine
 {
@@ -44,9 +41,10 @@ namespace OrionEngine
 				ORRenderCommand::SetViewport(x, y, width, height);
 			}
 
-			void BeginScene(const glm::mat4& viewProjection) noexcept
+			void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraForward) noexcept
 			{
 				m_SceneData.ViewProjectionMatrix = viewProjection;
+				m_SceneData.CameraForward = cameraForward;
 			}
 
 			void EndScene() noexcept
@@ -54,10 +52,13 @@ namespace OrionEngine
 
 			}
 
-			void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const glm::mat4& transform)
+			void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const Ref<AssetManagement::OEMaterial>& material, const glm::mat4& transform)
 			{
 				OE_CORE_ASSERT(shader, "Submit received a null shader!");
 				OE_CORE_ASSERT(mesh, "Submit received a null mesh!");
+				OE_CORE_ASSERT(material, "Submit received a null material!");
+
+				const AssetManagement::OEMaterialData& materialData = material->GetMaterialData();
 
 				shader->Bind();
 				shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
@@ -65,6 +66,13 @@ namespace OrionEngine
 				shader->SetVec3("u_LightDirection", glm::vec3(-0.5f, -1.0f, -0.5f));
 				shader->SetVec3("u_LightColor", glm::vec3(1.0f));
 				shader->SetFloat("u_LightIntensity", 1.0f);
+
+				shader->SetVec4("u_AlbedoColor", materialData.AlbedoColor);
+				shader->SetFloat("u_Metallic", materialData.Metallic);
+				shader->SetFloat("u_Roughness", materialData.Roughness);
+				shader->SetFloat("u_AmbientOcclusion", materialData.AmbientOcclusion);
+
+				shader->SetVec3("u_CameraForward", m_SceneData.CameraForward);
 
 				mesh->Bind();
 
