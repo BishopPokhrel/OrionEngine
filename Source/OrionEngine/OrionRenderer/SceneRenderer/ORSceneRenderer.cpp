@@ -24,18 +24,21 @@ namespace OrionEngine
 			if (!render->Mesh)
 				render->Mesh = ORDefaultRendererResources::GetDefaultMesh();
 
+			if (!render->Material)
+				render->Material = ORDefaultRendererResources::GetDefaultMaterial();
+
 			// Build Model Matrix
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->Position)
 				* glm::mat4_cast(glm::quat(transform->Rotation))
 				* glm::scale(glm::mat4(1.0f), transform->Scale);
 
 			OE_CORE_ASSERT(render->Mesh, "Renderable mesh is null before Submit!");
-			m_Renderer->Submit(render->Shader, render->Mesh, model);
+			m_Renderer->Submit(render->Shader, render->Mesh, render->Material, model);
 		}
 
 		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const glm::mat4& viewProjection)
 		{
-			m_Renderer->BeginScene(viewProjection);
+			m_Renderer->BeginScene(viewProjection, camera.GetForward());
 			auto& render = registry.RenderableComponent.GetAllComponents();
 
 			for (auto& [id, comp] : render)
