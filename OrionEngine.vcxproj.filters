@@ -145,6 +145,12 @@
     <ClCompile Include="Source\OrionEditor\EditorSpecificRendering\OpenGLUsage\OEEditorIconRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEditor\Panels\OEConsolePanel.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEditor\Panels\OEConsolePanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
