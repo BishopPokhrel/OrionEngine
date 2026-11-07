@@ -3,14 +3,19 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
+#include <cstdint>
 
 namespace OrionEngine
 {
-	class Logging
+	using OELogIdentifierID = uint64_t;
+	constexpr OELogIdentifierID INVALID_LOG_IDENTIFIER_ID = 0;
+
+	class OELogging
 	{
 	public:
 
-		enum class LogLevel
+		enum class OELogLevel
 		{
 			Debug,
 			Info,
@@ -19,23 +24,33 @@ namespace OrionEngine
 			Fatal
 		};
 
+		struct OELogEntry
+		{
+			OELogLevel LogLevel;
+			std::string Message;
+			std::string File;
+			int Line;
+			std::string Function;
+			OELogIdentifierID LogIdentifierID;
+		};
+
 		template<typename... Args>
 		inline static void Log(
-			LogLevel level,
+			OELogLevel level,
 			const char* file,
 			int line,
 			const char* func,
 			Args&&... args)
 		{
 			std::ostream& out =
-				(level == LogLevel::Error || level == LogLevel::Fatal)
+				(level == OELogLevel::Error || level == OELogLevel::Fatal)
 				? std::cerr : std::cout;
 
 			const char* lvl =
-				(level == LogLevel::Debug) ? "DEBUG" :
-				(level == LogLevel::Info) ? "INFO" :
-				(level == LogLevel::Warning) ? "WARNING" :
-				(level == LogLevel::Error) ? "ERROR" :
+				(level == OELogLevel::Debug) ? "DEBUG" :
+				(level == OELogLevel::Info) ? "INFO" :
+				(level == OELogLevel::Warning) ? "WARNING" :
+				(level == OELogLevel::Error) ? "ERROR" :
 				"FATAL";
 
 			std::stringstream ss;
@@ -47,36 +62,54 @@ namespace OrionEngine
 				<< "  FILE: " << file << "\n"
 				<< "  LINE: " << line << "\n"
 				<< "  FUNC: " << func << "\n\n";
+
+			OELogEntry entry;
+			entry.LogLevel = level;
+			entry.File = file;
+			entry.Line = line;
+			entry.Function = func;
+			entry.Message = ss.str();
+			entry.LogIdentifierID = m_NextLogIdentifierID++;
+
+			if (entry.LogIdentifierID != INVALID_LOG_IDENTIFIER_ID)
+				m_LogHistory.push_back(entry);
 		}
+
+		inline static std::vector<OELogEntry>& GetLogHistory() noexcept{ return m_LogHistory; }
+
+	private:
+
+		inline static std::vector<OELogEntry> m_LogHistory = {};
+		inline static OELogIdentifierID m_NextLogIdentifierID = 1;
 	};
 }
 
 #define ORION_ENGINE_DEBUG(...) \
-	OrionEngine::Logging::Log( \
-		OrionEngine::Logging::LogLevel::Debug, \
+	OrionEngine::OELogging::Log( \
+		OrionEngine::OELogging::OELogLevel::Debug, \
 		__FILE__, __LINE__, __FUNCTION__, \
 		__VA_ARGS__)
 
 #define ORION_ENGINE_INFO(...) \
-	OrionEngine::Logging::Log( \
-		OrionEngine::Logging::LogLevel::Info, \
+	OrionEngine::OELogging::Log( \
+		OrionEngine::OELogging::OELogLevel::Info, \
 		__FILE__, __LINE__, __FUNCTION__, \
 		__VA_ARGS__)
 
 #define ORION_ENGINE_WARNING(...) \
-	OrionEngine::Logging::Log( \
-		OrionEngine::Logging::LogLevel::Warning, \
+	OrionEngine::OELogging::Log( \
+		OrionEngine::OELogging::OELogLevel::Warning, \
 		__FILE__, __LINE__, __FUNCTION__, \
 		__VA_ARGS__)
 
 #define ORION_ENGINE_ERROR(...) \
-	OrionEngine::Logging::Log( \
-		OrionEngine::Logging::LogLevel::Error, \
+	OrionEngine::OELogging::Log( \
+		OrionEngine::OELogging::OELogLevel::Error, \
 		__FILE__, __LINE__, __FUNCTION__, \
 		__VA_ARGS__)
 
 #define ORION_ENGINE_FATAL_ERROR(...) \
-	OrionEngine::Logging::Log( \
-		OrionEngine::Logging::LogLevel::Fatal, \
+	OrionEngine::OELogging::Log( \
+		OrionEngine::OELogging::OELogLevel::Fatal, \
 		__FILE__, __LINE__, __FUNCTION__, \
 		__VA_ARGS__)
