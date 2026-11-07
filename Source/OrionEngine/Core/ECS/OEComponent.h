@@ -10,7 +10,9 @@
 #include <OrionEngine/OrionRenderer/ORShader.h>
 #include <OrionEngine/OrionRenderer/ORMesh.h>
 #include <OrionEngine/OrionRenderer/SceneRenderer/ORCamera.h>
+
 #include <OrionEngine/Core/OERef.h>
+#include <OrionEngine/Core/AssetManagement/OEAssetIdentifierHandle.h>
 
 namespace OrionEngine
 {
@@ -36,6 +38,8 @@ namespace OrionEngine
 		struct OERenderableComponent
 		{
 			bool b_Visible = false;
+
+			AssetManagement::OEAssetIdentifierHandle MeshIdenifierHandle = AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE;
 			Ref<OrionRenderer::ORShader> Shader;
 			Ref<OrionRenderer::ORMesh> Mesh;
 		};
@@ -49,7 +53,7 @@ namespace OrionEngine
 			float FarClip = 1000.0f;
 
 			OECameraComponent()
-				: Camera(-10.0f, 10.0f, -10.0f, 10.0f) // ← THE FIX
+				: Camera(-10.0f, 10.0f, -10.0f, 10.0f) 
 			{
 			}
 		};
