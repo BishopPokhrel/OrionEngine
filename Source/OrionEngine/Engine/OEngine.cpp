@@ -8,15 +8,23 @@ namespace OrionEngine
 {
 	void OEngine::OInitEngineSubsystems()
 	{
-		OE_CORE_ASSERT(m_Scene, "Scene is null!");
+		m_Renderer = CreateScope<OrionRenderer::ORRenderer>();
+		m_InputSystem = CreateScope<OEInputSystem>();
+		m_AssetManager = CreateScope<AssetManagement::OEAssetManager>();
+		m_Scene = CreateScope<OEScene>(m_AssetManager.get());
+
+		OE_CORE_ASSERT(m_Renderer, "Renderer is null!");
 		OE_CORE_ASSERT(m_InputSystem, "Input System is null!");
 		OE_CORE_ASSERT(m_AssetManager, "Asset Manager is null!");
+		OE_CORE_ASSERT(m_Scene, "Scene is null!");
 
-		m_Scene->InitScene();
 		m_Renderer->Init(OrionRenderer::ORGraphicsAPI::OpenGL);
 		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Mesh, CreateScope<AssetManagement::OEMeshLoader>());
+
 		OrionRenderer::ORDefaultRendererResources::Initialize();
-		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get()); 
+
+		m_Scene->InitScene();
+		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get());
 		m_ViewportFramebuffer = OrionRenderer::ORFrameBuffer::CreateFrameBuffer(1280, 720, m_Renderer->GetGraphicsAPI());
 	}
 

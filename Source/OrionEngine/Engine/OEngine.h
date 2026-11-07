@@ -18,8 +18,6 @@ namespace OrionEngine
 	public:
 
 		OEngine()
-			: m_Renderer(CreateScope<OrionRenderer::ORRenderer>()), m_InputSystem(CreateScope<OEInputSystem>()), m_Scene(CreateScope<OEScene>()),
-			m_AssetManager(CreateScope<AssetManagement::OEAssetManager>()), m_SceneRenderer(nullptr)
 		{ 
 		}
 
