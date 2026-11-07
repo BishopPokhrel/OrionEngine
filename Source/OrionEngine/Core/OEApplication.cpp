@@ -56,6 +56,7 @@ namespace OrionEngine
 			m_ImGuiLayer.ShowSceneManagerPanel(m_OEngine->GetScene());
 			m_ImGuiLayer.ShowCommandPanel(m_OEngine->GetScene());
 			m_ImGuiLayer.ShowResourceBrowserPanel(m_OEngine->GetAssetManager(), m_OEngine->GetScene());
+			m_ImGuiLayer.ShowConsolePanel();
 
 			m_ImGuiLayer.RenderImGui();
 
