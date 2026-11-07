@@ -51,6 +51,7 @@ namespace OrionEngine::OrionEditor
 		// Create the Renderable Component
 		ECS::OERenderableComponent assetRenderable;
 		assetRenderable.b_Visible = true;
+		assetRenderable.MeshIdenifierHandle = assetIdentifierHandle;
 		assetRenderable.Mesh = mesh->GetMesh();
 
 		// Attach the components to the game entity
