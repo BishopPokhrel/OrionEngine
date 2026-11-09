@@ -279,6 +279,41 @@ namespace OrionEngine
 						out << YAML::EndMap;
 					}
 
+					if (renderable->MaterialIdentifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+					{
+						out << YAML::Key << "Material";
+						out << YAML::Value << YAML::BeginMap;
+
+						out << YAML::Key << "Path";
+						out << YAML::Value << std::filesystem::relative(m_AssetManager->GetAssetPath(renderable->MaterialIdentifierHandle), m_ProjectPath.parent_path()).string();
+
+						out << YAML::Key << "Material Properties";
+						out << YAML::Value << YAML::BeginMap;
+
+						// Albedo, Metallic, Roughness & Ambient Occlusion
+						const auto& materialData = renderable->Material->GetMaterialData();
+
+						out << YAML::Key << "Albedo Color";
+						out << YAML::Value << YAML::Flow << YAML::BeginSeq
+							<< materialData.AlbedoColor.x
+							<< materialData.AlbedoColor.y
+							<< materialData.AlbedoColor.z
+							<< materialData.AlbedoColor.a << YAML::EndSeq;
+
+						out << YAML::Key << "Metallic";
+						out << YAML::Value << materialData.Metallic;
+
+						out << YAML::Key << "Roughness";
+						out << YAML::Value << materialData.Roughness;
+
+						out << YAML::Key << "Ambient Occlusion";
+						out << YAML::Value << materialData.AmbientOcclusion;
+
+						out << YAML::EndMap;
+
+						out << YAML::EndMap;
+					}
+
 					out << YAML::EndMap; // Renderable Component
 				}
 
@@ -580,22 +615,104 @@ namespace OrionEngine
 
 				if (renderNode)
 				{
+					ECS::OERenderableComponent renderComponent{};
+
+					renderComponent.b_Visible = renderNode["Visible"].as<bool>();
+
 					YAMLNode meshNode = renderNode["Mesh"];
 
-					std::filesystem::path assetMeshPath(meshNode["Path"].as<std::string>());
-					AssetManagement::OEAssetIdentifierHandle assetMeshIdenifierHandle = m_AssetManager->GetAssetIdentifierHandle(assetMeshPath);
+					if (meshNode)
+					{
+						std::filesystem::path assetMeshPath = m_ProjectPath.parent_path() / meshNode["Path"].as<std::string>();
+						assetMeshPath = std::filesystem::absolute(assetMeshPath).lexically_normal();
 
-					if (assetMeshIdenifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
-						assetMeshIdenifierHandle = m_AssetManager->RegisterAsset(AssetManagement::OEAssetType::Mesh, assetMeshPath);
+						AssetManagement::OEAssetIdentifierHandle assetMeshIdentifierHandle = m_AssetManager->GetAssetIdentifierHandle(assetMeshPath);
 
-					Ref<AssetManagement::OEMesh> assetMesh = m_AssetManager->LoadAsset<AssetManagement::OEMesh>(assetMeshIdenifierHandle);
+						if (assetMeshIdentifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+							assetMeshIdentifierHandle = m_AssetManager->RegisterAsset(AssetManagement::OEAssetType::Mesh, assetMeshPath);
 
-					OE_CORE_ASSERT(assetMesh, "Asset Mesh is null!");
+						if (assetMeshIdentifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+						{
+							ORION_ENGINE_ERROR("Failed to register Mesh asset: ", assetMeshPath.string());
+							return false;
+						}
 
-					ECS::OERenderableComponent renderComponent;
-					renderComponent.b_Visible = renderNode["Visible"].as<bool>();
-					renderComponent.MeshIdentifierHandle = assetMeshIdenifierHandle;
-					renderComponent.Mesh = assetMesh->GetMesh();
+						Ref<AssetManagement::OEMesh> assetMesh = m_AssetManager->LoadAsset<AssetManagement::OEMesh>(assetMeshIdentifierHandle);
+
+						if (!assetMesh)
+						{
+							ORION_ENGINE_ERROR("Failed to load Mesh asset: ", assetMeshPath.string());
+							return false;
+						}
+
+						renderComponent.MeshIdentifierHandle = assetMeshIdentifierHandle;
+						renderComponent.Mesh = assetMesh->GetMesh();
+					}
+
+					YAMLNode materialNode = renderNode["Material"];
+
+					if (materialNode)
+					{
+						std::filesystem::path assetMaterialPath = m_ProjectPath.parent_path() / materialNode["Path"].as<std::string>();
+						assetMaterialPath = std::filesystem::absolute(assetMaterialPath).lexically_normal();
+
+						AssetManagement::OEAssetIdentifierHandle assetMaterialIdentifierHandle = m_AssetManager->GetAssetIdentifierHandle(assetMaterialPath);
+
+						if (assetMaterialIdentifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+							assetMaterialIdentifierHandle = m_AssetManager->RegisterAsset(AssetManagement::OEAssetType::Material, assetMaterialPath);
+
+						if (assetMaterialIdentifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+						{
+							ORION_ENGINE_ERROR("Failed to register Material asset: ", assetMaterialPath.string());
+							return false;
+						}
+
+						Ref<AssetManagement::OEMaterial> assetMaterial = m_AssetManager->LoadAsset<AssetManagement::OEMaterial>(assetMaterialIdentifierHandle);
+
+						if (!assetMaterial)
+						{
+							ORION_ENGINE_ERROR("Failed to load Material asset: ", assetMaterialPath.string());
+							return false;
+						}
+
+						renderComponent.MaterialIdentifierHandle = assetMaterialIdentifierHandle;
+						renderComponent.Material = assetMaterial;
+
+						AssetManagement::OEAssetMetadata materialMetadata;
+						materialMetadata.IdentifierHandle = assetMaterialIdentifierHandle;
+						materialMetadata.Type = AssetManagement::OEAssetType::Material;
+						materialMetadata.Path = assetMaterialPath;
+
+						assetMaterial->SetMaterialAssetMetadata(materialMetadata);
+
+						// Deserialize the actual material properities after ensuring that the material is loaded correctly
+											
+						YAMLNode materialProperitesNode = materialNode["Material Properties"];
+
+						if (materialProperitesNode)
+						{
+							YAMLNode materialAlbedoColorNode = materialProperitesNode["Albedo Color"];
+							YAMLNode materialMetallicNode = materialProperitesNode["Metallic"];
+							YAMLNode materialRoughnessNode = materialProperitesNode["Roughness"];
+							YAMLNode materialAmbientOcclusionNode = materialProperitesNode["Ambient Occlusion"];
+
+							glm::vec4 albedoColorMaterial = (materialAlbedoColorNode && materialAlbedoColorNode.IsSequence() && materialAlbedoColorNode.size() == 4) ? glm::vec4(
+								materialAlbedoColorNode[0].as<float>(),
+								materialAlbedoColorNode[1].as<float>(),
+								materialAlbedoColorNode[2].as<float>(),
+								materialAlbedoColorNode[3].as<float>()
+							) : assetMaterial->GetMaterialData().AlbedoColor;
+
+							float metallicMaterial = materialMetallicNode ? materialMetallicNode.as<float>() : assetMaterial->GetMaterialData().Metallic;
+							float roughnessMaterial = materialRoughnessNode ? materialRoughnessNode.as<float>() : assetMaterial->GetMaterialData().Roughness;
+							float ambientOcclusionMaterial = materialAmbientOcclusionNode ? materialAmbientOcclusionNode.as<float>() : assetMaterial->GetMaterialData().AmbientOcclusion;
+
+							renderComponent.Material->SetAlbedoColor(albedoColorMaterial);
+							renderComponent.Material->SetMetallic(metallicMaterial);
+							renderComponent.Material->SetRoughness(roughnessMaterial);
+							renderComponent.Material->SetAmbientOcclusion(ambientOcclusionMaterial);
+						}
+					}
 
 					registry.RenderableComponent.AddComponent(entityID, renderComponent);
 				}
