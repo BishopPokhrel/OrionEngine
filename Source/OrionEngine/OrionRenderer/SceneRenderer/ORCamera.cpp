@@ -1,6 +1,3 @@
-
-#define GLM_ENABLE_EXPERIMENTAL
-
 #include "ORCamera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -13,45 +10,56 @@ namespace OrionEngine
     {
         ORCamera::ORCamera(float left, float right, float top, float bottom) noexcept
         {
-            m_View = glm::mat4(1.0f);
-            m_ViewProjection = glm::mat4(1.0f);
-
-            // Initial camera position
-            m_Position = glm::vec3(0.0f, 5.0f, 10.0f);
-
-            // Initial camera orientation
-            m_Yaw = glm::radians(-90.0f);
-            m_Pitch = glm::radians(-25.0f);
-
-            m_Forward = glm::vec3(0.0f, 0.0f, -1.0f);
-            m_Right = glm::vec3(1.0f, 0.0f, 0.0f);
-            m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-            // Original orthographic dimensions
-            m_OrthographicHalfHeight = (top - bottom) * 0.5f;
-            m_OrthographicCenterX = (left + right) * 0.5f;
-            m_OrthographicCenterY = (top + bottom) * 0.5f;
-
             const float originalHeight = top - bottom;
             const float originalWidth = right - left;
 
             if (originalHeight > 0.0f && originalWidth > 0.0f)
                 m_AspectRatio = originalWidth / originalHeight;
 
-            RecalculateProjection();
+            // Initialize the camera's direction toward its focal point.
+            const glm::vec3 direction = glm::normalize(m_FocalPoint - m_Position);
+
+            m_Yaw = std::atan2(direction.z, direction.x);
+            m_Pitch = std::asin(direction.y);
+
+            m_Distance = glm::length(m_FocalPoint - m_Position);
+
             RecalculateViewMatrix();
+            RecalculateProjection();
         }
 
         void ORCamera::SetPosition(const glm::vec3& position) noexcept
         {
             m_Position = position;
 
+            // Preserve the current orientation and distance.
+            m_FocalPoint = m_Position + m_Forward * m_Distance;
+
             RecalculateViewMatrix();
         }
 
         void ORCamera::Translate(const glm::vec3& delta) noexcept
         {
-            m_Position += delta;
+            m_FocalPoint += delta;
+
+            RecalculateViewMatrix();
+        }
+
+        void ORCamera::SetFocalPoint(const glm::vec3& focalPoint) noexcept
+        {
+            const glm::vec3 direction = focalPoint - m_Position;
+            const float distance = glm::length(direction);
+
+            if (distance <= 0.001f)
+                return;
+
+            m_FocalPoint = focalPoint;
+            m_Distance = distance;
+
+            const glm::vec3 normalizedDirection = direction / distance;
+
+            m_Yaw = std::atan2(normalizedDirection.z, normalizedDirection.x);
+            m_Pitch = std::asin(glm::clamp(normalizedDirection.y, -1.0f, 1.0f));
 
             RecalculateViewMatrix();
         }
@@ -61,8 +69,7 @@ namespace OrionEngine
             m_Yaw += deltaYaw;
             m_Pitch += deltaPitch;
 
-            // Prevent camera flipping.
-            const float pitchLimit = glm::radians(89.0f);
+            constexpr float pitchLimit = glm::radians(89.0f);
 
             m_Pitch = glm::clamp(
                 m_Pitch,
@@ -83,25 +90,20 @@ namespace OrionEngine
             RecalculateProjection();
         }
 
-        void ORCamera::SetZoom(float zoom) noexcept
+        void ORCamera::SetDistance(float distance) noexcept
         {
-            m_Zoom = glm::clamp(zoom, 0.1f, 10.0f);
+            m_Distance = glm::clamp(distance, 0.5f, 500.0f);
 
-            RecalculateProjection();
+            RecalculateViewMatrix();
         }
 
         void ORCamera::RecalculateProjection() noexcept
         {
-            const float halfHeight = m_OrthographicHalfHeight / m_Zoom;
-            const float halfWidth = halfHeight * m_AspectRatio;
-
-            m_Projection = glm::ortho(
-                m_OrthographicCenterX - halfWidth,
-                m_OrthographicCenterX + halfWidth,
-                m_OrthographicCenterY - halfHeight,
-                m_OrthographicCenterY + halfHeight,
+            m_Projection = glm::perspective(
+                glm::radians(m_FieldOfView),
+                m_AspectRatio,
                 0.1f,
-                500.0f
+                1000.0f
             );
 
             m_ViewProjection = m_Projection * m_View;
@@ -123,15 +125,12 @@ namespace OrionEngine
                 glm::cross(m_Forward, worldUp)
             );
 
-            m_Up = glm::normalize(
-                glm::cross(m_Right, m_Forward)
-            );
+            m_Up = glm::normalize(glm::cross(m_Right, m_Forward));
 
-            m_View = glm::lookAt(
-                m_Position,
-                m_Position + m_Forward,
-                m_Up
-            );
+            // Maintain the camera's distance from its focal point.
+            m_Position = m_FocalPoint - m_Forward * m_Distance;
+
+            m_View = glm::lookAt(m_Position, m_FocalPoint, m_Up);
 
             m_ViewProjection = m_Projection * m_View;
         }
