@@ -41,10 +41,10 @@ namespace OrionEngine
 				ORRenderCommand::SetViewport(x, y, width, height);
 			}
 
-			void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraForward) noexcept
+			void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition) noexcept
 			{
 				m_SceneData.ViewProjectionMatrix = viewProjection;
-				m_SceneData.CameraForward = cameraForward;
+				m_SceneData.CameraPosition = cameraPosition;
 			}
 
 			void EndScene() noexcept
@@ -72,7 +72,7 @@ namespace OrionEngine
 				shader->SetFloat("u_Roughness", materialData.Roughness);
 				shader->SetFloat("u_AmbientOcclusion", materialData.AmbientOcclusion);
 
-				shader->SetVec3("u_CameraForward", m_SceneData.CameraForward);
+				shader->SetVec3("u_CameraPosition", m_SceneData.CameraPosition);
 
 				mesh->Bind();
 
@@ -88,7 +88,7 @@ namespace OrionEngine
 
 		private:
 		
-			SceneData m_SceneData;
+			OESceneData m_SceneData;
 			ORGraphicsAPI m_GraphicsAPI;
 		};
 	}

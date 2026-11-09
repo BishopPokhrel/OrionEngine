@@ -51,7 +51,7 @@ namespace OrionEngine::OrionRenderer
 					in vec3 v_Normal;
 
 					// Camera
-					uniform vec3 u_CameraForward;
+					uniform vec3 u_CameraPosition;
 
 					// Directional Light
 					uniform vec3 u_LightDirection;
@@ -137,7 +137,7 @@ namespace OrionEngine::OrionRenderer
 
 						vec3 normal = normalize(v_Normal);
 						vec3 lightDirection = normalize(-u_LightDirection);
-						vec3 viewDirection = normalize(-u_CameraForward);
+						vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
 
 						float NdotL = max(dot(normal, lightDirection), 0.0);
 						float NdotV = max(dot(normal, viewDirection), 0.0);

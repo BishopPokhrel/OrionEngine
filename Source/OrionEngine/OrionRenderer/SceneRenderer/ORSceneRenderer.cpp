@@ -38,7 +38,7 @@ namespace OrionEngine
 
 		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const glm::mat4& viewProjection)
 		{
-			m_Renderer->BeginScene(viewProjection, camera.GetForward());
+			m_Renderer->BeginScene(viewProjection, camera.GetPosition());
 			auto& render = registry.RenderableComponent.GetAllComponents();
 
 			for (auto& [id, comp] : render)

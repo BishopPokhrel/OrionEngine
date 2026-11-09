@@ -4,9 +4,9 @@
 
 namespace OrionEngine::OrionRenderer
 {
-	struct SceneData
+	struct OESceneData
 	{
 		glm::mat4 ViewProjectionMatrix;
-		glm::vec3 CameraForward;
+		glm::vec3 CameraPosition;
 	};
 }
