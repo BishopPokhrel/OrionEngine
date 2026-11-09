@@ -1,0 +1,82 @@
+Scene: NewScene
+Entities:
+  Game Entity Terrain:
+    Transform Component:
+      Position: [0, 4.997402, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    Renderable Component:
+      Visible: true
+      Mesh:
+        Path: Assets\Terrain.obj
+      Material:
+        Path: Assets\TerrainMaterial.oemat
+        Material Properties:
+          Albedo Color: [0.14751342, 0.7245509, 0, 1]
+          Metallic: 0.306
+          Roughness: 0.53
+          Ambient Occlusion: 1
+  Game Entity Tree:
+    Transform Component:
+      Position: [-16.41687, 6.757747, 32.014748]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    Renderable Component:
+      Visible: true
+      Mesh:
+        Path: Assets\Tree.obj
+      Material:
+        Path: Assets\TreeMaterial.oemat
+        Material Properties:
+          Albedo Color: [0, 0.92814374, 0.9114705, 1]
+          Metallic: 1
+          Roughness: 0.5
+          Ambient Occlusion: 1
+  Game Entity Tree1:
+    Transform Component:
+      Position: [0, 4.654892, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    Renderable Component:
+      Visible: true
+      Mesh:
+        Path: Assets\Tree.obj
+      Material:
+        Path: Assets\Tree1Material.oemat
+        Material Properties:
+          Albedo Color: [0, 1, 0.69461083, 1]
+          Metallic: 1
+          Roughness: 0.5
+          Ambient Occlusion: 1
+  Game Entity Tree2:
+    Transform Component:
+      Position: [-7.7751017, 3.468565, -14.542809]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    Renderable Component:
+      Visible: true
+      Mesh:
+        Path: Assets\Tree.obj
+      Material:
+        Path: Assets\Tree2Material.oemat
+        Material Properties:
+          Albedo Color: [0, 1, 0.87425137, 1]
+          Metallic: 1
+          Roughness: 0.5
+          Ambient Occlusion: 1
+  Game Entity Sphere:
+    Transform Component:
+      Position: [78.83047, 41.065052, -2.527924]
+      Rotation: [0, -0, 0]
+      Scale: [6.6999993, 6.6999993, 6.6999993]
+    Renderable Component:
+      Visible: true
+      Mesh:
+        Path: Assets\Sphere.obj
+      Material:
+        Path: Assets\SphereMaterial.oemat
+        Material Properties:
+          Albedo Color: [0.65868264, 0.5443006, 0, 1]
+          Metallic: 0.415
+          Roughness: 0.525
+          Ambient Occlusion: 1
