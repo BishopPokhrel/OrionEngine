@@ -7,6 +7,7 @@
 #include <OrionEngine/Core/ECS/OEComponent.h>
 #include <OrionEngine/Core/ECS/OEGameEntity.h>
 #include <OrionEngine/Core/ECS/OEECSRegistry.h>
+#include <OrionEngine/Core/Scene/OEScene.h>
 
 #include <OrionEngine/Core/OERef.h>
 
@@ -25,8 +26,14 @@ namespace OrionEngine::OrionEditor
 			int ComponentTypeDeletionIndex = 0;
 		};
 
+		struct OMaterialDataNeeded
+		{
+			int MaterialTypeCreationIndex = 0;
+		};
+
 		Scope<OGameEntityDataNeeded> GameEntityDataNeeded = CreateScope<OGameEntityDataNeeded>();
 		Scope<OComponentDataNeeded> ComponentDataNeeded = CreateScope<OComponentDataNeeded>();
+		Scope<OMaterialDataNeeded> MaterialDataNeeded = CreateScope<OMaterialDataNeeded>();
 	};
 
 	class OEDetailsPanel
@@ -38,6 +45,7 @@ namespace OrionEngine::OrionEditor
 		{ }
 
 		void SetRegistry(ECS::OEECSRegistry& registry) { m_Registry = &registry; }
+		void SetScene(OEScene* scene) { m_Scene = scene; }
 
 		bool DrawEntityDetails();
 		bool DrawDetailsPanel();
@@ -46,6 +54,7 @@ namespace OrionEngine::OrionEditor
 
 		OEEditorContext* m_EditorContext = nullptr;
 		ECS::OEECSRegistry* m_Registry = nullptr;
+		OEScene* m_Scene = nullptr;
 		OEDPDataNeeded m_OEDPDataNeeded;
 	};
 }
