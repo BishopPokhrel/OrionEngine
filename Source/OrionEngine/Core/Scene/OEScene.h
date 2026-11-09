@@ -46,6 +46,7 @@ namespace OrionEngine
 
 		std::string GetSceneName() const noexcept { return m_OESceneName; }
 		OESceneSerializer* GetSerializer() const noexcept { return m_Serializer.get(); }
+		AssetManagement::OEAssetManager* GetAssetManager() const noexcept { return m_AssetManager; }
 
 	private:
 		std::string m_OESceneName;

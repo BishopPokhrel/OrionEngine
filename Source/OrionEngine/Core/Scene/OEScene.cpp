@@ -22,7 +22,7 @@ namespace OrionEngine
 		m_Serializer = CreateScope<OESceneSerializer>(this, m_AssetManager);
 		m_Created = true;
 
-		m_Camera.Rotate(glm::radians(-25.0f), glm::radians(20.0f));
+		m_Camera.SetPosition(glm::vec3(0.0f, 12.0f, 10.0f));
 	}
 
 	void OEScene::DeleteScene() noexcept
