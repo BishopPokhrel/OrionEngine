@@ -1,6 +1,8 @@
 #pragma once
 
 #include "DefaultEngineAssetTypes/OEMesh.h"
+#include "DefaultEngineAssetTypes/OEMaterial.h"
+
 #include "OEAssetMetadata.h"
 
 namespace OrionEngine::AssetManagement
@@ -12,5 +14,11 @@ namespace OrionEngine::AssetManagement
 	struct OEAssetTypeResolver<OEMesh>
 	{
 		static constexpr OEAssetType Type = OEAssetType::Mesh;
+	};
+
+	template<>
+	struct OEAssetTypeResolver<OEMaterial>
+	{
+		static constexpr OEAssetType Type = OEAssetType::Material;
 	};
 }
