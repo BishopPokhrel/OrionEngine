@@ -86,7 +86,7 @@ namespace OrionEngine::OrionEditor
                 const glm::vec2 imageSize(viewportImageSize.x, viewportImageSize.y);
 
                 const OrionRenderer::ORCamera& camera = scene->GetCurrentCamera();
-                const OERay ray = CreateRayFromCamera(mousePos, imagePos, imageSize, camera.GetView(), camera.GetProjection());
+                const OERay ray = CreateRayFromCamera(mousePos, imagePos, imageSize, camera.GetView(), camera.GetProjection(), camera.GetPosition());
 
                 // Access the scene's registry
                 ECS::OEECSRegistry& registry = scene->GetRegistry();
@@ -160,7 +160,12 @@ namespace OrionEngine::OrionEditor
             {
                 glm::vec3 movement(0.0f);
 
-                glm::vec3 horizontalForward = glm::normalize(glm::vec3(camera.GetForward().x, 0.0f, camera.GetForward().z));
+                glm::vec3 horizontalForward(camera.GetForward().x, 0.0f, camera.GetForward().y);
+
+                if (glm::length(horizontalForward) > 0.001f)
+                    horizontalForward = glm::normalize(horizontalForward);
+                else
+                    horizontalForward = glm::vec3(0.0f, 0.0f, -1.0f);
 
                 if (ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_UpArrow)) movement += horizontalForward;
                 if (ImGui::IsKeyDown(ImGuiKey_S) || ImGui::IsKeyDown(ImGuiKey_DownArrow)) movement -= horizontalForward;
@@ -188,7 +193,10 @@ namespace OrionEngine::OrionEditor
                 const float scroll = ImGui::GetIO().MouseWheel;
 
                 if (scroll != 0.0f)
-                    scene->GetCurrentCamera().SetZoom(scene->GetCurrentCamera().GetZoom() + scroll * 0.1f);
+                {
+                    const float zoomFactor = std::pow(0.9f, scroll);
+                    camera.SetDistance(camera.GetDistance() * zoomFactor);
+                }
             }
 
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
@@ -219,7 +227,7 @@ namespace OrionEngine::OrionEditor
                     // Construct the Model matrix
                     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), transform->Position) * glm::mat4_cast(glm::quat(transform->Rotation)) * glm::scale(glm::mat4(1.0f), transform->Scale);
 
-                    ImGuizmo::SetOrthographic(true);
+                    ImGuizmo::SetOrthographic(false);
                     ImGuizmo::SetDrawlist();
                     ImGuizmo::SetRect(viewportImagePos.x, viewportImagePos.y, viewportImageSize.x, viewportImageSize.y);
 
@@ -250,22 +258,20 @@ namespace OrionEngine::OrionEditor
         return true;
     }
 
-    OERay OEViewport::CreateRayFromCamera(const glm::vec2& mousePos, const glm::vec2& viewportPos, const glm::vec2& viewportSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+    OERay OEViewport::CreateRayFromCamera(const glm::vec2& mousePos, const glm::vec2& viewportPos, const glm::vec2& viewportSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec3& cameraPosition)
     {
         const float xNDC = 2.0f * (mousePos.x - viewportPos.x) / viewportSize.x - 1.0f;
         const float yNDC = 1.0f - 2.0f * (mousePos.y - viewportPos.y) / viewportSize.y;
 
         const glm::mat4 inverseViewProjection = glm::inverse(projectionMatrix * viewMatrix);
 
-        glm::vec4 nearPoint = inverseViewProjection * glm::vec4(xNDC, yNDC, -1.0f, 1.0f);
         glm::vec4 farPoint = inverseViewProjection * glm::vec4(xNDC, yNDC, 1.0f, 1.0f);
-
-        nearPoint /= nearPoint.w;
         farPoint /= farPoint.w;
 
         OERay ray;
-        ray.Origin = glm::vec3(nearPoint);
-        ray.Direction = glm::normalize(glm::vec3(farPoint - nearPoint));
+
+        ray.Origin = cameraPosition;
+        ray.Direction = glm::normalize(glm::vec3(farPoint) - cameraPosition);
 
         return ray;
     }

@@ -35,7 +35,7 @@ namespace OrionEngine::OrionEditor
 
     private:
 
-        OERay CreateRayFromCamera(const glm::vec2& mousePos, const glm::vec2& viewportPos, const glm::vec2& viewportSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+        OERay CreateRayFromCamera(const glm::vec2& mousePos, const glm::vec2& viewportPos, const glm::vec2& viewportSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec3& cameraPosition);
         bool IntersectRayAABB(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const glm::vec3& boundsMin, const glm::vec3& boundsMax, float& hitDistance);
 
         enum class OEGizmoOperations
