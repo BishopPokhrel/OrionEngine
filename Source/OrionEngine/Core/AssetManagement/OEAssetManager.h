@@ -6,6 +6,7 @@
 #include "OEAssetTypeResolver.h"
 
 #include "AssetLoaders/OEAssetLoader.h"
+#include "AssetLoaders/OEMaterialLoader.h"
 
 #include <OrionEngine/Core/OERef.h>
 
@@ -27,10 +28,14 @@ namespace OrionEngine::AssetManagement
         std::filesystem::path GetAssetPath(OEAssetIdentifierHandle idenifierHandle) const;
 
 		bool RegisterLoader(OEAssetType assetType, Scope<OEAssetLoader> loader);
+        bool CreateMaterialFile(const std::filesystem::path& projectPath, const std::string& materialName);
 
 		// Load Asset
 		template<typename AssetType>
 		inline Ref<AssetType> LoadAsset(OEAssetIdentifierHandle identifierHandle);
+
+        template<typename AssetType>
+        inline Ref<AssetType> GetAsset(OEAssetIdentifierHandle identifierHandle);
 
 		bool UnloadAsset(OEAssetIdentifierHandle identifierHandle);
 
@@ -83,5 +88,28 @@ namespace OrionEngine::AssetManagement
         m_LoadedAssets.emplace(identifierHandle, asset);
 
         return std::static_pointer_cast<AssetType>(asset);
+    }
+
+    template<typename AssetType>
+    inline Ref<AssetType> OEAssetManager::GetAsset(OEAssetIdentifierHandle identifierHandle)
+    {
+        if (identifierHandle == INVALID_ASSET_IDENTIFIER_HANDLE)
+            return nullptr;
+
+        // Find the loaded asset.
+        auto iterator = m_LoadedAssets.find(identifierHandle);
+
+        if (iterator == m_LoadedAssets.end())
+            return nullptr;
+
+        // Verify the requested asset type.
+        constexpr OEAssetType requiredAssetType = OEAssetTypeResolver<AssetType>::Type;
+
+        auto metadataIterator = m_AssetRegistry.find(identifierHandle);
+
+        if (metadataIterator == m_AssetRegistry.end() || metadataIterator->second.Type != requiredAssetType)
+            return nullptr;
+
+        return std::static_pointer_cast<AssetType>(iterator->second);
     }
 }

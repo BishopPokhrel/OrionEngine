@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include <OrionEngine/Core/OELogging.h>
+
 namespace OrionEngine::AssetManagement
 {
 	OEAssetIdentifierHandle OEAssetManager::RegisterAsset(OEAssetType assetType, const std::filesystem::path& assetPath)
@@ -74,5 +76,23 @@ namespace OrionEngine::AssetManagement
 		auto [iterator, isRegistered] = m_AssetLoaders.emplace(assetType, std::move(loader));
 
 		return isRegistered;
+	}
+
+	bool OEAssetManager::CreateMaterialFile(const std::filesystem::path& projectPath, const std::string& materialName)
+	{
+		if (!std::filesystem::exists(projectPath))
+		{
+			ORION_ENGINE_ERROR("Project Path ", projectPath.string(), " does not exist!");
+			return false;
+		}
+
+		auto iterator = m_AssetLoaders.find(OEAssetType::Material);
+
+		if (iterator == m_AssetLoaders.end())
+			return false;
+
+		OEMaterialLoader* materialLoader = static_cast<OEMaterialLoader*>(iterator->second.get());
+
+		return materialLoader->CreateMaterialFile(projectPath, materialName);
 	}
 }
