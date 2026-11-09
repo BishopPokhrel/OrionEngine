@@ -60,31 +60,46 @@ namespace OrionEngine::AssetManagement
 		return material;
 	}
 
-	// ----------------------------
-	// PRIVATE HELPERS 
-	// ----------------------------
-
 	bool OEMaterialLoader::CreateMaterialFile(const std::filesystem::path& projectPath, const std::string& materialName)
 	{
+		ORION_ENGINE_INFO("CreateMaterialFile called!");
+		ORION_ENGINE_INFO("Project path: ", projectPath.string());
+
 		if (!std::filesystem::is_directory(projectPath))
+		{
+			ORION_ENGINE_ERROR("Project path is not a directory!");
 			return false;
+		}
 
 		if (materialName.empty() || materialName.find_first_of("/\\") != std::string::npos)
+		{
+			ORION_ENGINE_ERROR("Invalid material name: ", materialName);
 			return false;
+		}
 
 		try
 		{
 			std::filesystem::path assetsPath = projectPath / "Assets";
+			ORION_ENGINE_INFO("Assets path: ", assetsPath.string());
 
 			if (!std::filesystem::is_directory(assetsPath))
+			{
+				ORION_ENGINE_ERROR("Assets directory does not exist!");
 				return false;
+			}
 
 			std::filesystem::path materialPath = assetsPath / (materialName + ".oemat");
+			ORION_ENGINE_INFO("Material path: ", materialPath.string());
 
 			if (std::filesystem::exists(materialPath))
+			{
+				ORION_ENGINE_ERROR("Material file already exists!");
 				return false;
+			}
 
 			Ref<OEMaterial> material = CreateRef<OEMaterial>();
+
+			ORION_ENGINE_INFO("Attempting to serialize material...");
 
 			if (!SerializeMaterialFile(materialPath, material))
 			{
@@ -102,20 +117,23 @@ namespace OrionEngine::AssetManagement
 		}
 	}
 
+	// ----------------------------
+	// PRIVATE HELPERS 
+	// ----------------------------
+
 	bool OEMaterialLoader::SerializeMaterialFile(const std::filesystem::path& path, const Ref<OEMaterial>& material)
 	{
 		OE_CORE_ASSERT(material, "Material is null!");
-
-		if (!std::filesystem::exists(path) || !std::filesystem::is_regular_file(path))
-			return false;
 
 		std::string extension = path.extension().string();
 		std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char character) { return static_cast<char>(std::tolower(character)); });
 
 		if (extension != ".oemat")
 			return false;
-		
+
 		YAML::Emitter out;
+
+		out << YAML::BeginMap;
 
 		out << YAML::Key << "Material";
 		out << YAML::Value << YAML::BeginMap;
@@ -146,15 +164,20 @@ namespace OrionEngine::AssetManagement
 
 		out << YAML::Key << "Asset Type";
 		out << YAML::Value << GetStringAssetType(materialData.MaterialAssetMetadata.Type);
-		
+
 		out << YAML::Key << "Path";
 		out << YAML::Value << materialData.MaterialAssetMetadata.Path.string();
 
 		out << YAML::EndMap;
-
+		out << YAML::EndMap;
 		out << YAML::EndMap;
 
-		// Save to disk
+		if (!out.good())
+		{
+			ORION_ENGINE_ERROR("YAML serialization failed: ", out.GetLastError());
+			return false;
+		}
+
 		std::ofstream outputFile(path);
 
 		if (!outputFile.is_open())
@@ -162,8 +185,8 @@ namespace OrionEngine::AssetManagement
 
 		outputFile << out.c_str();
 
-		if (!outputFile.good() || !out.good())
-			return false; 
+		if (!outputFile.good())
+			return false;
 
 		return true;
 	}
