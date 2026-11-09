@@ -67,6 +67,7 @@ namespace OrionEngine::OrionEditor
 	bool OEImGuiLayer::ShowDetailsPanel(OEScene* scene)
 	{
 		m_DetailsPanel.SetRegistry(scene->GetRegistry());
+		m_DetailsPanel.SetScene(scene);
 		m_DetailsPanel.DrawDetailsPanel();
 		return true;
 	}
