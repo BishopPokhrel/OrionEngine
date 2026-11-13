@@ -147,6 +147,11 @@ namespace OrionEngine
             glUniform3fv(GetUniformLocation(name), 1, &value[0]);
         }
 
+        void OpenGLShader::SetInt(const std::string& name, int value) noexcept
+        {
+            glUniform1i(GetUniformLocation(name), value);
+        }
+
         void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value) noexcept
         {
             GLint location = glGetUniformLocation(m_RendererID, name.c_str());

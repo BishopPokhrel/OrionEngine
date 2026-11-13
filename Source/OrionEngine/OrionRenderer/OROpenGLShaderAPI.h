@@ -50,6 +50,11 @@ namespace OrionEngine
 				shaderAPI->SetFloat(name, value);
 			}
 
+			void SetInt(const std::string& name, int value) noexcept override
+			{
+				shaderAPI->SetInt(name, value);
+			}
+
 			void Bind() noexcept override
 			{
 				shaderAPI->Bind();
