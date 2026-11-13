@@ -9,6 +9,10 @@
 
 #include <imgui.h>
 
+#if defined(_WIN64)
+#include <OrionEngine/OS/Windows/WindowsOSAPI.h>
+#endif
+
 namespace EditorUtils
 {
 	bool DrawIconTextBtn(const char* id, ImTextureID icon, const char* text, const ImVec2& size)
@@ -41,7 +45,7 @@ namespace OrionEngine::OrionEditor
 		if (m_EditorContext->SelectedEntity == ECS::INVALID_GAME_ENTITY_ID)
 		{
 			ImGui::TextDisabled("No entities selected yet.");
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 1.000f, 1.000f, 0.300));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.000f, 1.000f, 1.000f, 0.300f));
 			ImGui::TextWrapped("Try selecting entities in the Scene Hierarchy Panel to inspect its properties here");
 			ImGui::PopStyleColor();
 			return false;
@@ -201,7 +205,7 @@ namespace OrionEngine::OrionEditor
 		{
 			if (ECS::OEPhysicsComponent* physics = m_Registry->PhysicsComponent.GetComponent(m_EditorContext->SelectedEntity))
 			{
-				
+
 				ImGui::Text("Mass");
 				ImGui::SameLine(100.0f);
 				ImGui::SetNextItemWidth(-1.0f);
@@ -306,7 +310,7 @@ namespace OrionEngine::OrionEditor
 				ImGui::Text("Radius");
 				ImGui::SameLine(100.0f);
 				ImGui::SetNextItemWidth(-1.0f);
-				ImGui::DragFloat("##Radius", &physics->Radius, 0.1f, 0.0f,0.0f, "%.2f");
+				ImGui::DragFloat("##Radius", &physics->Radius, 0.1f, 0.0f, 0.0f, "%.2f");
 			}
 		}
 
@@ -328,15 +332,16 @@ namespace OrionEngine::OrionEditor
 				ImGui::PopFont();
 
 				ImGui::Spacing();
-				
+
 				auto materialData = render->Material->GetMaterialData();
 				const bool hasMaterial = materialData.MaterialAssetMetadata.IdentifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE;
+				const bool hasTexture = render->Material->GetMaterialAlbedoTexture() && render->Material->GetMaterialAlbedoTexture()->GetTextureData().TextureAssetMetadata.IdentifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE;
 
 				if (!hasMaterial)
 				{
 					const unsigned int addIcon = OEEditorTheme::GetEditorIcon("Add");
 
-					if (EditorUtils::DrawIconTextBtn("AttachMaterial", addIcon, "Attach Material", ImVec2(50.0f, 30.0f)))
+					if (EditorUtils::DrawIconTextBtn("AttachMaterial", addIcon, "Attach Material", ImVec2(150.0f, 30.0f)))
 						ImGui::OpenPopup("Material Picker");
 				}
 				else
@@ -345,7 +350,7 @@ namespace OrionEngine::OrionEditor
 					ImGui::SameLine();
 					if (ImGui::ColorPicker4("##AbledoColor", &materialData.AlbedoColor.x, ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_DisplayRGB))
 						render->Material->SetAlbedoColor(materialData.AlbedoColor);
-					
+
 					ImGui::Text("Metallic");
 					ImGui::SameLine();
 					if (ImGui::SliderFloat("##Metallic", &materialData.Metallic, 0.0f, 1.0f))
@@ -360,6 +365,63 @@ namespace OrionEngine::OrionEditor
 					ImGui::SameLine();
 					if (ImGui::SliderFloat("##AmbientOcclusion", &materialData.AmbientOcclusion, 0.0f, 1.0f))
 						render->Material->SetAmbientOcclusion(materialData.AmbientOcclusion);
+
+					ImGui::Spacing();
+
+					if (!hasTexture)
+					{
+						const unsigned int addIcon = OEEditorTheme::GetEditorIcon("Add");
+
+						if (EditorUtils::DrawIconTextBtn("AttachTexture", addIcon, "Attach Texture", ImVec2(150.0f, 30.0f)))
+						{
+							const std::filesystem::path& texturePath = OS::OpenWindowsFileDialog(
+								L"Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.hdr)\0"
+								L"*.png;*.jpg;*.jpeg;*.bmp;*.hdr\0"
+								L"All Files (*.*)\0"
+								L"*.*\0\0"
+							);
+
+							if (!texturePath.empty())
+							{
+								std::string extension = texturePath.extension().string();
+								std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char character) { return static_cast<char>(std::tolower(character)); });
+
+								const char* supportedExtensions[] = {
+									".png", ".jpeg", ".jpg", ".bmp", ".hdr"
+								};
+
+								if (std::find(std::begin(supportedExtensions), std::end(supportedExtensions), extension) != std::end(supportedExtensions))
+								{
+									AssetManagement::OEAssetIdentifierHandle textureIdentifierHandle = m_Scene->GetAssetManager()->RegisterAsset(AssetManagement::OEAssetType::Texture, texturePath);
+
+									if (textureIdentifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+									{
+										Ref<AssetManagement::OETexture> texture = m_Scene->GetAssetManager()->LoadAsset<AssetManagement::OETexture>(textureIdentifierHandle);
+										
+										if (texture)
+										{
+											AssetManagement::OEAssetIdentifierHandle oldTextureIdentifierHandle = texture->GetTextureData().TextureAssetMetadata.IdentifierHandle;
+
+											AssetManagement::OEAssetMetadata textureMetadata;
+											textureMetadata.IdentifierHandle = textureIdentifierHandle;
+											textureMetadata.Type = AssetManagement::OEAssetType::Texture;
+											textureMetadata.Path = texturePath;
+
+											texture->SetTextureAssetMetadata(textureMetadata);
+
+											oldTextureIdentifierHandle = textureIdentifierHandle;
+
+											render->Material->SetAlbedoTexture(texture);
+
+										}
+									}
+									else
+										ORION_ENGINE_ERROR("Failed to register asset at path ", texturePath.string());
+								}
+							}
+							
+						}
+					}
 				}
 			}
 		}
@@ -390,7 +452,7 @@ namespace OrionEngine::OrionEditor
 
 			ImGui::Text("Materials");
 			ImGui::SameLine();
-			
+
 			if (ImGui::BeginCombo("##MaterialType", materialTypeOptions[m_OEDPDataNeeded.MaterialDataNeeded->MaterialTypeCreationIndex]))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(materialTypeOptions); n++)
@@ -436,25 +498,13 @@ namespace OrionEngine::OrionEditor
 								render->MaterialIdentifierHandle = materialIdentifierHandle;
 								render->Material = material;
 
-								ORION_ENGINE_INFO("Material pointer valid: ", static_cast<bool>(render->Material));
-								ORION_ENGINE_INFO("Renderable material handle: ", render->MaterialIdentifierHandle);
-								ORION_ENGINE_INFO("Material metadata handle: ", render->Material ? render->Material->GetMaterialData().MaterialAssetMetadata.IdentifierHandle : AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE);
-
-								// TODO: SERIALIZE MATERIALS
-
 								ImGui::CloseCurrentPopup();
 							}
-							else
-								ORION_ENGINE_ERROR("Material is null!");
 						}
 						else
 							ORION_ENGINE_ERROR("Failed to register asset: ", materialName);
 					}
-					else
-						ORION_ENGINE_ERROR("Failed to create .oemat file!");
 				}
-				else
-					ORION_ENGINE_ERROR("Get component didnt run!");
 			}
 
 			ImGui::SameLine();
@@ -605,7 +655,7 @@ namespace OrionEngine::OrionEditor
 				ImGui::CloseCurrentPopup();
 
 				// Cleanup after closing popup
-				m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeDeletionIndex = 0; 
+				m_OEDPDataNeeded.ComponentDataNeeded->ComponentTypeDeletionIndex = 0;
 			}
 
 			ImGui::SameLine();
@@ -615,7 +665,7 @@ namespace OrionEngine::OrionEditor
 
 		return true;
 	}
-
+	
 	bool OEDetailsPanel::DrawDetailsPanel()
 	{
 		ImGui::Begin("Details");
