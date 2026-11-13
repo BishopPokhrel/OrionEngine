@@ -10,8 +10,6 @@ namespace OrionEngine
 {
 	namespace OrionRenderer
 	{
-		class ORRenderer; // forward declare
-
 		class ORVertexBuffer
 		{
 		public:
@@ -24,10 +22,6 @@ namespace OrionEngine
 			virtual const ORVertexBufferLayout& GetLayout() const noexcept = 0;
 
 			Ref<ORVertexBuffer> Create(const void* vertices, uint32_t size);
-
-		private:
-
-			ORRenderer* m_Renderer = nullptr;
 		};
 	}
 } 

@@ -7,7 +7,7 @@ namespace OrionEngine::OrionRenderer
 {
 	Ref<ORVertexBuffer> ORVertexBuffer::Create(const void* vertices, uint32_t size) 
 	{
-		switch (m_Renderer->GetGraphicsAPI())
+		switch (ORRenderer::GetGraphicsAPI())
 		{
 			case ORGraphicsAPI::None:
 				OE_CORE_ASSERT(false, "Unknown graphics API!");
