@@ -4,6 +4,7 @@
 #include <OrionEngine/Core/OEAssert.h>
 #include <OrionEngine/Core/AssetManagement/AssetLoaders/OEMeshLoader.h>
 #include <OrionEngine/Core/AssetManagement/AssetLoaders/OEMaterialLoader.h>
+#include <OrionEngine/Core/AssetManagement/AssetLoaders/OETextureLoader.h>
 
 namespace OrionEngine
 {
@@ -22,12 +23,13 @@ namespace OrionEngine
 		m_Renderer->Init(OrionRenderer::ORGraphicsAPI::OpenGL);
 		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Mesh, CreateScope<AssetManagement::OEMeshLoader>());
 		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Material, CreateScope<AssetManagement::OEMaterialLoader>());
+		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Texture, CreateScope<AssetManagement::OETextureLoader>());
 
 		OrionRenderer::ORDefaultRendererResources::Initialize();
 
 		m_Scene->InitScene();
 		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get());
-		m_ViewportFramebuffer = OrionRenderer::ORFrameBuffer::CreateFrameBuffer(1280, 720, m_Renderer->GetGraphicsAPI());
+		m_ViewportFramebuffer = OrionRenderer::ORFrameBuffer::CreateFrameBuffer(1280, 720, OrionRenderer::ORRenderer::GetGraphicsAPI());
 	}
 
 	void OEngine::OShutdownEngineSubsystems()
@@ -67,19 +69,10 @@ namespace OrionEngine
 		OE_CORE_ASSERT(m_SceneRenderer, "Scene renderer is null!");
 		OE_CORE_ASSERT(m_ViewportFramebuffer, "Viewport framebuffer is null!");
 
-		OrionRenderer::ORRenderCommand::SetClearColor(
-			0.2f,
-			0.3f,
-			0.4f,
-			1.0f
-		);
+		OrionRenderer::ORRenderCommand::SetClearColor(0.2f, 0.3f, 0.4f, 1.0F);
 
 		OrionRenderer::ORRenderCommand::Clear();
 
-		m_SceneRenderer->RenderScene(
-			m_Scene->GetRegistry(),
-			m_Scene->GetCurrentCamera(),
-			m_Scene->GetCurrentCamera().GetViewProjection()
-		);
+		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetCurrentCamera().GetViewProjection());
 	}
 }
