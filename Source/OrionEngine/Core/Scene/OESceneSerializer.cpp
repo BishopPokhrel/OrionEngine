@@ -12,7 +12,7 @@
 namespace OrionEngine
 {
 	bool OESceneSerializer::CreateOEProjectDirectory(const std::string& projectName)
-	{		
+	{
 		// ASSERT POINTER VARIABLES FIRST
 		OE_CORE_ASSERT(m_DirectoriesCreated.pFailedToCreateDirsOrFiles, "pFailedToCreateDirsOrFiles is null!");
 		OE_CORE_ASSERT(m_DirectoriesCreated.pFilesCreated, "pFilesCreated is null!");
@@ -20,114 +20,138 @@ namespace OrionEngine
 
 		try
 		{
-			if (projectName.empty()) return false;
+			if (projectName.empty() || m_Scene->GetSceneName().empty())
+				return false;
 
-			if (!std::filesystem::create_directory(projectName))
+			// Resolve all paths to absolute paths once.
+			const std::filesystem::path projectDirectory = std::filesystem::absolute(projectName).lexically_normal();
+
+			const std::string projectFileName = projectDirectory.filename().string();
+
+			if (projectFileName.empty())
+				return false;
+
+			m_ProjectPath = projectDirectory / (projectFileName + ".oeproj");
+			m_ScenePath = projectDirectory / (m_Scene->GetSceneName() + ".oescene");
+
+			const std::filesystem::path assetDirectory = projectDirectory / "Assets";
+			const std::filesystem::path scriptsDirectory = projectDirectory / "Scripts";
+
+			// Reset creation status.
+			m_DirectoriesCreated.ProjectDirectoryCreated = false;
+			m_DirectoriesCreated.AssetDirectoryCreated = false;
+			m_DirectoriesCreated.ScriptsDirectoryCreated = false;
+
+			m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = false;
+			m_DirectoriesCreated.pFilesCreated->SceneFileCreated = false;
+
+			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory = false;
+			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile = false;
+			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile = false;
+			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory = false;
+			m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory = false;
+
+			// Create project directory.
+			if (!std::filesystem::exists(projectDirectory))
 			{
-				if (DoesProjectExist(projectName))
+				if (!std::filesystem::create_directories(projectDirectory))
+				{
+					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory = true;
+					ORION_ENGINE_ERROR("Failed to create project directory: ", projectDirectory.string());
 					return false;
-
+				}
+			}
+			else if (!std::filesystem::is_directory(projectDirectory))
+			{
 				m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory = true;
-			}
-			else
-			{
-				m_ProjectPath = projectName + "/" + projectName + ".oeproj";
-				m_DirectoriesCreated.ProjectDirectoryCreated = true;
+				ORION_ENGINE_ERROR("Project path exists but is not a directory: ", projectDirectory.string());
+				return false;
 			}
 
-			if (!m_DirectoriesCreated.pFilesCreated->ProjectFileCreated)
+			m_DirectoriesCreated.ProjectDirectoryCreated = true;
+
+			// Do not overwrite an existing project file.
+			if (std::filesystem::exists(m_ProjectPath))
 			{
-				if (!std::filesystem::exists(m_ProjectPath))
+				ORION_ENGINE_WARNING("Project already exists: ", m_ProjectPath.string());
+				return false;
+			}
+
+			// Create project file.
+			{
+				std::ofstream projectFile(m_ProjectPath);
+
+				if (!projectFile.is_open() || !projectFile.good())
 				{
-					std::ofstream projectFile(m_ProjectPath);
-					if (!projectFile)
-						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile = true;
-
-					ORION_ENGINE_INFO("Successfully created project file: ", m_ProjectPath);
-					m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = true;
+					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile = true;
+					ORION_ENGINE_ERROR("Failed to create project file: ", m_ProjectPath.string());
+					return false;
 				}
-				else
-					m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = true;
 			}
 
-			// Create scene file
-			m_ScenePath = std::filesystem::path(projectName) / (m_Scene->GetSceneName() + ".oescene");
-			if (!m_DirectoriesCreated.pFilesCreated->SceneFileCreated)
+			m_DirectoriesCreated.pFilesCreated->ProjectFileCreated = true;
+			ORION_ENGINE_INFO("Successfully created project file: ", m_ProjectPath.string());
+
+			// Create scene file.
 			{
-				if (!std::filesystem::exists(m_ScenePath))
+				std::ofstream sceneFile(m_ScenePath);
+
+				if (!sceneFile.is_open() || !sceneFile.good())
 				{
-					std::ofstream sceneFile(m_ScenePath);
-					if (!sceneFile)
-						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile = true;
-					ORION_ENGINE_INFO("Successfully created scene file: ", m_ScenePath);
-					m_DirectoriesCreated.pFilesCreated->SceneFileCreated = true;
+					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile = true;
+					ORION_ENGINE_ERROR("Failed to create scene file: ", m_ScenePath.string());
+					return false;
 				}
-				else
-					m_DirectoriesCreated.pFilesCreated->SceneFileCreated = true;
 			}
 
-			// Create directories first
-			// Asset Directory
+			m_DirectoriesCreated.pFilesCreated->SceneFileCreated = true;
+			ORION_ENGINE_INFO("Successfully created scene file: ", m_ScenePath.string());
 
-			if (!m_DirectoriesCreated.AssetDirectoryCreated) // so we dont create the directory more than once
+			// Create Assets directory.
+			if (!std::filesystem::exists(assetDirectory))
 			{
-				std::filesystem::path assetDirPath = projectName + "/Assets";
-				if (!std::filesystem::exists(assetDirPath))
+				if (!std::filesystem::create_directory(assetDirectory))
 				{
-					if (!std::filesystem::create_directory(assetDirPath))
-						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory = true;
-
-					ORION_ENGINE_INFO("Successfully created directory: ", assetDirPath);
-					m_DirectoriesCreated.AssetDirectoryCreated = true;
+					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory = true;
+					ORION_ENGINE_ERROR("Failed to create Assets directory: ", assetDirectory.string());
+					return false;
 				}
-				else
-					m_DirectoriesCreated.AssetDirectoryCreated = true;
+			}
+			else if (!std::filesystem::is_directory(assetDirectory))
+			{
+				m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory = true;
+				ORION_ENGINE_ERROR("Assets path exists but is not a directory: ", assetDirectory.string());
+				return false;
 			}
 
-			// Scripts Directory
+			m_DirectoriesCreated.AssetDirectoryCreated = true;
+			ORION_ENGINE_INFO("Assets directory is ready: ", assetDirectory.string());
 
-			if (!m_DirectoriesCreated.ScriptsDirectoryCreated)
+			// Create Scripts directory.
+			if (!std::filesystem::exists(scriptsDirectory))
 			{
-				std::filesystem::path scriptsDirPath = projectName + "/Scripts";
-				if (!std::filesystem::exists(scriptsDirPath))
+				if (!std::filesystem::create_directory(scriptsDirectory))
 				{
-					if (!std::filesystem::create_directory(scriptsDirPath))
-						m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory = true;
-
-					ORION_ENGINE_INFO("Successfully created directory: ", scriptsDirPath);
-					m_DirectoriesCreated.ScriptsDirectoryCreated = true;
+					m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory = true;
+					ORION_ENGINE_ERROR("Failed to create Scripts directory: ", scriptsDirectory.string());
+					return false;
 				}
-				else
-					m_DirectoriesCreated.ScriptsDirectoryCreated = true;
 			}
-
-			bool ADCreated = m_DirectoriesCreated.AssetDirectoryCreated; // AD = Asset Directory, so AssetDirectoryCreated
-			bool SDCreated = m_DirectoriesCreated.ScriptsDirectoryCreated; // SD = Scripts Directory, so ScriptsDirectoryCreated
-			bool PDCreated = m_DirectoriesCreated.ProjectDirectoryCreated;
-			bool PFCreated = m_DirectoriesCreated.pFilesCreated->ProjectFileCreated; // PF = Project File, so ProjectFileCreated
-			bool SFCreated = m_DirectoriesCreated.pFilesCreated->SceneFileCreated; // SF = Scene File, so SceneFileCreated
-
-			bool allDirectoriesCreatedAndFiles = ADCreated && SDCreated && PFCreated && SFCreated && PDCreated;
-
-			if (allDirectoriesCreatedAndFiles)
+			else if (!std::filesystem::is_directory(scriptsDirectory))
 			{
-				ORION_ENGINE_INFO("All directories and files created successfully!");
+				m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory = true;
+				ORION_ENGINE_ERROR("Scripts path exists but is not a directory: ", scriptsDirectory.string());
+				return false;
 			}
 
-			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateAssetsDirectory)
-				ORION_ENGINE_WARNING("Failed to create directory Asset Directory");
+			m_DirectoriesCreated.ScriptsDirectoryCreated = true;
+			ORION_ENGINE_INFO("Scripts directory is ready: ", scriptsDirectory.string());
 
-			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateScriptsDirectory)
-				ORION_ENGINE_WARNING("Failed to create Scripts Directory");
+			ORION_ENGINE_INFO("All project directories and files created successfully!");
+			ORION_ENGINE_INFO("Project path: ", m_ProjectPath.string());
+			ORION_ENGINE_INFO("Scene path: ", m_ScenePath.string());
 
-			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectDirectory)
-				ORION_ENGINE_FATAL_ERROR("Failed to create Project: ", projectName, " directory!");
-
-			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateProjectFile)
-				ORION_ENGINE_FATAL_ERROR("Failed to create Project File!"); // TODO: Throw an exception later
-
-			if (m_DirectoriesCreated.pFailedToCreateDirsOrFiles->FailedToCreateSceneFile)
-				ORION_ENGINE_FATAL_ERROR("Failed to create Scene File!");
+			return true;
 		}
 		catch (const std::filesystem::filesystem_error& err)
 		{
@@ -139,8 +163,11 @@ namespace OrionEngine
 			ORION_ENGINE_ERROR(e.what());
 			return false;
 		}
-
-		return true;
+		catch (...)
+		{
+			ORION_ENGINE_ERROR("Unknown exception found!");
+			return false;
+		}
 	}
 
 	bool OESceneSerializer::OpenOEProjectDirectory(const std::filesystem::path& projectPath)
@@ -166,6 +193,11 @@ namespace OrionEngine
 		catch (const std::exception& e)
 		{
 			ORION_ENGINE_ERROR(e.what());
+			return false;
+		}
+		catch (...)
+		{
+			ORION_ENGINE_ERROR("Unknown exception found!");
 			return false;
 		}
 	}
@@ -292,6 +324,7 @@ namespace OrionEngine
 
 						// Albedo, Metallic, Roughness & Ambient Occlusion
 						const auto& materialData = renderable->Material->GetMaterialData();
+						Ref<AssetManagement::OETexture> materialAlbedoTexture = renderable->Material->GetMaterialAlbedoTexture();
 
 						out << YAML::Key << "Albedo Color";
 						out << YAML::Value << YAML::Flow << YAML::BeginSeq
@@ -308,6 +341,17 @@ namespace OrionEngine
 
 						out << YAML::Key << "Ambient Occlusion";
 						out << YAML::Value << materialData.AmbientOcclusion;
+
+						if (materialAlbedoTexture)
+						{
+							out << YAML::Key << "Texture Properties";
+							out << YAML::Value << YAML::BeginMap;
+
+							out << YAML::Key << "Texture Path";
+							out << YAML::Value << (m_ProjectPath.parent_path() / materialAlbedoTexture->GetTextureData().TextureAssetMetadata.Path).string();
+
+							out << YAML::EndMap;
+						}
 
 						out << YAML::EndMap;
 
@@ -459,6 +503,16 @@ namespace OrionEngine
 			ORION_ENGINE_ERROR("YAML Exception occurred: ", exception.what());
 			return false;
 		}
+		catch (const std::exception& e)
+		{
+			ORION_ENGINE_ERROR("Exception: ", e.what());
+			return false;
+		}
+		catch (...)
+		{
+			ORION_ENGINE_ERROR("Unknown exception found!");
+			return false;
+		}
 	}
 
 	bool OESceneSerializer::SerializeScene()
@@ -511,8 +565,17 @@ namespace OrionEngine
 			ORION_ENGINE_ERROR("YAML Exception occurred: ", exception.what());
 			return false;
 		}
+		catch (const std::exception& e)
+		{
+			ORION_ENGINE_ERROR("Exception: ", e.what());
+			return false;
+		}
+		catch (...)
+		{
+			ORION_ENGINE_ERROR("Unknown exception found!");
+			return false;
+		}
 	}
-
 
 	bool OESceneSerializer::DeserializeEntities(const YAMLNode& entityNodes)
 	{
@@ -696,6 +759,8 @@ namespace OrionEngine
 							YAMLNode materialRoughnessNode = materialProperitesNode["Roughness"];
 							YAMLNode materialAmbientOcclusionNode = materialProperitesNode["Ambient Occlusion"];
 
+							YAMLNode texturePropertiesNode = materialProperitesNode["Texture Properties"];
+
 							glm::vec4 albedoColorMaterial = (materialAlbedoColorNode && materialAlbedoColorNode.IsSequence() && materialAlbedoColorNode.size() == 4) ? glm::vec4(
 								materialAlbedoColorNode[0].as<float>(),
 								materialAlbedoColorNode[1].as<float>(),
@@ -706,6 +771,33 @@ namespace OrionEngine
 							float metallicMaterial = materialMetallicNode ? materialMetallicNode.as<float>() : assetMaterial->GetMaterialData().Metallic;
 							float roughnessMaterial = materialRoughnessNode ? materialRoughnessNode.as<float>() : assetMaterial->GetMaterialData().Roughness;
 							float ambientOcclusionMaterial = materialAmbientOcclusionNode ? materialAmbientOcclusionNode.as<float>() : assetMaterial->GetMaterialData().AmbientOcclusion;
+
+							if (texturePropertiesNode)
+							{
+								std::filesystem::path textureMaterialPath = m_ProjectPath.parent_path() / texturePropertiesNode["Texture Path"].as<std::string>();
+								textureMaterialPath = std::filesystem::absolute(textureMaterialPath).lexically_normal();
+
+								AssetManagement::OEAssetIdentifierHandle textureIdentifierHandle = m_AssetManager->GetAssetIdentifierHandle(textureMaterialPath);
+
+								if (textureIdentifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+									textureIdentifierHandle = m_AssetManager->RegisterAsset(AssetManagement::OEAssetType::Texture, textureMaterialPath);
+
+								if (textureIdentifierHandle == AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
+								{
+									ORION_ENGINE_ERROR("Failed to register texture asset at path ", textureMaterialPath.string());
+									return false;
+								}
+
+								Ref<AssetManagement::OETexture> texture = m_AssetManager->LoadAsset<AssetManagement::OETexture>(textureIdentifierHandle);
+
+								if (!texture)
+								{
+									ORION_ENGINE_ERROR("Failed to load asset at path ", textureMaterialPath.string());
+									return false;
+								}
+
+								assetMaterial->SetAlbedoTexture(texture);
+							}
 
 							renderComponent.Material->SetAlbedoColor(albedoColorMaterial);
 							renderComponent.Material->SetMetallic(metallicMaterial);
@@ -755,8 +847,17 @@ namespace OrionEngine
 			ORION_ENGINE_ERROR("YAML Exception occurred: ", exception.what());
 			return false;
 		}
+		catch (const std::exception& e)
+		{
+			ORION_ENGINE_ERROR("Exception: ", e.what());
+			return false;
+		}
+		catch (...)
+		{
+			ORION_ENGINE_ERROR("Unknown exception found!");
+			return false;
+		}
 	}
-
 
 	bool OESceneSerializer::DeserializeScene(const std::filesystem::path& scenePath)
 	{
@@ -807,6 +908,16 @@ namespace OrionEngine
 		{
 			ORION_ENGINE_ERROR("YAML Exception occurred: ", exception.what());
 			return false; 
+		}
+		catch (const std::exception& e)
+		{
+			ORION_ENGINE_ERROR("Exception: ", e.what());
+			return false;
+		}
+		catch (...)
+		{
+			ORION_ENGINE_ERROR("Unknown exception found!");
+			return false;
 		}
 
 		return true;
