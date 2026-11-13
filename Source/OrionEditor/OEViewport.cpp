@@ -172,8 +172,12 @@ namespace OrionEngine::OrionEditor
                 if (ImGui::IsKeyDown(ImGuiKey_A) || ImGui::IsKeyDown(ImGuiKey_LeftArrow)) movement -= camera.GetRight();
                 if (ImGui::IsKeyDown(ImGuiKey_D) || ImGui::IsKeyDown(ImGuiKey_RightArrow)) movement += camera.GetRight();
 
+                constexpr float baseSpeed = 0.5f;
+
+                float cameraSpeed = camera.GetDistance() * baseSpeed;
+
                 if (glm::length(movement) > 0.0f)
-                    camera.Translate(glm::normalize(movement) * 5.0f * OETime::OEGetDeltaTime());
+                    camera.Translate(glm::normalize(movement) * cameraSpeed * OETime::OEGetDeltaTime());   // Change the camera speed when the camera zoom is increased or decreased. 
 
                 ImVec2 mousePosition = ImGui::GetMousePos();
 
