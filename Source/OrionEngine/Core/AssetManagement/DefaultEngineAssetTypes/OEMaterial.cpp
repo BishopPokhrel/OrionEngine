@@ -43,4 +43,9 @@ namespace OrionEngine::AssetManagement
 	{
 		m_MaterialData.MaterialAssetMetadata = metadata;
 	}
+
+	void OEMaterial::SetAlbedoTexture(Ref<OETexture> texture)
+	{
+		m_MaterialData.AlbedoTexture = std::move(texture);
+	}
 }
