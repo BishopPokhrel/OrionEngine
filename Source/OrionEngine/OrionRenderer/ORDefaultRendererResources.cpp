@@ -18,18 +18,22 @@ namespace OrionEngine::OrionRenderer
 
 					layout(location = 0) in vec3 a_Position;
 					layout(location = 1) in vec3 a_Normal;
+					layout(location = 2) in vec2 a_TexCoord;
+
 
 					uniform mat4 u_ViewProjection;
 					uniform mat4 u_Transform;
 
 					out vec3 v_FragPosition;
 					out vec3 v_Normal;
+					out vec2 v_TexCoord;
 
 					void main()
 					{
 						vec4 worldPosition = u_Transform * vec4(a_Position, 1.0);
 
 						v_FragPosition = worldPosition.xyz;
+						v_TexCoord = a_TexCoord;
 
 						mat3 normalMatrix = transpose(inverse(mat3(u_Transform)));
 						v_Normal = normalize(normalMatrix * a_Normal);
@@ -49,6 +53,10 @@ namespace OrionEngine::OrionRenderer
 
 					in vec3 v_FragPosition;
 					in vec3 v_Normal;
+					in vec2 v_TexCoord;
+
+					uniform sampler2D u_AlbedoTexture;
+					uniform bool u_HasAlbedoTexture;
 
 					// Camera
 					uniform vec3 u_CameraPosition;
@@ -130,7 +138,13 @@ namespace OrionEngine::OrionRenderer
 
 					void main()
 					{
-						vec3 albedo = u_AlbedoColor.rgb;
+						vec4 albedoColor = u_AlbedoColor;
+
+						if (u_HasAlbedoTexture)
+							albedoColor *= texture(u_AlbedoTexture, v_TexCoord);
+
+						vec3 albedo = albedoColor.rgb;
+
 						float metallic = clamp(u_Metallic, 0.0, 1.0);
 						float roughness = clamp(u_Roughness, 0.04, 1.0);
 						float ao = clamp(u_AmbientOcclusion, 0.0, 1.0);
@@ -183,7 +197,7 @@ namespace OrionEngine::OrionRenderer
 						color = color / (color + vec3(1.0));
 						color = pow(color, vec3(1.0 / 2.2));
 
-						 o_Color = vec4(color, u_AlbedoColor.a);
+						 o_Color = vec4(color, albedoColor.a);
 					}
 				)"
 			}
@@ -196,40 +210,40 @@ namespace OrionEngine::OrionRenderer
 
 		const float vertices[] = {
 			// Front face (+Z)
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
 
 			// Back face (-Z)
-			 0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 0.0f,-1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f, 0.0f,-1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1.0f, 0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1.0f, 1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 0.0f,-1.0f, 1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f, 0.0f,-1.0f, 0.0f, 1.0f,
 
 			 // Left face (-X)
-			 -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-			 -0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f,
-			 -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f,
-			 -0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+			 -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			 -0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			 -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+			 -0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f,0.0f, 1.0f,
 
 			 // Right face (+X)
-			  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
-			  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-			  0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-			  0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+			  0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			  0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			  0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+			  0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 
 			  // Top face (+Y)
-			  -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-			   0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-			   0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-			  -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+			  -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			   0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+			   0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			  -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 
 			  // Bottom face (-Y)
-			  -0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f,
-			   0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f,
-			   0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f,
-			  -0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f
+			  -0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f, 0.0f, 0.0f,
+			   0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f, 1.0f, 0.0f,
+			   0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f, 1.0f, 1.0f,
+			  -0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f, 0.0f, 1.0f
 		};
 
 		s_DefaultShader->Bind();
@@ -245,6 +259,7 @@ namespace OrionEngine::OrionRenderer
 		ORVertexBufferLayout layout;
 		layout.Push<glm::vec3>("a_Position");
 		layout.Push<glm::vec3>("a_Normal");
+		layout.Push<glm::vec2>("a_TexCoord");
 
 		VBO->SetLayout(layout);
 		s_DefaultVertexArray->AddVertexBuffer(VBO);
