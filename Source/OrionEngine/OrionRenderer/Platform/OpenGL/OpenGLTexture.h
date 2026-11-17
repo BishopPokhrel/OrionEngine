@@ -13,6 +13,7 @@ namespace OrionEngine::OrionRenderer
 	public:
 
 		OpenGLTexture(const AssetManagement::OETextureData& textureData);
+		OpenGLTexture(uint32_t width, uint32_t height);
 		~OpenGLTexture();
 
 		void Bind(uint32_t textureSlot = 0) const noexcept override;
@@ -27,5 +28,7 @@ namespace OrionEngine::OrionRenderer
 
 		uint32_t m_Width = 0;
 		uint32_t m_Height = 0;
+
+		friend class OpenGLTextureFramebuffer;
 	};
 }

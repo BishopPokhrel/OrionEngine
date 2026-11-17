@@ -19,5 +19,6 @@ namespace OrionEngine::OrionRenderer
 		virtual uint32_t GetHeight() const noexcept = 0;
 
 		static Ref<ORTexture> CreateTexture(const AssetManagement::OETextureData& textureData); 
+		static Ref<ORTexture> CreateTexture(uint32_t width, uint32_t height);
 	};
 }

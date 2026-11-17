@@ -20,4 +20,19 @@ namespace OrionEngine::OrionRenderer
 
 		return nullptr;
 	}
+
+	Ref<ORTexture> ORTexture::CreateTexture(uint32_t width, uint32_t height)
+	{
+		switch (ORRenderer::GetGraphicsAPI())
+		{
+			case ORGraphicsAPI::None:
+				ORION_ENGINE_ERROR("Graphics API is not supported!");
+				return nullptr;
+
+			case ORGraphicsAPI::OpenGL:
+				return CreateRef<OpenGLTexture>(width, height);
+		}
+
+		return nullptr;
+	}
 }
