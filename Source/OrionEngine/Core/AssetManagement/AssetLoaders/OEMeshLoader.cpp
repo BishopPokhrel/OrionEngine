@@ -5,7 +5,7 @@
 #include <OrionEngine/Core/OELogging.h>
 
 // Renderer includes
-#include <OrionEngine/OrionRenderer/OROpenGLVertexArrayAPI.h>
+#include <OrionEngine/OrionRenderer/ORVertexArray.h>
 #include <OrionEngine/OrionRenderer/Platform/OpenGL/OpenGLVertexBuffer.h>
 #include <OrionEngine/OrionRenderer/Platform/OpenGL/OpenGLIndexBuffer.h>
 #include <OrionEngine/OrionRenderer/ORVertexBufferLayout.h>
@@ -120,7 +120,7 @@ namespace OrionEngine::AssetManagement
             }
         }
 
-		Ref<OrionRenderer::OROpenGLVertexArrayAPI> VAO = CreateRef<OrionRenderer::OROpenGLVertexArrayAPI>();
+		Ref<OrionRenderer::ORVertexArray> VAO = OrionRenderer::ORVertexArray::CreateVertexArray();
 		Ref<OrionRenderer::OpenGLVertexBuffer> VBO = CreateRef<OrionRenderer::OpenGLVertexBuffer>(vertices.data(), static_cast<uint32_t>(vertices.size() * sizeof(OEMeshVertex)));
 
 		OrionRenderer::ORVertexBufferLayout layout;
