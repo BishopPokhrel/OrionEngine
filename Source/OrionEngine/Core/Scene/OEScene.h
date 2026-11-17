@@ -11,6 +11,8 @@
 
 #include <glm/glm.hpp>
 
+#include "OEEnvironment.h"
+
 namespace OrionEngine::ECS
 {
 	class OEECSRegistry; 
@@ -48,6 +50,9 @@ namespace OrionEngine
 		OESceneSerializer* GetSerializer() const noexcept { return m_Serializer.get(); }
 		AssetManagement::OEAssetManager* GetAssetManager() const noexcept { return m_AssetManager; }
 
+		OEEnvironment& GetEnvironment() noexcept { return m_Environment; }
+		const OEEnvironment& GetEnvironment() const noexcept { return m_Environment; }
+
 	private:
 		std::string m_OESceneName;
 		AssetManagement::OEAssetManager* m_AssetManager = nullptr; // The scene does not own the asset manager; OEngine does
@@ -58,5 +63,7 @@ namespace OrionEngine
 
 		OrionRenderer::ORCamera m_Camera = OrionRenderer::ORCamera(-8.0f, 8.0f, 4.5f, -4.5f);
 		OrionRenderer::OEDirectionalLight m_DirectionalLight;
+
+		OEEnvironment m_Environment;
 	};
 }  
