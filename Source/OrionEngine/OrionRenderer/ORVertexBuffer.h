@@ -21,7 +21,7 @@ namespace OrionEngine
 			virtual void SetLayout(const ORVertexBufferLayout& layout) noexcept = 0;
 			virtual const ORVertexBufferLayout& GetLayout() const noexcept = 0;
 
-			Ref<ORVertexBuffer> Create(const void* vertices, uint32_t size);
+			static Ref<ORVertexBuffer> CreateVertexBuffer(const void* vertices, uint32_t size);
 		};
 	}
 } 

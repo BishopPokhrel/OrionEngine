@@ -19,5 +19,7 @@ namespace OrionEngine::OrionRenderer
         virtual void SetIndexBuffer(const Ref<ORIndexBuffer>& IBO) noexcept = 0;
 
         virtual const Ref<ORIndexBuffer>& GetIndexBuffer() const noexcept = 0;
+
+        static Ref<ORVertexArray> CreateVertexArray() noexcept;
     };
 }

@@ -5,7 +5,7 @@
 
 namespace OrionEngine::OrionRenderer
 {
-	Ref<ORVertexBuffer> ORVertexBuffer::Create(const void* vertices, uint32_t size) 
+	Ref<ORVertexBuffer> ORVertexBuffer::CreateVertexBuffer(const void* vertices, uint32_t size) 
 	{
 		switch (ORRenderer::GetGraphicsAPI())
 		{
