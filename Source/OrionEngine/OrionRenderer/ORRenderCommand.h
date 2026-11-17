@@ -47,6 +47,16 @@
 				{
 					s_RendererAPI->DrawArrays(vertexCount);
 				}
+
+				static void SetDepthFunctionLessOrEqual()
+				{
+					s_RendererAPI->SetDepthFunctionLessOrEqual();
+				}
+
+				static void SetDepthFunctionLess()
+				{
+					s_RendererAPI->SetDepthFunctionLess();
+				}
 			};
 		}
 	}
