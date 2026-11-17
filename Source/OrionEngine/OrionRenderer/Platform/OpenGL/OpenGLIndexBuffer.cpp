@@ -11,9 +11,11 @@ namespace OrionEngine
 			m_Count = count;
 
 			glGenBuffers(1, &m_RendererID);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+			glBindBuffer(GL_COPY_WRITE_BUFFER, m_RendererID);
+			glBufferData(GL_COPY_WRITE_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+			glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
 		}
+
 
 		OpenGLIndexBuffer::~OpenGLIndexBuffer() noexcept
 		{
