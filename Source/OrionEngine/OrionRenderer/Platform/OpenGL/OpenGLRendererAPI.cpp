@@ -39,5 +39,14 @@ namespace OrionEngine
 		{
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 		}
+		void OpenGLRendererAPI::SetDepthFunctionLessOrEqual()
+		{
+			glDepthFunc(GL_LEQUAL);
+		}
+
+		void OpenGLRendererAPI::SetDepthFunctionLess()
+		{
+			glDepthFunc(GL_LESS);
+		}
 	}
 }
