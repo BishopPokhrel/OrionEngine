@@ -5,7 +5,7 @@ namespace OrionEngine
 {
     namespace ECS
     {
-        OEGameEntityID OEECSRegistry::CreateGameEntity(const std::string& name) noexcept
+        OEGameEntityID OEECSRegistry::CreateGameEntity(const std::string& name) 
         {
             OEGameEntityData newGameEntity;
             newGameEntity.Name = name;
@@ -20,7 +20,7 @@ namespace OrionEngine
             return newGameEntity.ID;
         }
 
-        void OEECSRegistry::DeleteGameEntity(ECS::OEGameEntityID id) noexcept
+        void OEECSRegistry::DeleteGameEntity(ECS::OEGameEntityID id) 
         {
             for (auto it = m_Entities.begin(); it != m_Entities.end(); ++it)
             {
@@ -41,6 +41,50 @@ namespace OrionEngine
                     return;
                 }
             }
+        }
+
+        OEGameEntityID OEECSRegistry::CopyGameEntity(OEGameEntityID originalEntityID)
+        {
+            if (!IsValid(originalEntityID) || originalEntityID == INVALID_GAME_ENTITY_ID)
+                return INVALID_GAME_ENTITY_ID;
+
+            std::string originalEntityName = GetEntityNameByID(originalEntityID);
+            std::string newEntityName = originalEntityName + "Copy";
+
+            if (GetEntityIDByName(newEntityName) != INVALID_GAME_ENTITY_ID)
+                newEntityName = originalEntityName + "Copy" + std::to_string(m_CopiedNextNumber);
+
+            OEGameEntityID newEntityID = CreateGameEntity(newEntityName);
+
+            if (newEntityID == INVALID_GAME_ENTITY_ID)
+                return INVALID_GAME_ENTITY_ID;
+
+            if (HasComponent<OETransformComponent>(originalEntityID))
+            {
+                OETransformComponent* transform = GetComponent<OETransformComponent>(originalEntityID); // give the original entity's id so as to get their component and later copy it into the new entity
+                TransformComponent.AddComponent(newEntityID, transform ? *transform : OETransformComponent()); // Deference the component pointer only if its not null otherwise provide the default transform component
+            }
+
+            if (HasComponent<OEPhysicsComponent>(originalEntityID))
+            {
+                OEPhysicsComponent* physics = GetComponent<OEPhysicsComponent>(originalEntityID);
+                PhysicsComponent.AddComponent(newEntityID, physics ? *physics : OEPhysicsComponent());
+            }
+
+            if (HasComponent<OERenderableComponent>(originalEntityID))
+            {
+                OERenderableComponent* renderable = GetComponent<OERenderableComponent>(originalEntityID);
+                RenderableComponent.AddComponent(newEntityID, renderable ? *renderable : OERenderableComponent());
+            }
+
+            if (HasComponent<OECameraComponent>(originalEntityID))
+            {
+                OECameraComponent* camera = GetComponent<OECameraComponent>(originalEntityID);
+                CameraComponent.AddComponent(newEntityID, camera ? *camera : OECameraComponent());
+            }
+
+            m_CopiedNextNumber++;
+            return newEntityID;
         }
 
         ECS::OEGameEntityID OEECSRegistry::GetEntityIDByName(const std::string& name) const noexcept

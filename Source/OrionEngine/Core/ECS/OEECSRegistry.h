@@ -30,8 +30,9 @@ namespace OrionEngine
 
         public:
 
-            OEGameEntityID CreateGameEntity(const std::string& name) noexcept;
-            void DeleteGameEntity(OEGameEntityID id) noexcept;
+            OEGameEntityID CreateGameEntity(const std::string& name);
+            void DeleteGameEntity(OEGameEntityID id);
+            OEGameEntityID CopyGameEntity(OEGameEntityID originalEntityID);
 
             bool IsValid(OEGameEntityID id) const noexcept
             {
@@ -82,6 +83,7 @@ namespace OrionEngine
         private:
 
             OEGameEntityID m_NextID = 1;
+            int m_CopiedNextNumber = 1;
 
             std::vector<OEGameEntityData> m_Entities;
 
