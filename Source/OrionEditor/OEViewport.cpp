@@ -160,7 +160,7 @@ namespace OrionEngine::OrionEditor
             {
                 glm::vec3 movement(0.0f);
 
-                glm::vec3 horizontalForward(camera.GetForward().x, 0.0f, camera.GetForward().y);
+                glm::vec3 horizontalForward(camera.GetForward().x, 0.0f, camera.GetForward().z);
 
                 if (glm::length(horizontalForward) > 0.001f)
                     horizontalForward = glm::normalize(horizontalForward);
