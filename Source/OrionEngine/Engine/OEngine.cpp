@@ -28,8 +28,13 @@ namespace OrionEngine
 		OrionRenderer::ORDefaultRendererResources::Initialize();
 
 		m_Scene->InitScene();
-		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get());
+		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get(), m_AssetManager.get());
 		m_ViewportFramebuffer = OrionRenderer::ORFrameBuffer::CreateFrameBuffer(1280, 720, OrionRenderer::ORRenderer::GetGraphicsAPI());
+
+		if (!m_SceneRenderer->RenderSceneEnvironment(m_Scene->GetEnvironment()))
+			ORION_ENGINE_WARNING("IBL Generation failed!");
+
+		ORION_ENGINE_INFO("Engine subsystems initialized!");
 	}
 
 	void OEngine::OShutdownEngineSubsystems()
@@ -73,6 +78,6 @@ namespace OrionEngine
 
 		OrionRenderer::ORRenderCommand::Clear();
 
-		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetCurrentCamera().GetViewProjection());
+		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetEnvironment(), m_Scene->GetCurrentCamera().GetViewProjection());
 	}
 }
