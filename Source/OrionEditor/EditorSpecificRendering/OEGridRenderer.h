@@ -6,6 +6,30 @@
 #include <OrionEngine/OrionRenderer/ORVertexArray.h>
 #include <OrionEngine/OrionRenderer/ORShader.h>
 #include <OrionEngine/Core/OERef.h>
+#include <OrionEngine/Core/OELogging.h>
+
+#include <string>
+#include <fstream>
+#include <sstream>
+
+namespace Utils
+{
+    inline std::string ReadShaderFile(const std::string& filepath)
+    {
+        std::ifstream file(filepath);
+
+        if (!file.is_open())
+        {
+            ORION_ENGINE_ERROR("Failed to open shader file: ", filepath);
+            return {};
+        }
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+
+        return buffer.str();
+    }
+}
 
 namespace OrionEngine::OrionEditor::EditorSpecificRendering
 {

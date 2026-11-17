@@ -4,7 +4,7 @@
 #include <OrionEngine/Core/OELogging.h>
 #include <OrionEngine/OrionRenderer/ORRenderCommand.h>
 #include <OrionEngine/OrionRenderer/OROpenGLShaderAPI.h>
-#include <OrionEngine/OrionRenderer/OROpenGLVertexArrayAPI.h>
+#include <OrionEngine/OrionRenderer/ORVertexArray.h>
 
 #include <fstream>
 #include <sstream>
@@ -12,30 +12,11 @@
 
 #include <glm/gtc/matrix_inverse.hpp>
 
-namespace Utils
-{
-    std::string ReadShaderFile(const std::string& filepath)
-    {
-        std::ifstream file(filepath);
-
-        if (!file.is_open())
-        {
-            ORION_ENGINE_ERROR("Failed to open shader file: ", filepath);
-            return {};
-        }
-
-        std::stringstream buffer;
-        buffer << file.rdbuf();
-
-        return buffer.str();
-    }
-}
-
 namespace OrionEngine::OrionEditor::EditorSpecificRendering
 {
     void OEGridRenderer::Init()
     {
-        m_FullscreenVAO = CreateRef<OrionRenderer::OROpenGLVertexArrayAPI>();
+        m_FullscreenVAO = OrionRenderer::ORVertexArray::CreateVertexArray();
         m_GridShader = CreateRef<OrionRenderer::OROpenGLShaderAPI>();
 
         std::string vertexShaderSource = Utils::ReadShaderFile(
