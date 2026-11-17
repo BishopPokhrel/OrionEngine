@@ -20,6 +20,17 @@
     <None Include="imgui.ini" />
     <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridFragmentShader.glsl" />
     <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridVertexShader.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\BRDFIntegrationFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\BRDFIntegrationVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\EquirectangularToCubemapFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\EquirectangularToCubemapVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\IrradianceConvolutionFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\IrradianceConvolutionVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\PrefilterEnvironmentFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\PrefilterEnvironmentVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderVS.glsl" />
+    <None Include="Assets\EngineRendererAssets\EnvironmentTexture\DefaultEnvironmentHDRTexture.hdr" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\OEEntryPoint.cpp">
@@ -170,6 +181,36 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\stb_image\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORCubemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEditor\Panels\OEEnvironmentDetailsPanel.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORCubemapFramebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemapFramebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORTextureFramebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLTextureFramebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -333,9 +374,6 @@
     <ClInclude Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLVertexArrayAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\OrionEngine\Core\AssetManagement\OEAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -390,5 +428,38 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORCubemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORCubemapFramebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemapFramebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORTextureFramebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLTextureFramebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\Scene\OEEnvironment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\EngineRendererAssets\EnvironmentTexture\SOURCE.txt" />
   </ItemGroup>
 </Project>

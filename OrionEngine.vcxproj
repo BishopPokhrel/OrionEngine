@@ -128,10 +128,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="Assets\EngineRendererAssets\EnvironmentTexture\DefaultEnvironmentHDRTexture.hdr" />
     <None Include="imgui.ini" />
     <None Include="README.md" />
     <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridFragmentShader.glsl" />
     <None Include="Source\OrionEditor\EditorSpecificRendering\Shaders\GridVertexShader.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\BRDFIntegrationFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\BRDFIntegrationVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\EquirectangularToCubemapFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\EquirectangularToCubemapVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\IrradianceConvolutionFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\IrradianceConvolutionVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\PrefilterEnvironmentFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\IBL\Shaders\PrefilterEnvironmentVS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderFS.glsl" />
+    <None Include="Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderVS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\OrionEditor\EditorSpecificRendering\OEGridRenderer.cpp" />
@@ -143,6 +154,7 @@
     <ClCompile Include="Source\OrionEditor\Panels\OECommandPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OEConsolePanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OEDetailsPanel.cpp" />
+    <ClCompile Include="Source\OrionEditor\Panels\OEEnvironmentDetailsPanel.h" />
     <ClCompile Include="Source\OrionEditor\Panels\OEResourceBrowserPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\OrionEditor\Panels\OESceneManagerPanel.cpp" />
@@ -165,17 +177,26 @@
     <ClCompile Include="Source\OrionEngine\Core\Scene\OEScene.cpp" />
     <ClCompile Include="Source\OrionEngine\Core\Scene\OESceneSerializer.cpp" />
     <ClCompile Include="Source\OrionEngine\Engine\OEngine.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLGenerator.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORCubemap.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORCubemapFramebuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORFramebuffer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORTexture.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORTextureFramebuffer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexArray.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexBuffer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemap.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemapFramebuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLTextureFramebuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\Window\GLFWWindow.cpp" />
@@ -227,17 +248,22 @@
     <ClInclude Include="Source\OrionEngine\Core\OEEngineDefines.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
     <ClInclude Include="Source\OrionEngine\Core\OELogging.h" />
+    <ClInclude Include="Source\OrionEngine\Core\Scene\OEEnvironment.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OESceneSerializer.h" />
     <ClInclude Include="Source\OrionEngine\Engine\OEngine.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLGenerator.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLSettings.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\OEDirectionalLight.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORCubemap.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORCubemapFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORDefaultRendererResources.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORGraphicsAPI.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\IBL\ORIBLData.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORMesh.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLShaderAPI.h" />
-    <ClInclude Include="Source\OrionEngine\OrionRenderer\OROpenGLVertexArrayAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCmd.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORRenderer.h" />
@@ -245,14 +271,18 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORSceneData.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORShader.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORTexture.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORTextureFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexArray.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\ORVertexBufferLayout.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemap.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLCubemapFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLIndexBuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLTexture.h" />
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLTextureFramebuffer.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertex.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLVertexBuffer.h" />
@@ -261,6 +291,9 @@
     <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORCameraController.h" />
     <ClInclude Include="Source\OrionEngine\OrionRenderer\SceneRenderer\ORSceneRenderer.h" />
     <ClInclude Include="Source\OrionEngine\OS\Windows\WindowsOSAPI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\EngineRendererAssets\EnvironmentTexture\SOURCE.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
