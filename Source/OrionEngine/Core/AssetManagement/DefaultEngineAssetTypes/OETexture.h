@@ -41,6 +41,8 @@ namespace OrionEngine::AssetManagement
 		void SetHDRPixelData(std::vector<float>&& hdrPixelData);
 		void SetTextureAssetMetadata(OEAssetMetadata metadata);
 
+		void SetAssetMetadata(const OEAssetMetadata& metadata) noexcept override { SetTextureAssetMetadata(metadata); }
+
 		const bool IsImageHDR() const noexcept { return m_TextureData.IsImageHDR; }
 		const std::filesystem::path& GetTexturePath() const noexcept { return m_TextureData.TextureAssetMetadata.Path; }
 		const OETextureData& GetTextureData() const noexcept { return m_TextureData; }
