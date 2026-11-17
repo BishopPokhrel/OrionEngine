@@ -78,8 +78,9 @@ namespace OrionEngine
 
             if (!linkSuccess)
             {
-                char infoLog[1024];
+                char infoLog[1024] = {};
                 glGetProgramInfoLog(programID, sizeof(infoLog), nullptr, infoLog);
+                ORION_ENGINE_ERROR("Shader linker error: ", infoLog);
                 ORION_ENGINE_ERROR("Failed to link shader");
                 glDeleteShader(vertexShaderID);
                 glDeleteShader(fragmentShaderID);
@@ -182,7 +183,6 @@ namespace OrionEngine
         void OpenGLShader::Bind() noexcept
         {
             glUseProgram(m_RendererID);
-            CheckOpenGLError("OpenGL error - Bind() function");
         }
 
         void OpenGLShader::Unbind() noexcept
