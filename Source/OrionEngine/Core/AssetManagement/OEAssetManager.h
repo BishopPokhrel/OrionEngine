@@ -84,6 +84,8 @@ namespace OrionEngine::AssetManagement
         if (!asset)
             return nullptr;
 
+        asset->SetAssetMetadata(metadataIterator->second);
+
         // Cache the loaded asset.
         m_LoadedAssets.emplace(identifierHandle, asset);
 
