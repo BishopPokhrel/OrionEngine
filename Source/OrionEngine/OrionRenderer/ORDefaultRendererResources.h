@@ -20,6 +20,7 @@ namespace OrionEngine::OrionRenderer
 		static const Ref<ORVertexArray>& GetDefaultVertexArray() noexcept;
 		static const Ref<ORMesh>& GetDefaultMesh() noexcept; 
 		static const Ref<AssetManagement::OEMaterial>& GetDefaultMaterial() noexcept;
+		static const Ref<ORShader>& GetDefaultEnvironmentShader() noexcept;
 
 		static void Shutdown() noexcept;
 
@@ -29,5 +30,6 @@ namespace OrionEngine::OrionRenderer
 		inline static Ref<ORVertexArray> s_DefaultVertexArray;
 		inline static Ref<ORMesh> s_DefaultMesh;
 		inline static Ref<AssetManagement::OEMaterial> s_DefaultMaterial;
+		inline static Ref<ORShader> s_DefaultEnvironmentShader;
 	};
 }

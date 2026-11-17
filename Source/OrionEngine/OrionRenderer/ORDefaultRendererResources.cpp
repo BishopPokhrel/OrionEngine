@@ -2,8 +2,11 @@
 #include "OROpenGLShaderAPI.h"
 #include "ORVertexBufferLayout.h"
 
-#include "OROpenGLVertexArrayAPI.h"
-#include "Platform/OpenGL/OpenGLIndexBuffer.h"
+#include "ORVertexArray.h"
+#include "ORVertexBuffer.h"
+#include "ORIndexBuffer.h"
+
+#include <OrionEditor/EditorSpecificRendering/OEGridRenderer.h> // FOR Utils::ReadShaderFile only
 
 namespace OrionEngine::OrionRenderer
 {
@@ -204,7 +207,7 @@ namespace OrionEngine::OrionRenderer
 		);
 
 
-		s_DefaultVertexArray = CreateRef<OROpenGLVertexArrayAPI>();
+		s_DefaultVertexArray = ORVertexArray::CreateVertexArray();
 
 		// Vertex Buffer
 
@@ -254,7 +257,7 @@ namespace OrionEngine::OrionRenderer
 
 		s_DefaultShader->Unbind();
 
-		Ref<OpenGLVertexBuffer> VBO = CreateRef<OpenGLVertexBuffer>(vertices, sizeof(vertices));
+		Ref<ORVertexBuffer> VBO = ORVertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices));
 
 		ORVertexBufferLayout layout;
 		layout.Push<glm::vec3>("a_Position");
@@ -263,6 +266,16 @@ namespace OrionEngine::OrionRenderer
 
 		VBO->SetLayout(layout);
 		s_DefaultVertexArray->AddVertexBuffer(VBO);
+
+		s_DefaultEnvironmentShader = CreateRef<OROpenGLShaderAPI>();
+
+		std::string vertexShaderSource = Utils::ReadShaderFile(R"(D:\dev\OrionEngine\Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderVS.glsl)");
+		std::string fragmentShaderSource = Utils::ReadShaderFile(R"(D:\dev\OrionEngine\Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderFS.glsl)");
+
+		s_DefaultEnvironmentShader->CompileAndLinkThroughShaderFiles(vertexShaderSource, fragmentShaderSource);
+		s_DefaultEnvironmentShader->Bind();
+		s_DefaultEnvironmentShader->SetInt("u_EnvironmentMap", 0);
+		s_DefaultEnvironmentShader->Unbind();
 
 		// Index Buffer
 
@@ -286,7 +299,7 @@ namespace OrionEngine::OrionRenderer
 			20, 21, 22, 22, 23, 20
 		};
 
-		Ref<OpenGLIndexBuffer> IBO = CreateRef<OpenGLIndexBuffer>(indices, sizeof(indices) / sizeof(uint32_t));
+		Ref<ORIndexBuffer> IBO = ORIndexBuffer::CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t));
 		s_DefaultVertexArray->SetIndexBuffer(IBO);
 
 		s_DefaultMesh = CreateRef<ORMesh>(s_DefaultVertexArray);
@@ -313,11 +326,17 @@ namespace OrionEngine::OrionRenderer
 		return s_DefaultMaterial;
 	}
 
+	const Ref<ORShader>& ORDefaultRendererResources::GetDefaultEnvironmentShader() noexcept
+	{
+		return s_DefaultEnvironmentShader;
+	}
+
 	void ORDefaultRendererResources::Shutdown() noexcept
 	{
 		s_DefaultShader.reset();
 		s_DefaultVertexArray.reset();
 		s_DefaultMesh.reset();
 		s_DefaultMaterial.reset();
+		s_DefaultEnvironmentShader.reset();
 	}
 }
