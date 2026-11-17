@@ -56,6 +56,14 @@ namespace OrionEngine::OrionEditor
 				else
 					ImGui::OpenPopup("Entity Not Selected");
 			}
+			
+			if (ImGui::Button("Copy Game Entity"))
+			{
+				if (m_EditorContext->SelectedEntity != ECS::INVALID_GAME_ENTITY_ID)
+					m_Registry->CopyGameEntity(m_EditorContext->SelectedEntity);
+				else
+					ImGui::OpenPopup("Entity Not Selected!");
+			}
 
 			if (ImGui::BeginPopupModal("Rename Game Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
