@@ -16,6 +16,8 @@ namespace OrionEngine
 			void SetClearColor(float r, float g, float b, float a) override;
 			void DrawIndexed(uint32_t indexCount) override;
 			void DrawArrays(uint32_t indexCount) override;
+			void SetDepthFunctionLessOrEqual() override;
+			void SetDepthFunctionLess() override;
 		};
 	}
 }

@@ -15,6 +15,7 @@
 #include "ORSceneData.h"
 #include "ORMesh.h"
 #include "ORTexture.h"
+#include "ORCubemap.h"
 
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/Core/OEAssert.h>
@@ -114,6 +115,47 @@ namespace OrionEngine
 
                 mesh->Bind();
                 ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
+            }
+
+            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const glm::mat4& transform)
+            {
+                OE_CORE_ASSERT(shader, "Shader is null!");
+                OE_CORE_ASSERT(mesh, "Mesh is null!");
+
+                shader->Bind();
+                shader->SetMat4("u_Transform", transform);
+
+                mesh->Bind();
+                ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
+            }
+
+            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh)
+            {
+                OE_CORE_ASSERT(shader, "Shader is null!");
+                OE_CORE_ASSERT(mesh, "Mesh is null!");
+
+                shader->Bind();
+
+                mesh->Bind();
+                ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
+            }
+
+            void SubmitSkybox(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const Ref<ORCubemap>& cubemap, const glm::mat4& viewProjection)
+            {
+                OE_CORE_ASSERT(shader, "Skybox shader is null!");
+                OE_CORE_ASSERT(mesh, "Skybox mesh is null!");
+                OE_CORE_ASSERT(cubemap, "Skybox cubemap is null!");
+
+                ORRenderCommand::SetDepthFunctionLessOrEqual();
+
+                shader->Bind();
+                shader->SetMat4("u_ViewProjection", viewProjection);
+                cubemap->Bind(0);
+
+                mesh->Bind();
+                ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
+
+                ORRenderCommand::SetDepthFunctionLess();
             }
 
             void SetGraphicsAPI(ORGraphicsAPI API) noexcept
