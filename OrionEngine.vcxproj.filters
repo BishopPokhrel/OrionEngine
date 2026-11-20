@@ -213,6 +213,9 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORVertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEditor\Panels\OEEnvironmentDetailsPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
