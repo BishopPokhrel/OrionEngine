@@ -72,6 +72,15 @@ namespace OrionEngine::OrionEditor
 		return true;
 	}
 
+	bool OEImGuiLayer::ShowEnvironmentDetailsPanel(OEScene* scene)
+	{
+		if (!m_EnvironmentDetailsPanel.has_value())
+			m_EnvironmentDetailsPanel.emplace(scene);
+
+		m_EnvironmentDetailsPanel->DrawEnvironmentDetailsPanel();
+		return true;
+	}
+
 	bool OEImGuiLayer::ShowSceneManagerPanel(OEScene* scene)
 	{
 		m_SceneManagerPanel.SetScene(scene);
