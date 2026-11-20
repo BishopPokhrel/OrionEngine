@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OrionEngine/OrionRenderer/IBL/ORIBLData.h>
+#include <OrionEngine/OrionRenderer/IBL/ORIBLSettings.h>
 #include <OrionEngine/Core/OELogging.h>
 
 #include <filesystem>
@@ -13,6 +14,7 @@ namespace OrionEngine
 	struct OEEnvironmentData
 	{
 		OrionRenderer::ORIBLData EnvironmentIBLData;
+		OrionRenderer::ORIBLSettings EnvironmentIBLSettings;
 		std::filesystem::path EnvironmentHDRTexturePath;
 	};
 
@@ -43,6 +45,10 @@ namespace OrionEngine
 		}
 
 		const OrionRenderer::ORIBLData& GetEnvironmentIBLData() const noexcept { return m_EnvironmentData.EnvironmentIBLData; }
+		
+		const OrionRenderer::ORIBLSettings& GetEnvironmentIBLSettings() const noexcept { return m_EnvironmentData.EnvironmentIBLSettings; }
+		OrionRenderer::ORIBLSettings& GetEnvironmentIBLSettings() noexcept { return m_EnvironmentData.EnvironmentIBLSettings; }
+
 		const std::filesystem::path& GetEnvironmentHDRTexturePath() const noexcept { return m_EnvironmentData.EnvironmentHDRTexturePath; }
 
 		const OEEnvironmentData& GetEnvironmentData() const noexcept { return m_EnvironmentData; }
