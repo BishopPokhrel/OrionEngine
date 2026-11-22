@@ -1,7 +1,7 @@
-Asset: Kloppenheim 05 (Pure Sky)
+Asset: Qwantani Noon (Pure Sky)
 
 Creator/Source: Poly Haven
-Website: https://polyhaven.com/a/kloppenheim_05_puresky
+Website: https://polyhaven.com/a/qwantani_noon_puresky
 
 License: CC0 1.0 Universal
 License URL: https://creativecommons.org/publicdomain/zero/1.0/
