@@ -48,10 +48,11 @@ namespace OrionEngine
                 ORRenderCommand::SetViewport(x, y, width, height);
             }
 
-            void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition) noexcept
+            void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition, const ORIBLData& environmentIBLData)
             {
                 m_SceneData.ViewProjectionMatrix = viewProjection;
                 m_SceneData.CameraPosition = cameraPosition;
+                m_SceneData.EnvironmentIBLData = environmentIBLData;
             }
 
             void EndScene() noexcept
@@ -79,6 +80,26 @@ namespace OrionEngine
                 shader->SetFloat("u_Roughness", materialData.Roughness);
                 shader->SetFloat("u_AmbientOcclusion", materialData.AmbientOcclusion);
                 shader->SetVec3("u_CameraPosition", m_SceneData.CameraPosition);
+
+                const ORIBLData& environmentIBLData = m_SceneData.EnvironmentIBLData;
+
+                if (environmentIBLData.IrradianceCubemap)
+                    environmentIBLData.IrradianceCubemap->Bind(1);
+
+                if (environmentIBLData.PrefilteredCubemap)
+                    environmentIBLData.PrefilteredCubemap->Bind(2);
+
+                if (environmentIBLData.BRDFLUT)
+                    environmentIBLData.BRDFLUT->Bind(3);
+
+                shader->SetInt("u_IrradianceMap", 1);
+                shader->SetInt("u_PrefilteredMap", 2);
+                shader->SetInt("u_BRDFLUT", 3);
+
+                if (environmentIBLData.PrefilteredCubemap)
+                    shader->SetFloat("u_MaxReflectionLOD", static_cast<float>(m_SceneData.EnvironmentIBLData.PrefilteredCubemap->GetMipLevels() - 1));
+                else
+                    shader->SetFloat("u_MaxReflectionLOD", 0.0f);
 
                 const Ref<AssetManagement::OETexture>& albedoTexture = material->GetMaterialAlbedoTexture();
                 bool hasAlbedoTexture = false;
