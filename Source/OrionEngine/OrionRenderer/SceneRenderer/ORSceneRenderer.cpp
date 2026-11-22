@@ -51,7 +51,15 @@ namespace OrionEngine
 			
 			ORIBLData IBLData = IBLGenerator.Generate(environmentTexture);
 
+			if (!IBLData.EnvironmentCubemap || !IBLData.IrradianceCubemap || !IBLData.PrefilteredCubemap || !IBLData.BRDFLUT)
+			{
+				ORION_ENGINE_ERROR("Failed to generate environment IBL data!");
+				return false;
+			}
+
 			environment.SetEnvironmentIBLData(std::move(IBLData));
+			environment.ClearIBLDirty();
+
 			return true;
 		}
 
@@ -84,7 +92,7 @@ namespace OrionEngine
 
 		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const OEEnvironment& environment, const glm::mat4& viewProjection)
 		{
-			m_Renderer->BeginScene(viewProjection, camera.GetPosition());
+			m_Renderer->BeginScene(viewProjection, camera.GetPosition(), environment.GetEnvironmentIBLData());
 
 			auto& render = registry.RenderableComponent.GetAllComponents();
 
