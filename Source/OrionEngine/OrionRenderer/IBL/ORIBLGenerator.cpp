@@ -257,6 +257,10 @@ namespace OrionEngine::OrionRenderer
 
                 prefilteredCubemapFramebuffers->Bind();
 
+                const uint32_t mipResolution = std::max(1u, m_IBLSettings.PrefilterResolution >> mipLevel);
+
+                ORRenderCommand::SetViewport(0, 0, static_cast<int>(mipResolution), static_cast<int>(mipResolution));
+
                 const glm::mat4 captureView = glm::lookAt(glm::vec3(0.0f), captureDirections[faceIndex], captureUpVectors[faceIndex]);
 
                 prefilterShader->SetMat4("u_View", captureView);
