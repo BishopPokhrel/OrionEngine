@@ -15,7 +15,7 @@ namespace OrionEngine::OrionEditor
 {
 	bool OEResourceBrowserPanel::DrawProjectHierarchy()
 	{
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.025f, 0.019f, 0.175f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.105f, 0.105f, 0.105f, 1.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.5f);
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarRounding, 4.5f);
@@ -227,7 +227,7 @@ namespace OrionEngine::OrionEditor
 
 	bool OEResourceBrowserPanel::DrawDirectoryToolbar()
 	{
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.095f, 0.059f, 0.236f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.115f, 0.115f, 0.115f, 1.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.9f);
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarRounding, 4.5f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
@@ -273,7 +273,7 @@ namespace OrionEngine::OrionEditor
 
 	bool OEResourceBrowserPanel::DrawDirectoryContents()
 	{
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.015f, 0.012f, 0.095f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.075f, 0.075f, 0.075f, 1.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 4.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 2.0f);
 		

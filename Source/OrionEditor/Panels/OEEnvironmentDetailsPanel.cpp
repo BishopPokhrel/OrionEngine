@@ -28,7 +28,7 @@ namespace OrionEngine::OrionEditor
 			if (!environmentPath.empty())
 			{
 				currentEnvironment->SetEnvironmentHDRTexturePath(environmentPath);
-				strncpy_s(m_EDPDataNeeded.EnvironmentHDRTexturePathBuffer, sizeof(m_EDPDataNeeded.EnvironmentHDRTexturePathBuffer), environmentPath.string().c_str(), _TRUNCATE);
+				strncpy_s(m_EDPDataNeeded.EnvironmentHDRTexturePathBuffer, sizeof(m_EDPDataNeeded.EnvironmentHDRTexturePathBuffer), currentEnvironment->GetEnvironmentHDRTexturePath().string().c_str(), _TRUNCATE);
 			}
 		}
 
@@ -55,7 +55,10 @@ namespace OrionEngine::OrionEditor
 				{
 					bool b_IsEnvironmentResolutionSelected = (m_EDPDataNeeded.EnvironmentResolutionIndex == n);
 					if (ImGui::Selectable(environmentResOptions[n], b_IsEnvironmentResolutionSelected))
+					{
 						m_EDPDataNeeded.EnvironmentResolutionIndex = n;
+						currentEnvironment->MarkIBLDirty();
+					}
 
 					if (b_IsEnvironmentResolutionSelected)
 						ImGui::SetItemDefaultFocus();
@@ -103,7 +106,10 @@ namespace OrionEngine::OrionEditor
 				{
 					bool b_IsIrradianceResolutionSelected = (m_EDPDataNeeded.IrradianceResolutionIndex == n);
 					if (ImGui::Selectable(irradianceResOptions[n], b_IsIrradianceResolutionSelected))
+					{
 						m_EDPDataNeeded.IrradianceResolutionIndex = n;
+						currentEnvironment->MarkIBLDirty();
+					}
 
 					if (b_IsIrradianceResolutionSelected)
 						ImGui::SetItemDefaultFocus();
@@ -151,7 +157,10 @@ namespace OrionEngine::OrionEditor
 				{
 					bool b_IsPrefilterResolutionSelected = (m_EDPDataNeeded.PrefilterResolutionIndex == n);
 					if (ImGui::Selectable(prefilterResOptions[n], b_IsPrefilterResolutionSelected))
+					{
 						m_EDPDataNeeded.PrefilterResolutionIndex = n;
+						currentEnvironment->MarkIBLDirty();
+					}
 
 					if (b_IsPrefilterResolutionSelected)
 						ImGui::SetItemDefaultFocus();
@@ -191,7 +200,10 @@ namespace OrionEngine::OrionEditor
 		ImGui::Text("Prefilter Mip Levels");
 		ImGui::SameLine();
 		if (ImGui::SliderInt("##PrefilterMipLevels", &prefilterMipLevels, 1, maxMipLevels))
+		{
 			currentEnvironment->GetEnvironmentIBLSettings().SetPrefilterMipLevels(static_cast<uint32_t>(prefilterMipLevels));
+			currentEnvironment->MarkIBLDirty();
+		}
 		return true;
 	}
 
