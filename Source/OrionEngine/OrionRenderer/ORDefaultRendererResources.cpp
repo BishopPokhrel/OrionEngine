@@ -49,7 +49,6 @@ namespace OrionEngine::OrionRenderer
 			FragmentShader
 			{
 				R"(
-
 					#version 330 core
 
 					out vec4 o_Color;
@@ -58,8 +57,15 @@ namespace OrionEngine::OrionRenderer
 					in vec3 v_Normal;
 					in vec2 v_TexCoord;
 
+					// Albedo
 					uniform sampler2D u_AlbedoTexture;
 					uniform bool u_HasAlbedoTexture;
+
+					// Image-Based Lighting
+					uniform samplerCube u_IrradianceMap;
+					uniform samplerCube u_PrefilteredMap;
+					uniform sampler2D u_BRDFLUT;
+					uniform float u_MaxReflectionLOD;
 
 					// Camera
 					uniform vec3 u_CameraPosition;
@@ -110,11 +116,7 @@ namespace OrionEngine::OrionRenderer
 					// Smith Geometry
 					// --------------------------------------------------
 
-					float GeometrySmith(
-						vec3 normal,
-						vec3 viewDirection,
-						vec3 lightDirection,
-						float roughness)
+					float GeometrySmith(vec3 normal, vec3 viewDirection, vec3 lightDirection, float roughness)
 					{
 						float NdotV = max(dot(normal, viewDirection), 0.0);
 						float NdotL = max(dot(normal, lightDirection), 0.0);
@@ -131,7 +133,16 @@ namespace OrionEngine::OrionRenderer
 
 					vec3 FresnelSchlick(float cosTheta, vec3 F0)
 					{
-						return F0 + (1.0 - F0) *
+						return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+					}
+
+					// --------------------------------------------------
+					// Roughness-Aware Fresnel
+					// --------------------------------------------------
+
+					vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+					{
+						return F0 + (max(vec3(1.0 - roughness), F0) - F0) *
 							pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 					}
 
@@ -141,6 +152,7 @@ namespace OrionEngine::OrionRenderer
 
 					void main()
 					{
+						// Material
 						vec4 albedoColor = u_AlbedoColor;
 
 						if (u_HasAlbedoTexture)
@@ -152,16 +164,23 @@ namespace OrionEngine::OrionRenderer
 						float roughness = clamp(u_Roughness, 0.04, 1.0);
 						float ao = clamp(u_AmbientOcclusion, 0.0, 1.0);
 
+						// Surface Vectors
 						vec3 normal = normalize(v_Normal);
-						vec3 lightDirection = normalize(-u_LightDirection);
 						vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
 
-						float NdotL = max(dot(normal, lightDirection), 0.0);
 						float NdotV = max(dot(normal, viewDirection), 0.0);
 
+						// Reflectance
+						vec3 F0 = mix(vec3(0.04), albedo, metallic);
+
+						// --------------------------------------------------
+						// Direct Lighting
+						// --------------------------------------------------
+
+						vec3 lightDirection = normalize(-u_LightDirection);
 						vec3 halfway = normalize(viewDirection + lightDirection);
 
-						vec3 F0 = mix(vec3(0.04), albedo, metallic);
+						float NdotL = max(dot(normal, lightDirection), 0.0);
 
 						vec3 F = FresnelSchlick(
 							max(dot(halfway, viewDirection), 0.0),
@@ -170,12 +189,7 @@ namespace OrionEngine::OrionRenderer
 
 						float NDF = DistributionGGX(normal, halfway, roughness);
 
-						float G = GeometrySmith(
-							normal,
-							viewDirection,
-							lightDirection,
-							roughness
-						);
+						float G = GeometrySmith(normal, viewDirection, lightDirection, roughness);
 
 						vec3 numerator = NDF * G * F;
 						float denominator = max(4.0 * NdotV * NdotL, 0.0001);
@@ -193,14 +207,51 @@ namespace OrionEngine::OrionRenderer
 							u_LightIntensity *
 							NdotL;
 
-						vec3 ambient = vec3(0.03) * albedo * ao;
+						// --------------------------------------------------
+						// Image-Based Lighting
+						// --------------------------------------------------
 
-						vec3 color = ambient + directLighting;
+						// Fresnel
+						vec3 F_IBL = FresnelSchlickRoughness(NdotV, F0, roughness);
 
+						vec3 kS_IBL = F_IBL;
+						vec3 kD_IBL = (vec3(1.0) - kS_IBL) * (1.0 - metallic);
+
+						// Diffuse Irradiance
+						vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
+						vec3 diffuseIBL = irradiance * albedo;
+
+						// Specular Environment Reflection
+						vec3 reflectionDirection = reflect(-viewDirection, normal);
+
+						vec3 prefilteredColor = textureLod(
+							u_PrefilteredMap,
+							reflectionDirection,
+							roughness * u_MaxReflectionLOD
+						).rgb;
+
+						// BRDF Integration
+						vec2 BRDF = texture(u_BRDFLUT, vec2(NdotV, roughness)).rg;
+
+						vec3 specularIBL = prefilteredColor * (F_IBL * BRDF.x + BRDF.y);
+
+						// Combine Ambient Lighting
+						vec3 ambientLighting =
+							(kD_IBL * diffuseIBL + specularIBL) * ao;
+
+						// --------------------------------------------------
+						// Final Lighting
+						// --------------------------------------------------
+
+						vec3 color = ambientLighting + directLighting;
+
+						// Tone Mapping
 						color = color / (color + vec3(1.0));
+
+						// Gamma Correction
 						color = pow(color, vec3(1.0 / 2.2));
 
-						 o_Color = vec4(color, albedoColor.a);
+						o_Color = vec4(color, albedoColor.a);
 					}
 				)"
 			}
