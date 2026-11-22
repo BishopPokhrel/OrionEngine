@@ -53,9 +53,19 @@ namespace OrionEngine
 	void OEngine::OTick(float dt)
 	{
 		OE_CORE_ASSERT(m_Scene, "Scene is null!");
+		OE_CORE_ASSERT(m_SceneRenderer, "Scene renderer is null!");
+
+		OEEnvironment& environment = m_Scene->GetEnvironment();
+
+		if (environment.IsIBLDirty())
+		{
+			if (!m_SceneRenderer->RenderSceneEnvironment(environment))
+				ORION_ENGINE_WARNING("IBL regeneration failed!");
+		}
+
 		// Update other systems here later
 	}
-
+	
 	void OEngine::OBeginFrame()
 	{
 		OE_CORE_ASSERT(m_Renderer, "Renderer is null!");
