@@ -41,7 +41,11 @@ namespace OrionEngine
 				return;
 			}
 
+			if (m_EnvironmentData.EnvironmentHDRTexturePath == environmentHDRTexturePath)
+				return;
+
 			m_EnvironmentData.EnvironmentHDRTexturePath = environmentHDRTexturePath;
+			MarkIBLDirty();
 		}
 
 		const OrionRenderer::ORIBLData& GetEnvironmentIBLData() const noexcept { return m_EnvironmentData.EnvironmentIBLData; }
@@ -53,8 +57,13 @@ namespace OrionEngine
 
 		const OEEnvironmentData& GetEnvironmentData() const noexcept { return m_EnvironmentData; }
 
+		void MarkIBLDirty() noexcept { m_IBLDirty = true; }
+		void ClearIBLDirty() noexcept { m_IBLDirty = false; }
+		bool IsIBLDirty() const noexcept { return m_IBLDirty; }
+
 	private:
 
 		OEEnvironmentData m_EnvironmentData;
+		bool m_IBLDirty = false;
 	};
 }
