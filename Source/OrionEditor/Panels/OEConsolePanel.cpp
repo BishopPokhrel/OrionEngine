@@ -29,8 +29,8 @@ namespace OrionEngine::OrionEditor
 		OEEditorTheme::LoadEditorIcon("Search");
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 6.0f);
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.069, 0.061, 0.225, 1.000f));
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.200f, 0.200f, 0.200f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.115f, 0.115f, 0.115f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.780f, 0.780f, 0.780f, 1.000f));
 
 		if (ImGui::BeginChild("SearchBar", ImVec2(0.0f, 50.0f)))
 		{
@@ -38,13 +38,10 @@ namespace OrionEngine::OrionEditor
 
 			if (searchIcon)
 				ImGui::Image((ImTextureID)(intptr_t)searchIcon, ImVec2(22.0f, 22.0f));
-
-			ImGui::PushFont(OEEditorTheme::SemiBoldFont);
-			ImGui::Text("Search log...");
-			ImGui::PopFont();
-			ImGui::SameLine();
 			
-			if (ImGui::InputText("##SearchLog", m_OECPDN.SearchBuffer, sizeof(m_OECPDN.SearchBuffer)))
+			ImGui::SetNextItemWidth(-1.0f);
+
+			if (ImGui::InputTextWithHint("##SearchLog", "Search Log...", m_OECPDN.SearchBuffer, sizeof(m_OECPDN.SearchBuffer)))
 			{
 				m_OECPDN.CurrentlySelectedLog = {};
 
@@ -77,7 +74,7 @@ namespace OrionEngine::OrionEditor
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 4.5f);
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarRounding, 5.0f);
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.021f, 0.019f, 0.049f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.075f, 0.075f, 0.075f, 1.000f));
 
 		const std::string logQuery = m_OECPDN.SearchBuffer;
 		
@@ -95,11 +92,11 @@ namespace OrionEngine::OrionEditor
 				switch (log.LogLevel)
 				{
 					case OELogging::OELogLevel::Debug:
-						logColor = ImVec4(0.700f, 0.700f, 0.700f, 1.000f);
+						logColor = ImVec4(0.580f, 0.580f, 0.580f, 1.000f);
 						break;
 
 					case OELogging::OELogLevel::Info:
-						logColor = ImVec4(1.000f, 1.000f, 1.000f, 1.000f);
+						logColor = ImVec4(0.850f, 0.850f, 0.850f, 1.000f);
 						break;
 
 					case OELogging::OELogLevel::Warning:
@@ -111,7 +108,7 @@ namespace OrionEngine::OrionEditor
 						break;
 
 					case OELogging::OELogLevel::Fatal:
-						logColor = ImVec4(0.500f, 0.000f, 1.000f, 1.000f);
+						logColor = ImVec4(0.780f, 0.420f, 0.850f, 1.000f);
 						break;
 
 					default:
@@ -148,26 +145,29 @@ namespace OrionEngine::OrionEditor
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 4.5f);
 		ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarRounding, 5.0f);
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.029f, 0.019f, 0.095f, 1.000f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.090f, 0.090f, 0.090f, 1.000f));
 
 		if (ImGui::BeginChild("SelectedLogView", ImVec2(0.0f, 0.0f)))
 		{
+			const unsigned int infoIcon = OEEditorTheme::GetEditorIcon("Info");
+
+			if (infoIcon)
+			{
+				ImGui::Image((ImTextureID)(intptr_t)infoIcon, ImVec2(25.0f, 25.0f));
+				ImGui::SameLine();
+			}
+
+			ImGui::Text("Log Info");
+			ImGui::Spacing();
+			ImGui::Separator();
+
+
 			if (m_OECPDN.CurrentlySelectedLog.LogIdentifierID != INVALID_LOG_IDENTIFIER_ID)
 			{
-				if (ImGui::BeginTable("LogViewLayout", 2, ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV))
+				if (ImGui::BeginTable("LogViewLayout", 2, ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_RowBg))
 				{
 					ImGui::TableSetupColumn("Property", ImGuiTableColumnFlags_WidthStretch, 0.35f);
 					ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch, 0.65f);
-
-					const unsigned int infoIcon = OEEditorTheme::GetEditorIcon("Info");
-
-					if (infoIcon)
-						ImGui::Image((ImTextureID)(intptr_t)infoIcon, ImVec2(25.0f, 25.0f));
-
-					ImGui::SameLine();
-					ImGui::Text("Log Info");
-					ImGui::Spacing();
-					ImGui::Separator();
 
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
