@@ -28,6 +28,11 @@
 					s_RendererAPI->Clear();
 				}
 
+				static void ClearDepth()
+				{
+					s_RendererAPI->ClearDepth();
+				}
+
 				static void SetViewport(int x, int y, int width, int height)
 				{
 					s_RendererAPI->SetViewport(x, y, width, height);
