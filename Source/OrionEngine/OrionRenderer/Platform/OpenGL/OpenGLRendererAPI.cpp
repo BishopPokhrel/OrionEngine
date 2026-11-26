@@ -48,5 +48,10 @@ namespace OrionEngine
 		{
 			glDepthFunc(GL_LESS);
 		}
+
+		void OpenGLRendererAPI::ClearDepth()
+		{
+			glClear(GL_DEPTH_BUFFER_BIT);
+		}
 	}
 }
