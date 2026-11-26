@@ -11,7 +11,7 @@
 
 namespace OrionEngine
 {
-	bool OESceneSerializer::CreateOEProjectDirectory(const std::string& projectName)
+	bool OESceneSerializer::CreateOEProjectDirectory(const std::filesystem::path& projectDirPath)
 	{
 		// ASSERT POINTER VARIABLES FIRST
 		OE_CORE_ASSERT(m_DirectoriesCreated.pFailedToCreateDirsOrFiles, "pFailedToCreateDirsOrFiles is null!");
@@ -20,11 +20,11 @@ namespace OrionEngine
 
 		try
 		{
-			if (projectName.empty() || m_Scene->GetSceneName().empty())
+			if (m_Scene->GetSceneName().empty() || projectDirPath.empty())
 				return false;
 
 			// Resolve all paths to absolute paths once.
-			const std::filesystem::path projectDirectory = std::filesystem::absolute(projectName).lexically_normal();
+			const std::filesystem::path projectDirectory = std::filesystem::absolute(projectDirPath).lexically_normal();
 
 			const std::string projectFileName = projectDirectory.filename().string();
 
@@ -74,6 +74,13 @@ namespace OrionEngine
 			if (std::filesystem::exists(m_ProjectPath))
 			{
 				ORION_ENGINE_WARNING("Project already exists: ", m_ProjectPath.string());
+				return false;
+			}
+
+			// Same for the scene file
+			if (std::filesystem::exists(m_ScenePath))
+			{
+				ORION_ENGINE_WARNING("Scene already exists: ", m_ScenePath.string());
 				return false;
 			}
 

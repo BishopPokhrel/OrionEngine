@@ -23,7 +23,7 @@ namespace OrionEngine
 			OE_CORE_ASSERT(m_Scene, "Scene is null!");
 		}
 
-		bool CreateOEProjectDirectory(const std::string& projectName);
+		bool CreateOEProjectDirectory(const std::filesystem::path& projectDirPath);
 		bool OpenOEProjectDirectory(const std::filesystem::path& projectPath);
 		bool SerializeEntities(YAML::Emitter& out, const std::filesystem::path& path);
 		bool SerializeScene();
