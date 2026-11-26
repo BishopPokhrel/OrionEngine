@@ -53,6 +53,9 @@ namespace OrionEngine
 		OEEnvironment& GetEnvironment() noexcept { return m_Environment; }
 		const OEEnvironment& GetEnvironment() const noexcept { return m_Environment; }
 
+		OrionRenderer::OEDirectionalLight& GetDirectionalLight() noexcept { return m_DirectionalLight; }
+		const OrionRenderer::OEDirectionalLight& GetDirectionalLight() const noexcept { return m_DirectionalLight; }
+
 	private:
 		std::string m_OESceneName;
 		AssetManagement::OEAssetManager* m_AssetManager = nullptr; // The scene does not own the asset manager; OEngine does
