@@ -27,6 +27,8 @@ namespace OrionEngine
 
 		OrionRenderer::ORDefaultRendererResources::Initialize();
 
+		m_Renderer->InitShadowMap(2048); 
+
 		m_Scene->InitScene();
 		m_SceneRenderer = CreateScope<OrionRenderer::ORSceneRenderer>(m_Renderer.get(), m_AssetManager.get());
 		m_ViewportFramebuffer = OrionRenderer::ORFrameBuffer::CreateFrameBuffer(1280, 720, OrionRenderer::ORRenderer::GetGraphicsAPI());
@@ -88,6 +90,6 @@ namespace OrionEngine
 
 		OrionRenderer::ORRenderCommand::Clear();
 
-		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetEnvironment(), m_Scene->GetCurrentCamera().GetViewProjection());
+		m_SceneRenderer->RenderScene(m_Scene->GetRegistry(), m_Scene->GetCurrentCamera(), m_Scene->GetEnvironment(), m_Scene->GetDirectionalLight(), m_Scene->GetCurrentCamera().GetViewProjection());
 	}
 }
