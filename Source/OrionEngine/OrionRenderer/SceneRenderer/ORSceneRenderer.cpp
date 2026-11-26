@@ -63,6 +63,37 @@ namespace OrionEngine
 			return true;
 		}
 
+		void ORSceneRenderer::RenderShadowPass(ECS::OEECSRegistry& registry, const glm::mat4& lightSpaceMatrix)
+		{
+			OE_CORE_ASSERT(m_ShadowDepthShader, "Shadow Depth Shader is null!");
+
+			m_Renderer->BeginShadowPass();
+
+			auto& renderable = registry.RenderableComponent.GetAllComponents();
+
+			for (auto& [id, comp] : renderable)
+			{
+				if (!comp.b_Visible)
+					continue;
+
+				auto* transform = registry.GetComponent<ECS::OETransformComponent>(id);
+
+				if (!transform)
+					continue;
+
+				if (!comp.Mesh)
+					comp.Mesh = ORDefaultRendererResources::GetDefaultMesh();
+
+				glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->Position)
+					* glm::mat4_cast(glm::quat(transform->Rotation))
+					* glm::scale(glm::mat4(1.0f), transform->Scale);
+
+				m_Renderer->SubmitShadow(m_ShadowDepthShader, comp.Mesh, model, lightSpaceMatrix);
+			}
+
+			m_Renderer->EndShadowPass();
+		}
+
 		void ORSceneRenderer::Render(ECS::OEECSRegistry& registry, ECS::OEGameEntityID entity)
 		{
 			auto* transform = registry.TransformComponent.GetComponent(entity);
@@ -90,9 +121,15 @@ namespace OrionEngine
 			m_Renderer->Submit(render->Shader, render->Mesh, render->Material, model);
 		}
 
-		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const OEEnvironment& environment, const glm::mat4& viewProjection)
+		void ORSceneRenderer::RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const OEEnvironment& environment, const OEDirectionalLight& directionalLight, const glm::mat4& viewProjection)
 		{
-			m_Renderer->BeginScene(viewProjection, camera.GetPosition(), environment.GetEnvironmentIBLData());
+			const bool hasValidLightDirection = glm::dot(directionalLight.Direction, directionalLight.Direction) >= 0.000001f;
+			const glm::mat4 lightSpaceMatrix = hasValidLightDirection ? m_Renderer->CalculateLightSpaceMatrix(directionalLight) : glm::mat4(1.0f);
+
+			if (hasValidLightDirection)
+				RenderShadowPass(registry, lightSpaceMatrix);
+
+			m_Renderer->BeginScene(viewProjection, lightSpaceMatrix, camera.GetPosition(), environment.GetEnvironmentIBLData(), directionalLight);
 
 			auto& render = registry.RenderableComponent.GetAllComponents();
 
@@ -115,6 +152,6 @@ namespace OrionEngine
 			}
 
 			m_Renderer->EndScene();
-		}
-	}
+		}	
+}
 }

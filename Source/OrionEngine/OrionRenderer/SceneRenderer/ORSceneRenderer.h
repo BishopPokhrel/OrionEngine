@@ -11,6 +11,8 @@
 
 #include <OrionEngine/OrionRenderer/ORRenderer.h>
 #include <OrionEngine/OrionRenderer/ORDefaultRendererResources.h>
+#include <OrionEngine/OrionRenderer/ORShadowMap.h>
+#include <OrionEngine/OrionRenderer/ORShader.h>
 
 namespace OrionEngine
 {
@@ -25,17 +27,22 @@ namespace OrionEngine
 			{
 				OE_CORE_ASSERT(m_Renderer, "ORSceneRenderer received a null renderer (ORRenderer)!");
 				OE_CORE_ASSERT(m_AssetManager, "ORSceneRenderer received a null asset manager!");
+
+				m_ShadowDepthShader = ORDefaultRendererResources::GetDefaultShadowDepthShader();
 			}
 
-			void RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const OEEnvironment& environment, const glm::mat4& viewProjection);
-			void Render(ECS::OEECSRegistry& registry, ECS::OEGameEntityID entity);
+			void RenderScene(ECS::OEECSRegistry& registry, const ORCamera& camera, const OEEnvironment& environment, const OEDirectionalLight& directionalLight, const glm::mat4& viewProjection);			void Render(ECS::OEECSRegistry& registry, ECS::OEGameEntityID entity);
 
 			bool RenderSceneEnvironment(OEEnvironment& environment);
+
+			void RenderShadowPass(ECS::OEECSRegistry& registry, const glm::mat4& lightSpaceMatrix);
 
 		private:
 
 			ORRenderer* m_Renderer = nullptr;
 			AssetManagement::OEAssetManager* m_AssetManager = nullptr;
+
+			Ref<ORShader> m_ShadowDepthShader;
 		};
 	}
 }
