@@ -21,6 +21,7 @@ namespace OrionEngine::OrionRenderer
 		static const Ref<ORMesh>& GetDefaultMesh() noexcept; 
 		static const Ref<AssetManagement::OEMaterial>& GetDefaultMaterial() noexcept;
 		static const Ref<ORShader>& GetDefaultEnvironmentShader() noexcept;
+		static const Ref<ORShader>& GetDefaultShadowDepthShader() noexcept;
 
 		static void Shutdown() noexcept;
 
@@ -31,5 +32,6 @@ namespace OrionEngine::OrionRenderer
 		inline static Ref<ORMesh> s_DefaultMesh;
 		inline static Ref<AssetManagement::OEMaterial> s_DefaultMaterial;
 		inline static Ref<ORShader> s_DefaultEnvironmentShader;
+		inline static Ref<ORShader> s_DefaultShadowDepthShader;
 	};
 }

@@ -13,249 +13,281 @@ namespace OrionEngine::OrionRenderer
 	void ORDefaultRendererResources::Initialize() noexcept
 	{
 		s_DefaultShader = CreateRef<OROpenGLShaderAPI>();
-		s_DefaultShader->CompileAndLinkThroughShaderVariables(
-			VertexShader
-			{
-				R"(
-					#version 330 core
+        s_DefaultShader->CompileAndLinkThroughShaderVariables(
+            VertexShader
+            {
+                R"(
+                    #version 330 core
+
+                    layout(location = 0) in vec3 a_Position;
+                    layout(location = 1) in vec3 a_Normal;
+                    layout(location = 2) in vec2 a_TexCoord;
+
+                    uniform mat4 u_ViewProjection;
+                    uniform mat4 u_Transform;
+                    uniform mat4 u_LightSpaceMatrix;
+
+                    out vec3 v_FragPosition;
+                    out vec3 v_Normal;
+                    out vec2 v_TexCoord;
+                    out vec4 v_FragPositionLightSpace;
+
+                    void main()
+                    {
+                        vec4 worldPosition = u_Transform * vec4(a_Position, 1.0);
+
+                        v_FragPosition = worldPosition.xyz;
+                        v_TexCoord = a_TexCoord;
+                        v_FragPositionLightSpace = u_LightSpaceMatrix * worldPosition;
+
+                        mat3 normalMatrix = transpose(inverse(mat3(u_Transform)));
+                        v_Normal = normalize(normalMatrix * a_Normal);
+
+                        gl_Position = u_ViewProjection * worldPosition;
+                    }
+                )"
+            },
+
+            FragmentShader
+            {
+                R"(
+                    #version 330 core
+
+                    out vec4 o_Color;
+
+                    in vec3 v_FragPosition;
+                    in vec3 v_Normal;
+                    in vec2 v_TexCoord;
+                    in vec4 v_FragPositionLightSpace;
+
+                    // Albedo
+                    uniform sampler2D u_AlbedoTexture;
+                    uniform bool u_HasAlbedoTexture;
+
+                    // Image-Based Lighting
+                    uniform samplerCube u_IrradianceMap;
+                    uniform samplerCube u_PrefilteredMap;
+                    uniform sampler2D u_BRDFLUT;
+                    uniform float u_MaxReflectionLOD;
+
+                    // Shadow Mapping
+                    uniform sampler2D u_ShadowMap;
+
+                    // Camera
+                    uniform vec3 u_CameraPosition;
+
+                    // Directional Light
+                    uniform vec3 u_LightDirection;
+                    uniform vec3 u_LightColor;
+                    uniform float u_LightIntensity;
+
+                    // Material
+                    uniform vec4 u_AlbedoColor;
+                    uniform float u_Metallic;
+                    uniform float u_Roughness;
+                    uniform float u_AmbientOcclusion;
+
+                    const float PI = 3.14159265359;
+
+                    // --------------------------------------------------
+                    // GGX Normal Distribution
+                    // --------------------------------------------------
+
+                    float DistributionGGX(vec3 normal, vec3 halfway, float roughness)
+                    {
+                        float a = roughness * roughness;
+                        float a2 = a * a;
 
-					layout(location = 0) in vec3 a_Position;
-					layout(location = 1) in vec3 a_Normal;
-					layout(location = 2) in vec2 a_TexCoord;
+                        float NdotH = max(dot(normal, halfway), 0.0);
+                        float NdotH2 = NdotH * NdotH;
 
+                        float denominator = NdotH2 * (a2 - 1.0) + 1.0;
 
-					uniform mat4 u_ViewProjection;
-					uniform mat4 u_Transform;
+                        return a2 / max(PI * denominator * denominator, 0.000001);
+                    }
 
-					out vec3 v_FragPosition;
-					out vec3 v_Normal;
-					out vec2 v_TexCoord;
+                    // --------------------------------------------------
+                    // Schlick-GGX Geometry
+                    // --------------------------------------------------
 
-					void main()
-					{
-						vec4 worldPosition = u_Transform * vec4(a_Position, 1.0);
+                    float GeometrySchlickGGX(float NdotV, float roughness)
+                    {
+                        float r = roughness + 1.0;
+                        float k = (r * r) / 8.0;
 
-						v_FragPosition = worldPosition.xyz;
-						v_TexCoord = a_TexCoord;
+                        return NdotV / max(NdotV * (1.0 - k) + k, 0.000001);
+                    }
 
-						mat3 normalMatrix = transpose(inverse(mat3(u_Transform)));
-						v_Normal = normalize(normalMatrix * a_Normal);
+                    // --------------------------------------------------
+                    // Smith Geometry
+                    // --------------------------------------------------
 
-						gl_Position = u_ViewProjection * worldPosition;
-					}
-				)"
-			},
+                    float GeometrySmith(vec3 normal, vec3 viewDirection, vec3 lightDirection, float roughness)
+                    {
+                        float NdotV = max(dot(normal, viewDirection), 0.0);
+                        float NdotL = max(dot(normal, lightDirection), 0.0);
 
-			FragmentShader
-			{
-				R"(
-					#version 330 core
+                        float geometryView = GeometrySchlickGGX(NdotV, roughness);
+                        float geometryLight = GeometrySchlickGGX(NdotL, roughness);
 
-					out vec4 o_Color;
+                        return geometryView * geometryLight;
+                    }
 
-					in vec3 v_FragPosition;
-					in vec3 v_Normal;
-					in vec2 v_TexCoord;
+                    // --------------------------------------------------
+                    // Schlick Fresnel
+                    // --------------------------------------------------
 
-					// Albedo
-					uniform sampler2D u_AlbedoTexture;
-					uniform bool u_HasAlbedoTexture;
+                    vec3 FresnelSchlick(float cosTheta, vec3 F0)
+                    {
+                        return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+                    }
 
-					// Image-Based Lighting
-					uniform samplerCube u_IrradianceMap;
-					uniform samplerCube u_PrefilteredMap;
-					uniform sampler2D u_BRDFLUT;
-					uniform float u_MaxReflectionLOD;
+                    // --------------------------------------------------
+                    // Roughness-Aware Fresnel
+                    // --------------------------------------------------
 
-					// Camera
-					uniform vec3 u_CameraPosition;
+                    vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+                    {
+                        return F0 + (max(vec3(1.0 - roughness), F0) - F0) *
+                            pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+                    }
 
-					// Directional Light
-					uniform vec3 u_LightDirection;
-					uniform vec3 u_LightColor;
-					uniform float u_LightIntensity;
+                    // --------------------------------------------------
+                    // Shadow Calculation
+                    // --------------------------------------------------
 
-					// Material
-					uniform vec4 u_AlbedoColor;
-					uniform float u_Metallic;
-					uniform float u_Roughness;
-					uniform float u_AmbientOcclusion;
+                    float CalculateShadow(vec3 normal, vec3 lightDirection)
+                    {
+                        vec3 projectedCoordinates = v_FragPositionLightSpace.xyz /
+                            v_FragPositionLightSpace.w;
 
-					const float PI = 3.14159265359;
+                        projectedCoordinates = projectedCoordinates * 0.5 + 0.5;
+                        if (projectedCoordinates.z < 0.0 || projectedCoordinates.z > 1.0 ||
+                            projectedCoordinates.x < 0.0 || projectedCoordinates.x > 1.0 ||
+                            projectedCoordinates.y < 0.0 || projectedCoordinates.y > 1.0)
+                            return 0.0;
 
-					// --------------------------------------------------
-					// GGX Normal Distribution
-					// --------------------------------------------------
+                        float closestDepth = texture(u_ShadowMap, projectedCoordinates.xy).r;
+                        float currentDepth = projectedCoordinates.z;
 
-					float DistributionGGX(vec3 normal, vec3 halfway, float roughness)
-					{
-						float a = roughness * roughness;
-						float a2 = a * a;
+                        float bias = max(0.005 * (1.0 - dot(normal, lightDirection)), 0.0005);
 
-						float NdotH = max(dot(normal, halfway), 0.0);
-						float NdotH2 = NdotH * NdotH;
+                        return currentDepth - bias > closestDepth ? 1.0 : 0.0;
+                    }
 
-						float denominator = NdotH2 * (a2 - 1.0) + 1.0;
+                    // --------------------------------------------------
+                    // Main
+                    // --------------------------------------------------
 
-						return a2 / max(PI * denominator * denominator, 0.000001);
-					}
+                    void main()
+                    {
+                        // Material
+                        vec4 albedoColor = u_AlbedoColor;
 
-					// --------------------------------------------------
-					// Schlick-GGX Geometry
-					// --------------------------------------------------
+                        if (u_HasAlbedoTexture)
+                            albedoColor *= texture(u_AlbedoTexture, v_TexCoord);
 
-					float GeometrySchlickGGX(float NdotV, float roughness)
-					{
-						float r = roughness + 1.0;
-						float k = (r * r) / 8.0;
+                        vec3 albedo = albedoColor.rgb;
 
-						return NdotV / max(NdotV * (1.0 - k) + k, 0.000001);
-					}
+                        float metallic = clamp(u_Metallic, 0.0, 1.0);
+                        float roughness = clamp(u_Roughness, 0.04, 1.0);
+                        float ao = clamp(u_AmbientOcclusion, 0.0, 1.0);
 
-					// --------------------------------------------------
-					// Smith Geometry
-					// --------------------------------------------------
+                        // Surface Vectors
+                        vec3 normal = normalize(v_Normal);
+                        vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
 
-					float GeometrySmith(vec3 normal, vec3 viewDirection, vec3 lightDirection, float roughness)
-					{
-						float NdotV = max(dot(normal, viewDirection), 0.0);
-						float NdotL = max(dot(normal, lightDirection), 0.0);
+                        float NdotV = max(dot(normal, viewDirection), 0.0);
 
-						float geometryView = GeometrySchlickGGX(NdotV, roughness);
-						float geometryLight = GeometrySchlickGGX(NdotL, roughness);
+                        // Reflectance
+                        vec3 F0 = mix(vec3(0.04), albedo, metallic);
 
-						return geometryView * geometryLight;
-					}
+                        // --------------------------------------------------
+                        // Direct Lighting
+                        // --------------------------------------------------
 
-					// --------------------------------------------------
-					// Schlick Fresnel
-					// --------------------------------------------------
+                        vec3 lightDirection = normalize(-u_LightDirection);
+                        vec3 halfway = normalize(viewDirection + lightDirection);
 
-					vec3 FresnelSchlick(float cosTheta, vec3 F0)
-					{
-						return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-					}
+                        float NdotL = max(dot(normal, lightDirection), 0.0);
 
-					// --------------------------------------------------
-					// Roughness-Aware Fresnel
-					// --------------------------------------------------
+                        vec3 F = FresnelSchlick(
+                            max(dot(halfway, viewDirection), 0.0),
+                            F0
+                        );
 
-					vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
-					{
-						return F0 + (max(vec3(1.0 - roughness), F0) - F0) *
-							pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-					}
+                        float NDF = DistributionGGX(normal, halfway, roughness);
 
-					// --------------------------------------------------
-					// Main
-					// --------------------------------------------------
+                        float G = GeometrySmith(normal, viewDirection, lightDirection, roughness);
 
-					void main()
-					{
-						// Material
-						vec4 albedoColor = u_AlbedoColor;
+                        vec3 numerator = NDF * G * F;
+                        float denominator = max(4.0 * NdotV * NdotL, 0.0001);
 
-						if (u_HasAlbedoTexture)
-							albedoColor *= texture(u_AlbedoTexture, v_TexCoord);
+                        vec3 specular = numerator / denominator;
 
-						vec3 albedo = albedoColor.rgb;
+                        vec3 kS = F;
+                        vec3 kD = (vec3(1.0) - kS) * (1.0 - metallic);
 
-						float metallic = clamp(u_Metallic, 0.0, 1.0);
-						float roughness = clamp(u_Roughness, 0.04, 1.0);
-						float ao = clamp(u_AmbientOcclusion, 0.0, 1.0);
+                        vec3 diffuse = kD * albedo / PI;
 
-						// Surface Vectors
-						vec3 normal = normalize(v_Normal);
-						vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
+                        float shadow = CalculateShadow(normal, lightDirection);
 
-						float NdotV = max(dot(normal, viewDirection), 0.0);
+                        vec3 directLighting =
+                            (diffuse + specular) *
+                            u_LightColor *
+                            u_LightIntensity *
+                            NdotL *
+                            (1.0 - shadow);
 
-						// Reflectance
-						vec3 F0 = mix(vec3(0.04), albedo, metallic);
+                        // --------------------------------------------------
+                        // Image-Based Lighting
+                        // --------------------------------------------------
 
-						// --------------------------------------------------
-						// Direct Lighting
-						// --------------------------------------------------
+                        // Fresnel
+                        vec3 F_IBL = FresnelSchlickRoughness(NdotV, F0, roughness);
 
-						vec3 lightDirection = normalize(-u_LightDirection);
-						vec3 halfway = normalize(viewDirection + lightDirection);
+                        vec3 kS_IBL = F_IBL;
+                        vec3 kD_IBL = (vec3(1.0) - kS_IBL) * (1.0 - metallic);
 
-						float NdotL = max(dot(normal, lightDirection), 0.0);
+                        // Diffuse Irradiance
+                        vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
+                        vec3 diffuseIBL = irradiance * albedo;
 
-						vec3 F = FresnelSchlick(
-							max(dot(halfway, viewDirection), 0.0),
-							F0
-						);
+                        // Specular Environment Reflection
+                        vec3 reflectionDirection = reflect(-viewDirection, normal);
 
-						float NDF = DistributionGGX(normal, halfway, roughness);
+                        vec3 prefilteredColor = textureLod(
+                            u_PrefilteredMap,
+                            reflectionDirection,
+                            roughness * u_MaxReflectionLOD
+                        ).rgb;
 
-						float G = GeometrySmith(normal, viewDirection, lightDirection, roughness);
+                        // BRDF Integration
+                        vec2 BRDF = texture(u_BRDFLUT, vec2(NdotV, roughness)).rg;
 
-						vec3 numerator = NDF * G * F;
-						float denominator = max(4.0 * NdotV * NdotL, 0.0001);
+                        vec3 specularIBL = prefilteredColor * (F_IBL * BRDF.x + BRDF.y);
 
-						vec3 specular = numerator / denominator;
+                        // Combine Ambient Lighting
+                        vec3 ambientLighting =
+                            (kD_IBL * diffuseIBL + specularIBL) * ao;
 
-						vec3 kS = F;
-						vec3 kD = (vec3(1.0) - kS) * (1.0 - metallic);
+                        // --------------------------------------------------
+                        // Final Lighting
+                        // --------------------------------------------------
 
-						vec3 diffuse = kD * albedo / PI;
+                        vec3 color = ambientLighting + directLighting;
 
-						vec3 directLighting =
-							(diffuse + specular) *
-							u_LightColor *
-							u_LightIntensity *
-							NdotL;
+                        // Tone Mapping
+                        color = color / (color + vec3(1.0));
 
-						// --------------------------------------------------
-						// Image-Based Lighting
-						// --------------------------------------------------
+                        // Gamma Correction
+                        color = pow(color, vec3(1.0 / 2.2));
 
-						// Fresnel
-						vec3 F_IBL = FresnelSchlickRoughness(NdotV, F0, roughness);
-
-						vec3 kS_IBL = F_IBL;
-						vec3 kD_IBL = (vec3(1.0) - kS_IBL) * (1.0 - metallic);
-
-						// Diffuse Irradiance
-						vec3 irradiance = texture(u_IrradianceMap, normal).rgb;
-						vec3 diffuseIBL = irradiance * albedo;
-
-						// Specular Environment Reflection
-						vec3 reflectionDirection = reflect(-viewDirection, normal);
-
-						vec3 prefilteredColor = textureLod(
-							u_PrefilteredMap,
-							reflectionDirection,
-							roughness * u_MaxReflectionLOD
-						).rgb;
-
-						// BRDF Integration
-						vec2 BRDF = texture(u_BRDFLUT, vec2(NdotV, roughness)).rg;
-
-						vec3 specularIBL = prefilteredColor * (F_IBL * BRDF.x + BRDF.y);
-
-						// Combine Ambient Lighting
-						vec3 ambientLighting =
-							(kD_IBL * diffuseIBL + specularIBL) * ao;
-
-						// --------------------------------------------------
-						// Final Lighting
-						// --------------------------------------------------
-
-						vec3 color = ambientLighting + directLighting;
-
-						// Tone Mapping
-						color = color / (color + vec3(1.0));
-
-						// Gamma Correction
-						color = pow(color, vec3(1.0 / 2.2));
-
-						o_Color = vec4(color, albedoColor.a);
-					}
-				)"
-			}
-		);
+                        o_Color = vec4(color, albedoColor.a);
+                    }
+                )"
+            }
+        );
 
 
 		s_DefaultVertexArray = ORVertexArray::CreateVertexArray();
@@ -300,13 +332,31 @@ namespace OrionEngine::OrionRenderer
 			  -0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f, 0.0f, 1.0f
 		};
 
-		s_DefaultShader->Bind();
+        s_DefaultShadowDepthShader = CreateRef<OROpenGLShaderAPI>();
 
-		s_DefaultShader->SetVec3("u_LightDirection", glm::vec3(-0.5f, -1.0f, -0.5f));
-		s_DefaultShader->SetVec3("u_LightColor", glm::vec3(1.0f));
-		s_DefaultShader->SetFloat("u_LightIntensity", 1.0f);
+        std::string shadowVertexShaderSource = Utils::ReadShaderFile(
+            R"(D:\dev\OrionEngine\Source\OrionEngine\OrionRenderer\ShadowMapShaders\ShadowMapVS.glsl)"
+        );
 
-		s_DefaultShader->Unbind();
+        std::string shadowFragmentShaderSource = R"(
+            #version 330
+            
+            void main() 
+            {
+                
+            }
+        )";   // Minimal depth only fragment shader
+
+        s_DefaultShadowDepthShader->CompileAndLinkThroughShaderFiles(shadowVertexShaderSource, shadowFragmentShaderSource);
+
+        s_DefaultShader->Bind();
+
+        s_DefaultShader->SetVec3("u_LightDirection", glm::vec3(-0.5f, -1.0f, -0.5f));
+        s_DefaultShader->SetVec3("u_LightColor", glm::vec3(1.0f));
+        s_DefaultShader->SetFloat("u_LightIntensity", 1.0f);
+        s_DefaultShader->SetInt("u_ShadowMap", 4);
+
+        s_DefaultShader->Unbind();
 
 		Ref<ORVertexBuffer> VBO = ORVertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices));
 
@@ -382,6 +432,11 @@ namespace OrionEngine::OrionRenderer
 		return s_DefaultEnvironmentShader;
 	}
 
+    const Ref<ORShader>& ORDefaultRendererResources::GetDefaultShadowDepthShader() noexcept
+    {
+        return s_DefaultShadowDepthShader;
+    }
+
 	void ORDefaultRendererResources::Shutdown() noexcept
 	{
 		s_DefaultShader.reset();
@@ -389,5 +444,6 @@ namespace OrionEngine::OrionRenderer
 		s_DefaultMesh.reset();
 		s_DefaultMaterial.reset();
 		s_DefaultEnvironmentShader.reset();
+        s_DefaultShadowDepthShader.reset();
 	}
 }
