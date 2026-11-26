@@ -53,6 +53,7 @@ namespace OrionEngine::OrionEditor
 		struct OEMainMenuBarDataNeeded
 		{
 			char ProjectNameBuffer[1024];
+			char ProjectPathBuffer[2048];
 			bool OpenProjectNamePopup;
 			bool OpenSceneFilePopup;
 			bool OpenProjectFilePopup;

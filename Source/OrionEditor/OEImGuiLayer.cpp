@@ -13,6 +13,8 @@
 #include <OrionEngine/Core/OELogging.h>
 #include <OrionEngine/Core/Scene/OESceneSerializer.h>
 
+#include <filesystem>
+
 namespace OrionEngine::OrionEditor
 {
 	bool OEImGuiLayer::InitImGui(GLFWwindow* window)
@@ -163,10 +165,19 @@ namespace OrionEngine::OrionEditor
 			ImGui::SameLine();
 			ImGui::InputText("##ProjectName", m_OEMMBDN.ProjectNameBuffer, sizeof(m_OEMMBDN.ProjectNameBuffer));
 
+			ImGui::Text("Project Path");
+			ImGui::SameLine();
+			ImGui::InputText("##ProjectPath", m_OEMMBDN.ProjectPathBuffer, sizeof(m_OEMMBDN.ProjectPathBuffer));
+			
+			ImGui::Spacing();
+
 			if (ImGui::Button("Create"))
 			{
 				std::string projectName = m_OEMMBDN.ProjectNameBuffer;
-				if (scene->GetSerializer()->CreateOEProjectDirectory(projectName))
+				std::filesystem::path userProjectPath = std::string(m_OEMMBDN.ProjectPathBuffer);
+				std::filesystem::path projectPath = std::filesystem::path(userProjectPath / projectName);
+
+				if (scene->GetSerializer()->CreateOEProjectDirectory(projectPath))
 					m_ResourceBrowserPanel->SetProjectPath(scene->GetSerializer()->GetCurrentProjectPath());
 				ImGui::CloseCurrentPopup();
 			}
