@@ -31,6 +31,7 @@
     <None Include="Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderFS.glsl" />
     <None Include="Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderVS.glsl" />
     <None Include="Assets\EngineRendererAssets\EnvironmentTexture\DefaultEnvironmentHDRTexture.hdr" />
+    <None Include="Source\OrionEngine\OrionRenderer\ShadowMapShaders\ShadowMapVS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\OEEntryPoint.cpp">
@@ -214,6 +215,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\OrionEditor\Panels\OEEnvironmentDetailsPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORShadowMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShadowMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -459,6 +466,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEEnvironment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\ORShadowMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShadowMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
