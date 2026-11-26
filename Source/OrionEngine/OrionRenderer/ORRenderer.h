@@ -5,6 +5,7 @@
 #include <utility>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "ORGraphicsAPI.h"
 #include "ORRenderCommand.h"
@@ -16,6 +17,8 @@
 #include "ORMesh.h"
 #include "ORTexture.h"
 #include "ORCubemap.h"
+#include "OEDirectionalLight.h"
+#include "ORShadowMap.h"
 
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/Core/OEAssert.h>
@@ -32,165 +35,41 @@ namespace OrionEngine
         {
         public:
 
-            void Init(ORGraphicsAPI API) noexcept
-            {
-                SetGraphicsAPI(API);
-                ORRenderCommand::ORInit();
-            }
+            void Init(ORGraphicsAPI API) noexcept;
+            void Shutdown() noexcept;
+            void SetViewport(int x, int y, int width, int height) noexcept;
 
-            void Shutdown() noexcept
-            {
-                m_TextureCache.clear();
-            }
+            void BeginScene(const glm::mat4& viewProjection, const glm::mat4& lightSpaceMatrix, const glm::vec3& cameraPosition, const ORIBLData& environmentIBLData, const OEDirectionalLight& directionalLight);
+            void EndScene() noexcept;
 
-            void SetViewport(int x, int y, int width, int height) noexcept
-            {
-                ORRenderCommand::SetViewport(x, y, width, height);
-            }
+            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const Ref<AssetManagement::OEMaterial>& material, const glm::mat4& transform);
+            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const glm::mat4& transform);
+            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh);
+            void SubmitSkybox(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const Ref<ORCubemap>& cubemap, const glm::mat4& viewProjection);
 
-            void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition, const ORIBLData& environmentIBLData)
-            {
-                m_SceneData.ViewProjectionMatrix = viewProjection;
-                m_SceneData.CameraPosition = cameraPosition;
-                m_SceneData.EnvironmentIBLData = environmentIBLData;
-            }
+            glm::mat4 CalculateLightSpaceMatrix(const OEDirectionalLight& directionalLight) noexcept;
+            
+            void InitShadowMap(uint32_t resolution);
+            void BeginShadowPass();
+            void SubmitShadow(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const glm::mat4& transform, const glm::mat4& lightSpace);
+            void EndShadowPass() noexcept;
 
-            void EndScene() noexcept
-            {
+            const Ref<ORShadowMap>& GetShadowMap() const noexcept { return m_ShadowMap; }
 
-            }
-
-            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const Ref<AssetManagement::OEMaterial>& material, const glm::mat4& transform)
-            {
-                OE_CORE_ASSERT(shader, "Submit received a null shader!");
-                OE_CORE_ASSERT(mesh, "Submit received a null mesh!");
-                OE_CORE_ASSERT(material, "Submit received a null material!");
-
-                const AssetManagement::OEMaterialData& materialData = material->GetMaterialData();
-
-                shader->Bind();
-                shader->SetMat4("u_ViewProjection", m_SceneData.ViewProjectionMatrix);
-                shader->SetMat4("u_Transform", transform);
-                shader->SetVec3("u_LightDirection", glm::vec3(-0.5f, -1.0f, -0.5f));
-                shader->SetVec3("u_LightColor", glm::vec3(1.0f));
-                shader->SetFloat("u_LightIntensity", 1.0f);
-
-                shader->SetVec4("u_AlbedoColor", materialData.AlbedoColor);
-                shader->SetFloat("u_Metallic", materialData.Metallic);
-                shader->SetFloat("u_Roughness", materialData.Roughness);
-                shader->SetFloat("u_AmbientOcclusion", materialData.AmbientOcclusion);
-                shader->SetVec3("u_CameraPosition", m_SceneData.CameraPosition);
-
-                const ORIBLData& environmentIBLData = m_SceneData.EnvironmentIBLData;
-
-                if (environmentIBLData.IrradianceCubemap)
-                    environmentIBLData.IrradianceCubemap->Bind(1);
-
-                if (environmentIBLData.PrefilteredCubemap)
-                    environmentIBLData.PrefilteredCubemap->Bind(2);
-
-                if (environmentIBLData.BRDFLUT)
-                    environmentIBLData.BRDFLUT->Bind(3);
-
-                shader->SetInt("u_IrradianceMap", 1);
-                shader->SetInt("u_PrefilteredMap", 2);
-                shader->SetInt("u_BRDFLUT", 3);
-
-                if (environmentIBLData.PrefilteredCubemap)
-                    shader->SetFloat("u_MaxReflectionLOD", static_cast<float>(m_SceneData.EnvironmentIBLData.PrefilteredCubemap->GetMipLevels() - 1));
-                else
-                    shader->SetFloat("u_MaxReflectionLOD", 0.0f);
-
-                const Ref<AssetManagement::OETexture>& albedoTexture = material->GetMaterialAlbedoTexture();
-                bool hasAlbedoTexture = false;
-
-                if (albedoTexture)
-                {
-                    const AssetManagement::OETextureData& textureData = albedoTexture->GetTextureData();
-                    const AssetManagement::OEAssetIdentifierHandle identifierHandle = textureData.TextureAssetMetadata.IdentifierHandle;
-
-                    if (identifierHandle != AssetManagement::INVALID_ASSET_IDENTIFIER_HANDLE)
-                    {
-                        auto textureIterator = m_TextureCache.find(identifierHandle);
-
-                        if (textureIterator == m_TextureCache.end())
-                        {
-                            Ref<ORTexture> rendererTexture = ORTexture::CreateTexture(textureData);
-
-                            if (rendererTexture)
-                                textureIterator = m_TextureCache.emplace(identifierHandle, std::move(rendererTexture)).first;
-                        }
-
-                        if (textureIterator != m_TextureCache.end())
-                        {
-                            textureIterator->second->Bind(0);
-                            hasAlbedoTexture = true;
-                        }
-                    }
-                    else
-                        ORION_ENGINE_WARNING("Albedo texture has an invalid asset identifier!");
-                }
-
-                shader->SetInt("u_AlbedoTexture", 0);
-                shader->SetInt("u_HasAlbedoTexture", hasAlbedoTexture ? 1 : 0);
-
-                mesh->Bind();
-                ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
-            }
-
-            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const glm::mat4& transform)
-            {
-                OE_CORE_ASSERT(shader, "Shader is null!");
-                OE_CORE_ASSERT(mesh, "Mesh is null!");
-
-                shader->Bind();
-                shader->SetMat4("u_Transform", transform);
-
-                mesh->Bind();
-                ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
-            }
-
-            void Submit(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh)
-            {
-                OE_CORE_ASSERT(shader, "Shader is null!");
-                OE_CORE_ASSERT(mesh, "Mesh is null!");
-
-                shader->Bind();
-
-                mesh->Bind();
-                ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
-            }
-
-            void SubmitSkybox(const Ref<ORShader>& shader, const Ref<ORMesh>& mesh, const Ref<ORCubemap>& cubemap, const glm::mat4& viewProjection)
-            {
-                OE_CORE_ASSERT(shader, "Skybox shader is null!");
-                OE_CORE_ASSERT(mesh, "Skybox mesh is null!");
-                OE_CORE_ASSERT(cubemap, "Skybox cubemap is null!");
-
-                ORRenderCommand::SetDepthFunctionLessOrEqual();
-
-                shader->Bind();
-                shader->SetMat4("u_ViewProjection", viewProjection);
-                cubemap->Bind(0);
-
-                mesh->Bind();
-                ORRenderCommand::DrawIndexed(mesh->GetIndexCount());
-
-                ORRenderCommand::SetDepthFunctionLess();
-            }
-
-            void SetGraphicsAPI(ORGraphicsAPI API) noexcept
-            {
-                m_GraphicsAPI = API;
-            }
+            void SetGraphicsAPI(ORGraphicsAPI API) noexcept { m_GraphicsAPI = API; }
 
             static ORGraphicsAPI GetGraphicsAPI() { return m_GraphicsAPI; }
+
+            uint32_t GetShadowMapDepthTextureID() const noexcept { return m_ShadowMap ? m_ShadowMap->GetDepthTextureID() : 0; }
 
         private:
 
             OESceneData m_SceneData;
 
             std::unordered_map<AssetManagement::OEAssetIdentifierHandle, Ref<ORTexture>> m_TextureCache;
+            glm::ivec2 m_ViewportSize = { 1280, 720 };
+
+            Ref<ORShadowMap> m_ShadowMap;
 
             static ORGraphicsAPI m_GraphicsAPI;
         };
