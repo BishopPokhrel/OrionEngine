@@ -43,6 +43,11 @@ namespace OrionEngine
             const glm::vec3& GetRight() const noexcept { return m_Right; }
             const glm::vec3& GetUp() const noexcept { return m_Up; }
 
+            const float& GetOrthoLeft() { return m_OrthoLeft; }
+            const float& GetOrthoRight() { return m_OrthoRight; }
+            const float& GetOrthoTop() { return m_OrthoTop; }
+            const float& GetOrthoBottom() { return m_OrthoBottom; }
+
         private:
 
             void RecalculateViewMatrix() noexcept;
@@ -67,6 +72,11 @@ namespace OrionEngine
 
             float m_AspectRatio = 16.0f / 9.0f;
             float m_FieldOfView = 45.0f;
+
+            float m_OrthoLeft = 0.0f;
+            float m_OrthoRight = 0.0f;
+            float m_OrthoTop = 0.0f;
+            float m_OrthoBottom = 0.0f;
         };
     }
 }

@@ -24,6 +24,11 @@ namespace OrionEngine
 
             m_Distance = glm::length(m_FocalPoint - m_Position);
 
+            m_OrthoLeft = left;
+            m_OrthoRight = right;
+            m_OrthoTop = top;
+            m_OrthoBottom = bottom;
+
             RecalculateViewMatrix();
             RecalculateProjection();
         }
