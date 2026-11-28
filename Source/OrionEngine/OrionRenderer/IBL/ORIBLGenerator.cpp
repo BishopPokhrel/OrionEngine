@@ -84,7 +84,7 @@ namespace OrionEngine::OrionRenderer
 
         const glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 
-        Ref<OROpenGLShaderAPI> conversionShader = CreateRef<OROpenGLShaderAPI>();
+        Ref<ORShader> conversionShader = ORShader::CreateShader();
 
         std::string vertexShaderSource = Utils::ReadShaderFile("D:\\dev\\OrionEngine\\Source\\OrionEngine\\OrionRenderer\\IBL\\Shaders\\EquirectangularToCubemapVS.glsl");
         std::string fragmentShaderSource = Utils::ReadShaderFile("D:\\dev\\OrionEngine\\Source\\OrionEngine\\OrionRenderer\\IBL\\Shaders\\EquirectangularToCubemapFS.glsl");
@@ -153,7 +153,7 @@ namespace OrionEngine::OrionRenderer
 
         const glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 
-        Ref<OROpenGLShaderAPI> irradianceShader = CreateRef<OROpenGLShaderAPI>();
+        Ref<ORShader> irradianceShader = ORShader::CreateShader();
 
         std::string vertexShaderSource = Utils::ReadShaderFile("D:\\dev\\OrionEngine\\Source\\OrionEngine\\OrionRenderer\\IBL\\Shaders\\IrradianceConvolutionVS.glsl");
 
@@ -209,7 +209,7 @@ namespace OrionEngine::OrionRenderer
         std::string vertexShaderSource = Utils::ReadShaderFile("D:\\dev\\OrionEngine\\Source\\OrionEngine\\OrionRenderer\\IBL\\Shaders\\PrefilterEnvironmentVS.glsl");
         std::string fragmentShaderSource = Utils::ReadShaderFile("D:\\dev\\OrionEngine\\Source\\OrionEngine\\OrionRenderer\\IBL\\Shaders\\PrefilterEnvironmentFS.glsl");
 
-        Ref<OROpenGLShaderAPI> prefilterShader = CreateRef<OROpenGLShaderAPI>();
+        Ref<ORShader> prefilterShader = ORShader::CreateShader();
 
         prefilterShader->CompileAndLinkThroughShaderFiles(vertexShaderSource, fragmentShaderSource);
         prefilterShader->Bind();
@@ -288,7 +288,7 @@ namespace OrionEngine::OrionRenderer
         Ref<ORTextureFramebuffer> framebuffer = ORTextureFramebuffer::CreateTextureFramebuffer();
         OE_CORE_ASSERT(framebuffer, "Failed to create BRDF LUT framebuffer!");
 
-        Ref<OROpenGLShaderAPI> BRDFShader = CreateRef<OROpenGLShaderAPI>();
+        Ref<ORShader> BRDFShader = ORShader::CreateShader();
         OE_CORE_ASSERT(BRDFShader, "Failed to create BRDF LUT shader!");
 
         framebuffer->AttachTexture(brdfLUT);
