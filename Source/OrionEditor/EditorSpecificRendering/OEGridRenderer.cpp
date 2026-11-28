@@ -17,7 +17,7 @@ namespace OrionEngine::OrionEditor::EditorSpecificRendering
     void OEGridRenderer::Init()
     {
         m_FullscreenVAO = OrionRenderer::ORVertexArray::CreateVertexArray();
-        m_GridShader = CreateRef<OrionRenderer::OROpenGLShaderAPI>();
+        m_GridShader = OrionRenderer::ORShader::CreateShader();
 
         std::string vertexShaderSource = Utils::ReadShaderFile(
             "D:/dev/OrionEngine/Source/OrionEditor/EditorSpecificRendering/Shaders/GridVertexShader.glsl"
