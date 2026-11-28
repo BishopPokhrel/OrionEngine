@@ -12,7 +12,7 @@ namespace OrionEngine::OrionRenderer
 {
 	void ORDefaultRendererResources::Initialize() noexcept
 	{
-		s_DefaultShader = CreateRef<OROpenGLShaderAPI>();
+        s_DefaultShader = ORShader::CreateShader();
         s_DefaultShader->CompileAndLinkThroughShaderVariables(
             VertexShader
             {
@@ -332,7 +332,7 @@ namespace OrionEngine::OrionRenderer
 			  -0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f, 0.0f, 1.0f
 		};
 
-        s_DefaultShadowDepthShader = CreateRef<OROpenGLShaderAPI>();
+        s_DefaultShadowDepthShader = ORShader::CreateShader();
 
         std::string shadowVertexShaderSource = Utils::ReadShaderFile(
             R"(D:\dev\OrionEngine\Source\OrionEngine\OrionRenderer\ShadowMapShaders\ShadowMapVS.glsl)"
@@ -368,7 +368,7 @@ namespace OrionEngine::OrionRenderer
 		VBO->SetLayout(layout);
 		s_DefaultVertexArray->AddVertexBuffer(VBO);
 
-		s_DefaultEnvironmentShader = CreateRef<OROpenGLShaderAPI>();
+        s_DefaultEnvironmentShader = ORShader::CreateShader();
 
 		std::string vertexShaderSource = Utils::ReadShaderFile(R"(D:\dev\OrionEngine\Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderVS.glsl)");
 		std::string fragmentShaderSource = Utils::ReadShaderFile(R"(D:\dev\OrionEngine\Source\OrionEngine\OrionRenderer\SceneRenderer\EnvironmentShaders\DefaultEnvironmentShaderFS.glsl)");
