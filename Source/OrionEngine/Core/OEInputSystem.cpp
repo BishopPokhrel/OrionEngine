@@ -1,3 +1,4 @@
+
 #define GLFW_INCLUDE_NONE
 
 #include "OEInputSystem.h"
@@ -47,6 +48,7 @@ namespace OrionEngine
 	void OEInputSystem::InitializeOEInputSystem(GLFWwindow* window) noexcept
 	{
 		m_OEInputStates.clear();
+		m_MouseButtonStates.clear();
 		m_PreviousKeyDown.clear();
 		m_PreviousMouseDown.clear();
 
@@ -60,8 +62,7 @@ namespace OrionEngine
 			[](GLFWwindow* window, double, double yOffset)
 			{
 				auto* self = static_cast<OEInputSystem*>(glfwGetWindowUserPointer(window));
-				if (self)
-					self->scrollDelta += static_cast<int>(yOffset);
+				if (self) self->scrollDelta += static_cast<int>(yOffset);
 			});
 	}
 
@@ -69,62 +70,46 @@ namespace OrionEngine
 	{
 		glfwPollEvents();
 
-		// -----------------------
-		// KEY STATES (SAFE VERSION)
-		// -----------------------
+		// KEY STATES
 		for (auto& [key, state] : m_OEInputStates)
 		{
 			auto prevIt = m_PreviousKeyDown.find(key);
 			bool prev = (prevIt != m_PreviousKeyDown.end()) ? prevIt->second : false;
-
-			int glfwKey = key.empty() ? GLFW_KEY_UNKNOWN : key[0];
-
+			int glfwKey = Utils::StringToGLFWKey(key);
 			bool curr = (glfwGetKey(window, glfwKey) == GLFW_PRESS);
 
 			m_PreviousKeyDown[key] = curr;
 
-			if (!prev && curr)
-				state = OEInputState::Pressed;
-			else if (prev && curr)
-				state = OEInputState::Held;
-			else if (prev && !curr)
-				state = OEInputState::Released;
-			else
-				state = OEInputState::None;
+			if (!prev && curr) state = OEInputState::Pressed;
+			else if (prev && curr) state = OEInputState::Held;
+			else if (prev && !curr) state = OEInputState::Released;
+			else state = OEInputState::None;
 		}
 
-		// -----------------------
-		// MOUSE BUTTONS (SAFE)
-		// -----------------------
-		for (auto& [trigger, callbacks] : m_MouseCallbacks)
+		// MOUSE BUTTON STATES
+		for (int button = GLFW_MOUSE_BUTTON_1; button <= GLFW_MOUSE_BUTTON_8; button++)
 		{
-			int button = trigger.key;
-			OEInputState required = trigger.state;
-
 			bool prev = m_PreviousMouseDown[button];
 			bool curr = (glfwGetMouseButton(window, button) == GLFW_PRESS);
 
 			m_PreviousMouseDown[button] = curr;
 
-			OEInputState state = OEInputState::None;
-
-			if (!prev && curr)
-				state = OEInputState::Pressed;
-			else if (prev && curr)
-				state = OEInputState::Held;
-			else if (prev && !curr)
-				state = OEInputState::Released;
-
-			if (state == required)
-			{
-				for (auto& cb : callbacks)
-					cb();
-			}
+			if (!prev && curr) m_MouseButtonStates[button] = OEInputState::Pressed;
+			else if (prev && curr) m_MouseButtonStates[button] = OEInputState::Held;
+			else if (prev && !curr) m_MouseButtonStates[button] = OEInputState::Released;
+			else m_MouseButtonStates[button] = OEInputState::None;
 		}
 
-		// -----------------------
+		// MOUSE BUTTON CALLBACKS
+		for (auto& [trigger, callbacks] : m_MouseCallbacks)
+		{
+			auto it = m_MouseButtonStates.find(trigger.key);
+
+			if (it != m_MouseButtonStates.end() && it->second == trigger.state)
+				for (auto& cb : callbacks) cb();
+		}
+
 		// MOUSE POSITION
-		// -----------------------
 		double cx, cy;
 		glfwGetCursorPos(window, &cx, &cy);
 
@@ -134,52 +119,61 @@ namespace OrionEngine
 		mouseX = cx;
 		mouseY = cy;
 
-		// -----------------------
 		// KEY CALLBACKS
-		// -----------------------
 		for (auto& [trigger, callbacks] : m_KeyCallbacks)
 		{
-			std::string keyStr(1, static_cast<char>(trigger.key));
-
-			auto it = m_OEInputStates.find(keyStr);
-			if (it != m_OEInputStates.end() && it->second == trigger.state)
+			for (const auto& [key, state] : m_OEInputStates)
 			{
-				for (auto& cb : callbacks)
-					cb();
+				if (Utils::StringToGLFWKey(key) == trigger.key && state == trigger.state)
+				{
+					for (auto& cb : callbacks) cb();
+					break;
+				}
 			}
 		}
 	}
 
-	// ---------------------------
-	// PUBLIC API (FIXED)
-	// ---------------------------
+	// KEYBOARD API
 
 	bool OEInputSystem::IsKeyPressed(const std::string& key) noexcept
 	{
 		auto it = m_OEInputStates.find(key);
-		if (it == m_OEInputStates.end())
-			return false;
-
-		return it->second == OEInputState::Pressed;
+		return it != m_OEInputStates.end() && it->second == OEInputState::Pressed;
 	}
 
 	bool OEInputSystem::IsKeyReleased(const std::string& key) noexcept
 	{
 		auto it = m_OEInputStates.find(key);
-		if (it == m_OEInputStates.end())
-			return false;
-
-		return it->second == OEInputState::Released;
+		return it != m_OEInputStates.end() && it->second == OEInputState::Released;
 	}
 
 	bool OEInputSystem::IsKeyHeld(const std::string& key) noexcept
 	{
 		auto it = m_OEInputStates.find(key);
-		if (it == m_OEInputStates.end())
-			return false;
-
-		return it->second == OEInputState::Held;
+		return it != m_OEInputStates.end() && it->second == OEInputState::Held;
 	}
+
+	// MOUSE BUTTON API
+
+	bool OEInputSystem::IsMouseButtonPressed(int button) noexcept
+	{
+		auto it = m_MouseButtonStates.find(button);
+		return it != m_MouseButtonStates.end() && it->second == OEInputState::Pressed;
+	}
+
+	bool OEInputSystem::IsMouseButtonReleased(int button) noexcept
+	{
+		auto it = m_MouseButtonStates.find(button);
+		return it != m_MouseButtonStates.end() && it->second == OEInputState::Released;
+	}
+
+	bool OEInputSystem::IsMouseButtonHeld(int button) noexcept
+	{
+		auto it = m_MouseButtonStates.find(button);
+		return it != m_MouseButtonStates.end() && it->second == OEInputState::Held;
+	}
+
+	// MOUSE INFORMATION API
 
 	std::pair<double, double> OEInputSystem::GetMousePosition() noexcept
 	{
@@ -196,9 +190,11 @@ namespace OrionEngine
 		return scrollDelta;
 	}
 
+	// CALLBACK REGISTRATION
+
 	void OEInputSystem::RegisterKeyCallback(const std::string& key, std::function<void()> callback, OEInputState state) noexcept
 	{
-		OEInputKey k{ key.empty() ? 0 : key[0], state };
+		OEInputKey k{ Utils::StringToGLFWKey(key), state };
 		m_KeyCallbacks[k].push_back(callback);
 	}
 
@@ -208,14 +204,20 @@ namespace OrionEngine
 		m_MouseCallbacks[k].push_back(callback);
 	}
 
+	// INPUT STATE MANAGEMENT
+
 	void OEInputSystem::ResetPerFrameStates() noexcept
 	{
 		for (auto& [key, state] : m_OEInputStates)
 		{
-			if (state == OEInputState::Pressed)
-				state = OEInputState::Held;
-			else if (state == OEInputState::Released)
-				state = OEInputState::None;
+			if (state == OEInputState::Pressed) state = OEInputState::Held;
+			else if (state == OEInputState::Released) state = OEInputState::None;
+		}
+
+		for (auto& [button, state] : m_MouseButtonStates)
+		{
+			if (state == OEInputState::Pressed) state = OEInputState::Held;
+			else if (state == OEInputState::Released) state = OEInputState::None;
 		}
 	}
 

@@ -62,8 +62,14 @@ namespace OrionEngine
 		void ResetPerFrameStates() noexcept;
 		void RegisterKey(const std::string& key) noexcept;
 
+		bool IsMouseButtonPressed(int button) noexcept;
+		bool IsMouseButtonReleased(int button) noexcept;
+		bool IsMouseButtonHeld(int button) noexcept;
+
+
 	private:
 		std::unordered_map<std::string, OEInputState> m_OEInputStates;
+		std::unordered_map<int, OEInputState> m_MouseButtonStates;
 
 		std::unordered_map<OEInputKey, std::vector<std::function<void()>>, OEInputKeyHash> m_KeyCallbacks;
 		std::unordered_map<OEInputKey, std::vector<std::function<void()>>, OEInputKeyHash> m_MouseCallbacks;
