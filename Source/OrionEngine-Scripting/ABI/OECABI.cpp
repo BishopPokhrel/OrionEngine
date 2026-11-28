@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "OECABI.h"
 
 #include "../OEScriptingInternal.h"
@@ -105,7 +107,7 @@ extern "C"
 			case OELogLevel::WARNING:
 				ORION_ENGINE_WARNING(message);
 				break;
-			case OELogLevel::ERROR:
+			case OELogLevel::ERR:
 				ORION_ENGINE_ERROR(message);
 				break;
 			case OELogLevel::FATAL:

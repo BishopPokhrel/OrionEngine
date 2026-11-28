@@ -55,7 +55,7 @@ extern "C"
 		DEBUG,
 		INFO,
 		WARNING,
-		ERROR,
+		ERR,
 		FATAL
 	} OELogLevel;
 
