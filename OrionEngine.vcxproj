@@ -104,6 +104,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)\Source</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,6 +121,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)\Source</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -187,6 +189,7 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORIndexBuffer.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderCommand.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORRenderer.cpp" />
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORShader.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORShadowMap.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORTexture.cpp" />
     <ClCompile Include="Source\OrionEngine\OrionRenderer\ORTextureFramebuffer.cpp" />
@@ -252,6 +255,7 @@
     <ClInclude Include="Source\OrionEngine\Core\OEEngineDefines.h" />
     <ClInclude Include="Source\OrionEngine\Core\OEExceptions.h" />
     <ClInclude Include="Source\OrionEngine\Core\OELogging.h" />
+    <ClInclude Include="Source\OrionEngine\Core\OEScriptingContext.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEEnvironment.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OEScene.h" />
     <ClInclude Include="Source\OrionEngine\Core\Scene\OESceneSerializer.h" />

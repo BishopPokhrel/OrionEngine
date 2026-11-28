@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37111.16 d17.14
+VisualStudioVersion = 17.14.37111.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OrionEngine", "OrionEngine.vcxproj", "{B2DD0AA6-6B7C-4736-BB6F-9F9B111E997A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OrionEngine-Scripting", "Source\OrionEngine-Scripting\OrionEngine-Scripting.vcxproj", "{F0C5E00D-AE15-470C-89A3-51EBA59D436D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{B2DD0AA6-6B7C-4736-BB6F-9F9B111E997A}.Release|x64.Build.0 = Release|x64
 		{B2DD0AA6-6B7C-4736-BB6F-9F9B111E997A}.Release|x86.ActiveCfg = Release|Win32
 		{B2DD0AA6-6B7C-4736-BB6F-9F9B111E997A}.Release|x86.Build.0 = Release|Win32
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Debug|x64.ActiveCfg = Debug|x64
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Debug|x64.Build.0 = Debug|x64
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Debug|x86.ActiveCfg = Debug|Win32
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Debug|x86.Build.0 = Debug|Win32
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Release|x64.ActiveCfg = Release|x64
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Release|x64.Build.0 = Release|x64
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Release|x86.ActiveCfg = Release|Win32
+		{F0C5E00D-AE15-470C-89A3-51EBA59D436D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

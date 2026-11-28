@@ -223,6 +223,9 @@
     <ClCompile Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShadowMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OrionEngine\OrionRenderer\ORShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\OrionEngine\Core\OEApplication.h">
@@ -472,6 +475,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\OrionEngine\OrionRenderer\Platform\OpenGL\OpenGLShadowMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\OrionEngine\Core\OEScriptingContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
