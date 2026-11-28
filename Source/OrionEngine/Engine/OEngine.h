@@ -10,6 +10,7 @@
 #include <OrionEngine/Core/Scene/OEScene.h>
 #include <OrionEngine/Core/OERef.h>
 #include <OrionEngine/Core/AssetManagement/OEAssetManager.h>
+#include <OrionEngine/Core/OEScriptingContext.h>
 
 namespace OrionEngine
 {
@@ -47,5 +48,7 @@ namespace OrionEngine
 
 		Scope<OrionRenderer::ORSceneRenderer> m_SceneRenderer;
 		Ref<OrionRenderer::ORFrameBuffer> m_ViewportFramebuffer;
+
+		OEScriptingContext m_ScriptingContext;
 	};
 }

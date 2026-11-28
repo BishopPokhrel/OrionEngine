@@ -25,6 +25,10 @@ namespace OrionEngine
 		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Material, CreateScope<AssetManagement::OEMaterialLoader>());
 		m_AssetManager->RegisterLoader(AssetManagement::OEAssetType::Texture, CreateScope<AssetManagement::OETextureLoader>());
 
+		m_ScriptingContext.InputSystem = m_InputSystem.get();
+		m_ScriptingContext.Registry = &m_Scene->GetRegistry();
+		m_ScriptingContext.AssetManager = m_AssetManager.get();
+
 		OrionRenderer::ORDefaultRendererResources::Initialize();
 
 		m_Renderer->InitShadowMap(2048); 
