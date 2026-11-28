@@ -3,6 +3,8 @@
 #include <string>
 #include <glm/glm.hpp>
 
+#include <OrionEngine/Core/OERef.h>
+
 namespace OrionEngine
 {
 	namespace OrionRenderer
@@ -31,6 +33,8 @@ namespace OrionEngine
 
 			virtual void Bind() noexcept = 0;
 			virtual void Unbind() noexcept = 0;
+
+			static Ref<ORShader> CreateShader() noexcept;
 		};
 	}
 }
